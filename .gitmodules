@@ -1,0 +1,3 @@
+[submodule "library/ubinos"]
+	path = library/ubinos
+	url = https://github.com/ubinos/ubinos.git
