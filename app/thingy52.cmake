@@ -46,8 +46,8 @@ include_directories(${_tmpdir}/lib_thingy/include/board)
 include_directories(${_tmpdir}/lib_thingy/include/macros)
 include_directories(${_tmpdir}/lib_thingy/include/util)
 include_directories(${_tmpdir}/lib_thingy/include/drivers)
-include_directories(${_tmpdir}/lib_thingy/include/ble_services)
-include_directories(${_tmpdir}/lib_thingy/include/modules)
+
+include_directories(${_tmpdir}/modules)
 
 include_directories(${_tmpdir}/../library/nrf5sdk_v17.00.00_lite/components/toolchain/cmsis/dsp/Include)
 

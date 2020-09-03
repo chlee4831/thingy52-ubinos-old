@@ -1,45 +1,13 @@
 /*
-  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
-  All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without modification,
-  are permitted provided that the following conditions are met:
-
-  1. Redistributions of source code must retain the above copyright notice, this
-     list of conditions and the following disclaimer.
-
-  2. Redistributions in binary form, except as embedded into a Nordic
-     Semiconductor ASA integrated circuit in a product or a software update for
-     such product, must reproduce the above copyright notice, this list of
-     conditions and the following disclaimer in the documentation and/or other
-     materials provided with the distribution.
-
-  3. Neither the name of Nordic Semiconductor ASA nor the names of its
-     contributors may be used to endorse or promote products derived from this
-     software without specific prior written permission.
-
-  4. This software, with or without modification, must only be used with a
-     Nordic Semiconductor ASA integrated circuit.
-
-  5. Any software provided in binary form under this license must not be reverse
-     engineered, decompiled, modified and/or disassembled.
-
-  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
-  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * m_environment.c
+ *
+ *  Created on: 2020. 9. 3.
+ *      Author: chlee
  */
 
 #include "m_environment.h"
 #include <string.h>
 #include "app_util_platform.h"
-#include "m_environment_flash.h"
 #include "drv_humidity.h"
 #include "drv_pressure.h"
 #include "drv_gas_sensor.h"
@@ -48,10 +16,10 @@
 #include "pca20020.h"
 #include "nrf_delay.h"
 #include "nrf_fstorage.h"
-#include "m_ui.h"
 #define  NRF_LOG_MODULE_NAME m_env
 #include "nrf_log.h"
 #include "macros_common.h"
+#include "thingy_main.h"
 
 /**@brief Different GAS sensor states.
  */
@@ -68,11 +36,10 @@ typedef enum
 static void temperature_timeout_handler(void * p_context); ///< Temperature handler, forward declaration.
 static void humidity_timeout_handler(void * p_context);    ///< Humidity handler, forward declaration.
 
-static ble_tes_t              m_tes;            ///< Structure to identify the Thingy Environment Service.
-static ble_tes_config_t     * m_p_config;       ///< Configuraion pointer.
-static const ble_tes_config_t m_default_config = ENVIRONMENT_CONFIG_DEFAULT; ///< Default configuraion.
-static m_gas_baseline_t     * m_p_baseline;     ///< Baseline pointer.
-static const m_gas_baseline_t m_default_baseline = ENVIRONMENT_BASELINE_DEFAULT; ///< Default baseline.
+static env_config_t      		m_p_config;       ///< Configuraion
+static const env_config_t 		m_default_config = ENVIRONMENT_CONFIG_DEFAULT; ///< Default configuraion.
+static m_gas_baseline_t      	m_p_baseline;     ///< Baseline
+static const m_gas_baseline_t 	m_default_baseline = ENVIRONMENT_BASELINE_DEFAULT; ///< Default baseline.
 
 
 static bool        m_get_humidity                   = false;
@@ -93,7 +60,7 @@ APP_TIMER_DEF(gas_calib_timer_id);
 
 /**@brief Function for converting the temperature sample.
  */
-static void temperature_conv_data(float in_temp, ble_tes_temperature_t * p_out_temp)
+static void temperature_conv_data(float in_temp, env_temperature_t * p_out_temp)
 {
     float f_decimal;
 
@@ -106,7 +73,7 @@ static void temperature_conv_data(float in_temp, ble_tes_temperature_t * p_out_t
 
 /**@brief Function for converting the humidity sample.
  */
-static void humidity_conv_data(uint8_t humid, ble_tes_humidity_t * p_out_humid)
+static void humidity_conv_data(uint8_t humid, env_humidity_t * p_out_humid)
 {
    *p_out_humid = (uint8_t)humid;
    NRF_LOG_DEBUG("humidity_conv_data: Relative Humidty: ,%d,%%\r\n", humid);
@@ -115,7 +82,7 @@ static void humidity_conv_data(uint8_t humid, ble_tes_humidity_t * p_out_humid)
 
 /**@brief Function for converting the pressure sample.
  */
-static void pressure_conv_data(float in_press, ble_tes_pressure_t * p_out_press)
+static void pressure_conv_data(float in_press, env_pressure_t * p_out_press)
 {
     float f_decimal;
 
@@ -124,7 +91,6 @@ static void pressure_conv_data(float in_press, ble_tes_pressure_t * p_out_press)
     p_out_press->decimal = (uint8_t)(f_decimal * 100.0f);
     NRF_LOG_DEBUG("pressure_conv_data: Pressure/Altitude: %d.%d Pa/m\r\n", p_out_press->integer, p_out_press->decimal);
 }
-
 
 /**@brief Pressure sensor event handler.
  */
@@ -136,10 +102,9 @@ static void drv_pressure_evt_handler(drv_pressure_evt_t const * p_event)
         {
             if (p_event->mode == DRV_PRESSURE_MODE_BAROMETER)
             {
-                ble_tes_pressure_t pressure;
-                pressure_conv_data(drv_pressure_get(),&pressure);
-                (void)ble_tes_pressure_set(&m_tes, &pressure);
-
+                env_pressure_t* pressure = (env_pressure_t*)malloc(sizeof(env_pressure_t));
+                pressure_conv_data(drv_pressure_get(),pressure);
+                thingy_main_event_send(THINGY_EVT_ENV_PRESSURE, NULL, (uint8_t*)pressure);
             }
         }
         break;
@@ -162,14 +127,14 @@ static void drv_humidity_evt_handler(drv_humidity_evt_t event)
 
     if (event == DRV_HUMIDITY_EVT_DATA)
     {
-        ble_tes_temperature_t temp;
-        ble_tes_humidity_t humid;
+        env_temperature_t* temp = (env_temperature_t*)malloc(sizeof(env_temperature_t));
+        env_humidity_t* humid = (env_humidity_t*)malloc(sizeof(env_humidity_t));
 
         float temperature = drv_humidity_temp_get();
         uint16_t humidity = drv_humidity_get();
 
-        temperature_conv_data(temperature, &temp);
-        humidity_conv_data(humidity, &humid);
+        temperature_conv_data(temperature, temp);
+        humidity_conv_data(humidity, humid);
 
         if (m_calib_gas_sensor == true)
         {
@@ -180,14 +145,14 @@ static void drv_humidity_evt_handler(drv_humidity_evt_t event)
 
         if (m_get_temperature == true)
         {
-            err_code = ble_tes_temperature_set(&m_tes, &temp);
+            thingy_main_event_send(THINGY_EVT_ENV_TEMPERATURE, NULL, (uint8_t*)temp);
             APP_ERROR_CHECK(err_code);
             m_get_temperature = false;
         }
 
         if (m_get_humidity == true)
         {
-            err_code = ble_tes_humidity_set(&m_tes, &humid);
+        	thingy_main_event_send(THINGY_EVT_ENV_HUMIDITY, NULL, (uint8_t*)humid);
             APP_ERROR_CHECK(err_code);
             m_get_humidity = false;
         }
@@ -205,14 +170,14 @@ static void drv_gas_data_handler(drv_gas_sensor_data_t const * p_data)
 {
     if (p_data != NULL)
     {
-        ble_tes_gas_t data;
-        data.eco2_ppm = p_data->ec02_ppm;
-        data.tvoc_ppb = p_data->tvoc_ppb;
+        env_gas_t* data = (env_gas_t*)malloc(sizeof(env_gas_t));
+        data->eco2_ppm = p_data->ec02_ppm;
+        data->tvoc_ppb = p_data->tvoc_ppb;
 
         NRF_LOG_DEBUG("gas_data_handler eCO2:, %d, - TVOC:, %d,\r\n", p_data->ec02_ppm,
                                                                       p_data->tvoc_ppb);
 
-        (void)ble_tes_gas_set(&m_tes, &data);
+        thingy_main_event_send(THINGY_EVT_ENV_GAS, NULL, (uint8_t*)data);
 
         #if defined (ENV_DEBUG)
             uint32_t err_code;
@@ -236,19 +201,18 @@ static void drv_color_data_handler(drv_color_data_t const * p_data)
 
     if (p_data != NULL)
     {
-        ble_tes_color_t data;
+        env_color_t* data = (env_color_t*)malloc(sizeof(env_color_t));
         NRF_LOG_DEBUG("color_data_handler r: %d - g: %d - b: %d - c: %d\r\n", p_data->red,
                                                                               p_data->green,
                                                                               p_data->blue,
                                                                               p_data->clear);
-        data.red   = p_data->red;
-        data.green = p_data->green;
-        data.blue  = p_data->blue;
-        data.clear = p_data->clear;
-        (void)ble_tes_color_set(&m_tes, &data);
+        data->red   = p_data->red;
+        data->green = p_data->green;
+        data->blue  = p_data->blue;
+        data->clear = p_data->clear;
+        thingy_main_event_send(THINGY_EVT_ENV_COLOR, NULL, (uint8_t*)data);
     }
 }
-
 
 /**@brief Function for handling temperature timer timeout event.
  *
@@ -281,7 +245,7 @@ static uint32_t temperature_start(void)
     RETURN_IF_ERROR(err_code);
 
     err_code = app_timer_start(temperature_timer_id,
-                               APP_TIMER_TICKS(m_p_config->temperature_interval_ms),
+                               APP_TIMER_TICKS(m_p_config.temperature_interval_ms),
                                NULL);
     RETURN_IF_ERROR(err_code);
 
@@ -346,7 +310,7 @@ static uint32_t pressure_start(void)
 
 
     return app_timer_start(pressure_timer_id,
-                           APP_TIMER_TICKS(m_p_config->pressure_interval_ms),
+                           APP_TIMER_TICKS(m_p_config.pressure_interval_ms),
                            NULL);
 }
 
@@ -484,7 +448,7 @@ static uint32_t humidity_start(void)
     RETURN_IF_ERROR(err_code);
 
     return app_timer_start(humidity_timer_id,
-                           APP_TIMER_TICKS(m_p_config->humidity_interval_ms),
+                           APP_TIMER_TICKS(m_p_config.humidity_interval_ms),
                            NULL);
 }
 
@@ -524,25 +488,25 @@ static uint32_t humidity_stop(bool disable_drv)
 static uint32_t gas_load_baseline_flash(uint16_t * p_gas_baseline)
 {
     // No explicit flash load performed here, since this is done by the m_environment module at init and stored in m_p_config.
-    switch(m_p_config->gas_interval_mode)
+    switch(m_p_config.gas_interval_mode)
     {
         case GAS_MODE_250MS:
-            *p_gas_baseline = m_p_baseline->mode_250ms;
+            *p_gas_baseline = m_p_baseline.mode_250ms;
             NRF_LOG_DEBUG("Gas sensor baseline loaded from flash, value 0x%04x, mode: GAS_MODE_250MS \r\n", *p_gas_baseline);
         break;
 
         case GAS_MODE_1S:
-            *p_gas_baseline = m_p_baseline->mode_1s;
+            *p_gas_baseline = m_p_baseline.mode_1s;
             NRF_LOG_DEBUG("Gas sensor baseline loaded from flash, value 0x%04x, mode: GAS_MODE_1S \r\n", *p_gas_baseline);
         break;
 
         case GAS_MODE_10S:
-            *p_gas_baseline = m_p_baseline->mode_10s;
+            *p_gas_baseline = m_p_baseline.mode_10s;
             NRF_LOG_DEBUG("Gas sensor baseline loaded from flash, value 0x%04x, mode: GAS_MODE_10S \r\n", *p_gas_baseline);
         break;
 
         case GAS_MODE_60S:
-            *p_gas_baseline = m_p_baseline->mode_60s;
+            *p_gas_baseline = m_p_baseline.mode_60s;
             NRF_LOG_DEBUG("Gas sensor baseline loaded from flash, value 0x%04x, mode: GAS_MODE_60S \r\n", *p_gas_baseline);
         break;
 
@@ -560,25 +524,25 @@ static uint32_t gas_store_baseline_flash(uint16_t baseline)
 {
     uint32_t err_code;
 
-    switch(m_p_config->gas_interval_mode)
+    switch(m_p_config.gas_interval_mode)
     {
         case GAS_MODE_250MS:
-            m_p_baseline->mode_250ms = baseline;
+            m_p_baseline.mode_250ms = baseline;
             NRF_LOG_DEBUG("Gas sensor baseline stored to flash, value 0x%04x, mode: GAS_MODE_250MS\r\n", baseline);
         break;
 
         case GAS_MODE_1S:
-            m_p_baseline->mode_1s = baseline;
+            m_p_baseline.mode_1s = baseline;
             NRF_LOG_DEBUG("Gas sensor baseline stored to flash, value 0x%04x, mode: GAS_MODE_1S\r\n", baseline);
         break;
 
         case GAS_MODE_10S:
-            m_p_baseline->mode_10s = baseline;
+            m_p_baseline.mode_10s = baseline;
             NRF_LOG_DEBUG("Gas sensor baseline stored to flash, value 0x%04x, mode: GAS_MODE_10S\r\n", baseline);
         break;
 
         case GAS_MODE_60S:
-            m_p_baseline->mode_60s = baseline;
+            m_p_baseline.mode_60s = baseline;
             NRF_LOG_DEBUG("Gas sensor baseline stored to flash, value 0x%04x, mode: GAS_MODE_60S\r\n", baseline);
         break;
 
@@ -595,12 +559,12 @@ static uint32_t gas_store_baseline_flash(uint16_t baseline)
 
 static uint32_t gas_start(void)
 {
-    NRF_LOG_DEBUG("Gas start: mode: 0x%x \r\n", m_p_config->gas_interval_mode);
+    NRF_LOG_DEBUG("Gas start: mode: 0x%x \r\n", m_p_config.gas_interval_mode);
 
     uint32_t err_code;
     drv_gas_sensor_mode_t mode;
 
-    switch (m_p_config->gas_interval_mode)
+    switch (m_p_config.gas_interval_mode)
     {
         case GAS_MODE_250MS:
             mode = DRV_GAS_SENSOR_MODE_250MS;
@@ -625,8 +589,8 @@ static uint32_t gas_start(void)
     m_gas_state = GAS_STATE_WARMUP;
 
     return app_timer_start(gas_calib_timer_id,
-                               APP_TIMER_TICKS(M_GAS_BASELINE_WRITE_MS),
-                               NULL);
+                           APP_TIMER_TICKS(M_GAS_BASELINE_WRITE_MS),
+                           NULL);
 }
 
 
@@ -662,9 +626,9 @@ static void color_timeout_handler(void * p_context)
     uint32_t                    err_code;
     drv_ext_light_rgb_intensity_t color;
 
-    color.r = m_p_config->color_config.led_red;
-    color.g = m_p_config->color_config.led_green;
-    color.b = m_p_config->color_config.led_blue;
+    color.r = m_p_config.color_config.led_red;
+    color.g = m_p_config.color_config.led_green;
+    color.b = m_p_config.color_config.led_blue;
     (void)drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE, &color);
 
     err_code = drv_color_sample();
@@ -677,9 +641,9 @@ static uint32_t color_start(void)
     uint32_t                    err_code;
     drv_ext_light_rgb_intensity_t color;
 
-    color.r = m_p_config->color_config.led_red;
-    color.g = m_p_config->color_config.led_green;
-    color.b = m_p_config->color_config.led_blue;
+    color.r = m_p_config.color_config.led_red;
+    color.g = m_p_config.color_config.led_green;
+    color.b = m_p_config.color_config.led_blue;
 
     (void)drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE, &color);
 
@@ -690,7 +654,7 @@ static uint32_t color_start(void)
     APP_ERROR_CHECK(err_code);
 
     return app_timer_start(color_timer_id,
-                           APP_TIMER_TICKS(m_p_config->color_interval_ms),
+                           APP_TIMER_TICKS(m_p_config.color_interval_ms),
                            NULL);
 }
 
@@ -711,23 +675,24 @@ static uint32_t color_stop(void)
 }
 
 
-static uint32_t config_verify(ble_tes_config_t * p_config)
+static uint32_t config_verify(env_config_t * p_config)
 {
-    uint32_t err_code;
+//    uint32_t err_code;
 
-    if ( (p_config->temperature_interval_ms < BLE_TES_CONFIG_TEMPERATURE_INT_MIN)    ||
-         (p_config->temperature_interval_ms > BLE_TES_CONFIG_TEMPERATURE_INT_MAX)    ||
-         (p_config->pressure_interval_ms < BLE_TES_CONFIG_PRESSURE_INT_MIN)          ||
-         (p_config->pressure_interval_ms > BLE_TES_CONFIG_PRESSURE_INT_MAX)          ||
-         (p_config->humidity_interval_ms < BLE_TES_CONFIG_HUMIDITY_INT_MIN)          ||
-         (p_config->humidity_interval_ms > BLE_TES_CONFIG_HUMIDITY_INT_MAX)          ||
-         (p_config->color_interval_ms < BLE_TES_CONFIG_COLOR_INT_MIN)                ||
-         (p_config->color_interval_ms > BLE_TES_CONFIG_COLOR_INT_MAX)                ||
-         (p_config->gas_interval_mode < BLE_TES_CONFIG_GAS_MODE_MIN)                 ||
-         ((int)p_config->gas_interval_mode > (int)BLE_TES_CONFIG_GAS_MODE_MAX))
+    if ( (p_config->temperature_interval_ms < ENV_CONFIG_TEMPERATURE_INT_MIN)    ||
+         (p_config->temperature_interval_ms > ENV_CONFIG_TEMPERATURE_INT_MAX)    ||
+         (p_config->pressure_interval_ms < ENV_CONFIG_PRESSURE_INT_MIN)          ||
+         (p_config->pressure_interval_ms > ENV_CONFIG_PRESSURE_INT_MAX)          ||
+         (p_config->humidity_interval_ms < ENV_CONFIG_HUMIDITY_INT_MIN)          ||
+         (p_config->humidity_interval_ms > ENV_CONFIG_HUMIDITY_INT_MAX)          ||
+         (p_config->color_interval_ms < ENV_CONFIG_COLOR_INT_MIN)                ||
+         (p_config->color_interval_ms > ENV_CONFIG_COLOR_INT_MAX)                ||
+         (p_config->gas_interval_mode < ENV_CONFIG_GAS_MODE_MIN)                 ||
+         ((int)p_config->gas_interval_mode > (int)ENV_CONFIG_GAS_MODE_MAX))
     {
-        err_code = m_env_flash_config_store((ble_tes_config_t *)&m_default_config);
-        APP_ERROR_CHECK(err_code);
+    	memcpy(p_config, &m_default_config, sizeof(env_config_t));
+//        err_code = m_env_flash_config_store((env_config_t *)&m_default_config);
+//        APP_ERROR_CHECK(err_code);
     }
 
     return NRF_SUCCESS;
@@ -737,7 +702,7 @@ static uint32_t config_verify(ble_tes_config_t * p_config)
 /**@brief Function for applying the configuration.
  *
  */
-static uint32_t config_apply(ble_tes_config_t * p_config)
+static uint32_t config_apply(env_config_t * p_config)
 {
     uint32_t err_code;
 
@@ -748,215 +713,31 @@ static uint32_t config_apply(ble_tes_config_t * p_config)
     (void)humidity_stop(true);
     (void)color_stop();
 
-    if ((p_config->temperature_interval_ms > 0) &&
-        (m_tes.is_temperature_notif_enabled) )
+    if ((p_config->temperature_interval_ms > 0))
     {
         err_code = temperature_start();
         APP_ERROR_CHECK(err_code);
     }
 
-    if ((p_config->pressure_interval_ms > 0) &&
-        (m_tes.is_pressure_notif_enabled) )
+    if ((p_config->pressure_interval_ms > 0))
     {
         err_code = pressure_start();
         APP_ERROR_CHECK(err_code);
     }
 
-    if ((p_config->humidity_interval_ms > 0) &&
-        (m_tes.is_humidity_notif_enabled) )
+    if ((p_config->humidity_interval_ms > 0))
     {
         err_code = humidity_start();
         APP_ERROR_CHECK(err_code);
     }
 
-    if ((p_config->color_interval_ms > 0) &&
-        (m_tes.is_color_notif_enabled) )
+    if ((p_config->color_interval_ms > 0))
     {
         err_code = color_start();
         APP_ERROR_CHECK(err_code);
     }
 
     return NRF_SUCCESS;
-}
-
-
-/**@brief Function for handling event from the Thingy Environment Service.
- *
- * @details This function will process the data received from the Thingy Environment BLE Service and send
- *          it to the UART module.
- *
- * @param[in] p_tes    Thingy Environment Service structure.
- * @param[in] evt_type Thingy Environment Service event type.
- * @param[in] p_data   Event data.
- * @param[in] length   Length of the data.
- */
-static void ble_tes_evt_handler( ble_tes_t        * p_tes,
-                                 ble_tes_evt_type_t evt_type,
-                                 uint8_t          * p_data,
-                                 uint16_t           length)
-{
-    uint32_t err_code;
-
-    switch (evt_type)
-    {
-        case BLE_TES_EVT_NOTIF_TEMPERATURE:
-            NRF_LOG_DEBUG("tes_evt_handler: BLE_TES_EVT_NOTIF_TEMPERATURE: %d\r\n", p_tes->is_temperature_notif_enabled);
-            if (p_tes->is_temperature_notif_enabled)
-            {
-                err_code = temperature_start();
-                APP_ERROR_CHECK(err_code);
-            }
-            else
-            {
-                err_code = temperature_stop(p_tes->is_humidity_notif_enabled == false);
-                APP_ERROR_CHECK(err_code);
-            }
-            break;
-
-        case BLE_TES_EVT_NOTIF_PRESSURE:
-            NRF_LOG_DEBUG("tes_evt_handler: BLE_TES_EVT_NOTIF_PRESSURE: %d\r\n", p_tes->is_pressure_notif_enabled);
-            if (p_tes->is_pressure_notif_enabled)
-            {
-                err_code = pressure_start();
-                APP_ERROR_CHECK(err_code);
-            }
-            else
-            {
-                err_code = pressure_stop();
-                APP_ERROR_CHECK(err_code);
-            }
-            break;
-
-        case BLE_TES_EVT_NOTIF_HUMIDITY:
-            NRF_LOG_DEBUG("tes_evt_handler: BLE_TES_EVT_NOTIF_HUMIDITY: %d\r\n", p_tes->is_humidity_notif_enabled);
-            if (p_tes->is_humidity_notif_enabled)
-            {
-                err_code = humidity_start();
-                APP_ERROR_CHECK(err_code);
-            }
-            else
-            {
-                err_code = humidity_stop(p_tes->is_temperature_notif_enabled == false);
-                APP_ERROR_CHECK(err_code);
-            }
-            break;
-
-        case BLE_TES_EVT_NOTIF_GAS:
-            NRF_LOG_DEBUG("tes_evt_handler: BLE_TES_EVT_NOTIF_GAS: %d\r\n", p_tes->is_gas_notif_enabled);
-            if (p_tes->is_gas_notif_enabled)
-            {
-                err_code = gas_start();
-                APP_ERROR_CHECK(err_code);
-            }
-            else
-            {
-                err_code = gas_stop();
-                APP_ERROR_CHECK(err_code);
-            }
-            break;
-
-        case BLE_TES_EVT_NOTIF_COLOR:
-            NRF_LOG_DEBUG("tes_evt_handler: BLE_TES_EVT_NOTIF_COLOR: %d\r\n", p_tes->is_color_notif_enabled);
-            if (p_tes->is_color_notif_enabled)
-            {
-                err_code = color_start();
-                APP_ERROR_CHECK(err_code);
-            }
-            else
-            {
-                err_code = color_stop();
-                APP_ERROR_CHECK(err_code);
-            }
-            break;
-
-        case BLE_TES_EVT_CONFIG_RECEIVED:
-        {
-            NRF_LOG_DEBUG("tes_evt_handler: BLE_TES_EVT_CONFIG_RECEIVED: %d\r\n", length);
-            APP_ERROR_CHECK_BOOL(length == sizeof(ble_tes_config_t));
-
-            err_code = m_env_flash_config_store((ble_tes_config_t *)p_data);
-            APP_ERROR_CHECK(err_code);
-
-            err_code = config_apply((ble_tes_config_t *)p_data);
-            APP_ERROR_CHECK(err_code);
-        }
-        break;
-
-        default:
-            break;
-
-    }
-}
-
-
-/**@brief Function for initializing the Thingy Environment Service.
- *
- * @details This callback function will be called from the ble handling module to initialize the Thingy Environment service.
- *
- * @retval NRF_SUCCESS If initialization was successful.
- */
-static uint32_t environment_service_init(bool major_minor_fw_ver_changed)
-{
-    uint32_t              err_code;
-    ble_tes_temperature_t temperature = {.integer = 0, .decimal = 0};
-    ble_tes_pressure_t    pressure    = {.integer = 0, .decimal = 0};
-    ble_tes_humidity_t    humidity    = 0;
-    ble_tes_color_t       color       = {.red = 0, .green = 0, .blue = 0, .clear = 0};
-    ble_tes_gas_t         gas         = {.eco2_ppm = 0, .tvoc_ppb = 0};
-    ble_tes_init_t        tes_init;
-
-    /**@brief Load configuration from flash. */
-    err_code = m_env_flash_init(&m_default_config, &m_p_config, &m_default_baseline, &m_p_baseline);
-    RETURN_IF_ERROR(err_code);
-
-    if (major_minor_fw_ver_changed)
-    {
-        err_code = m_env_flash_config_store(&m_default_config);
-        APP_ERROR_CHECK(err_code);
-
-        err_code = m_env_flash_baseline_store(&m_default_baseline);
-        APP_ERROR_CHECK(err_code);
-    }
-
-    err_code = config_verify(m_p_config);
-    RETURN_IF_ERROR(err_code);
-
-    memset(&tes_init, 0, sizeof(tes_init));
-
-    tes_init.p_init_temperature = &temperature;
-    tes_init.p_init_pressure = &pressure;
-    tes_init.p_init_humidity = &humidity;
-    tes_init.p_init_color = &color;
-    tes_init.p_init_gas = &gas;
-    tes_init.p_init_config = m_p_config;
-    tes_init.evt_handler = ble_tes_evt_handler;
-
-    NRF_LOG_INFO("Init: ble_tes_init \r\n");
-    err_code = ble_tes_init(&m_tes, &tes_init);
-    RETURN_IF_ERROR(err_code);
-
-    (void)config_apply(m_p_config);
-
-    return NRF_SUCCESS;
-}
-
-
-/**@brief Function for passing the BLE event to the Thingy Environment service.
- *
- * @details This callback function will be called from the BLE handling module.
- *
- * @param[in] p_ble_evt    Pointer to the BLE event.
- */
-static void environment_on_ble_evt(ble_evt_t * p_ble_evt)
-{
-    ble_tes_on_ble_evt(&m_tes, p_ble_evt);
-
-    if (p_ble_evt->header.evt_id == BLE_GAP_EVT_DISCONNECTED)
-    {
-        uint32_t err_code;
-        err_code = m_environment_stop();
-        APP_ERROR_CHECK(err_code);
-    }
 }
 
 
@@ -1064,7 +845,24 @@ static uint32_t color_sensor_init(const nrf_drv_twi_t * p_twi_instance)
 
 uint32_t m_environment_start(void)
 {
-    return NRF_SUCCESS;
+	uint32_t err_code;
+
+//	err_code = temperature_start();
+//	APP_ERROR_CHECK(err_code);
+
+	err_code = pressure_start();
+	APP_ERROR_CHECK(err_code);
+
+//	err_code = humidity_start();
+//	APP_ERROR_CHECK(err_code);
+//
+//	err_code = color_start();
+//	APP_ERROR_CHECK(err_code);
+//
+//	err_code = gas_start();
+//	APP_ERROR_CHECK(err_code);
+
+	return NRF_SUCCESS;
 }
 
 
@@ -1095,13 +893,22 @@ uint32_t m_environment_init(m_environment_init_t * p_params)
 {
     uint32_t err_code;
 
-//    NULL_PARAM_CHECK(p_handle);
     NULL_PARAM_CHECK(p_params);
 
     NRF_LOG_INFO("Init: \r\n");
 
-//    p_handle->ble_evt_cb = environment_on_ble_evt;
-//    p_handle->init_cb    = environment_service_init;
+    /**@brief Load configuration from flash. */
+//    err_code = m_env_flash_init(&m_default_config, &m_p_config, &m_default_baseline, &m_p_baseline);
+//    RETURN_IF_ERROR(err_code);
+
+//        err_code = m_env_flash_config_store(&m_default_config);
+//        APP_ERROR_CHECK(err_code);
+//
+//        err_code = m_env_flash_baseline_store(&m_default_baseline);
+//        APP_ERROR_CHECK(err_code);
+
+    err_code = config_verify(&m_p_config);
+    RETURN_IF_ERROR(err_code);
 
     /**@brief Init drivers */
     err_code = pressure_sensor_init(p_params->p_twi_instance);

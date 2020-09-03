@@ -31,11 +31,11 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <thingy_main.h>
 #include "ble_stack.h"
 #include "ble_process.h"
 #include "LAP_main.h"
 #include "LAP_api.h"
+#include "thingy_main.h"
 
 int appmain(int argc, char * argv[]) {
 

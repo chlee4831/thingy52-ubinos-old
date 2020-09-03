@@ -32,51 +32,69 @@
 #include "thingy_main.h"
 
 #include "m_environment.h"
-#include "m_motion.h"
-//#include "m_sound.h"
-#include "m_ui.h"
-
-
-//APP_TIMER_DEF(test_timer);
-static const nrf_drv_twi_t m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
+#include "support_func.h"
 
 static msgq_pt main_msgq;
 
-//============================================================================================
+static const nrf_drv_twi_t     m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
 
+//============================================================================================
+/**@brief Function for initializing the Thingy.
+ */
 static void thingy_init(void)
 {
     uint32_t                 err_code;
-    m_ui_init_t              ui_params;
+//    m_ui_init_t              ui_params;
     m_environment_init_t     env_params;
-    m_motion_init_t          motion_params;
+//    m_motion_init_t          motion_params;
+//    m_ble_init_t             ble_params;
+//    batt_meas_init_t         batt_meas_init = BATT_MEAS_PARAM_CFG;
 
     /**@brief Initialize the TWI manager. */
     err_code = twi_manager_init(APP_IRQ_PRIORITY_THREAD);
     APP_ERROR_CHECK(err_code);
 
-    /**@brief Initialize LED and button UI module. */
-    ui_params.p_twi_instance = &m_twi_sensors;
-    err_code = m_ui_init(&ui_params);
-    APP_ERROR_CHECK(err_code);
+//    /**@brief Initialize LED and button UI module. */
+//    ui_params.p_twi_instance = &m_twi_sensors;
+//    err_code = m_ui_init(&m_ble_service_handles[THINGY_SERVICE_UI],
+//                         &ui_params);
+//    APP_ERROR_CHECK(err_code);
 
     /**@brief Initialize environment module. */
     env_params.p_twi_instance = &m_twi_sensors;
     err_code = m_environment_init(&env_params);
     APP_ERROR_CHECK(err_code);
 
-    /**@brief Initialize motion module. */
-    motion_params.p_twi_instance = &m_twi_sensors;
-
-    err_code = m_motion_init(&motion_params);
-    APP_ERROR_CHECK(err_code);
-
-//    err_code = m_sound_init();
+//    /**@brief Initialize motion module. */
+//    motion_params.p_twi_instance = &m_twi_sensors;
+//
+//    err_code = m_motion_init(&m_ble_service_handles[THINGY_SERVICE_MOTION],
+//                             &motion_params);
 //    APP_ERROR_CHECK(err_code);
-
+//
+//    err_code = m_sound_init(&m_ble_service_handles[THINGY_SERVICE_SOUND]);
+//    APP_ERROR_CHECK(err_code);
+//
+//    /**@brief Initialize the battery measurement. */
+//    batt_meas_init.evt_handler = m_batt_meas_handler;
+//    err_code = m_batt_meas_init(&m_ble_service_handles[THINGY_SERVICE_BATTERY], &batt_meas_init);
+//    APP_ERROR_CHECK(err_code);
+//
+//    err_code = m_batt_meas_enable(BATT_MEAS_INTERVAL_MS);
+//    APP_ERROR_CHECK(err_code);
+//
+//    /**@brief Initialize BLE handling module. */
+//    ble_params.evt_handler       = thingy_ble_evt_handler;
+//    ble_params.p_service_handles = m_ble_service_handles;
+//    ble_params.service_num       = THINGY_SERVICES_MAX;
+//
+//    err_code = m_ble_init(&ble_params);
+//    APP_ERROR_CHECK(err_code);
+//
 //    err_code = m_ui_led_set_event(M_UI_BLE_DISCONNECTED);
 //    APP_ERROR_CHECK(err_code);
 }
+
 
 static void board_init(void)
 {
@@ -113,7 +131,6 @@ static void board_init(void)
 
     task_sleepms(100);
 }
-
 //============================================================================================
 
 void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t *msg) {
@@ -141,6 +158,8 @@ void thingy_main_task(void *arg) {
 
 	board_init();
 	thingy_init();
+
+	m_environment_start();
 
 	while (1) {
 		r = msgq_receive(main_msgq, (unsigned char*) &read_msg);
@@ -174,7 +193,7 @@ void thingy_main_task_init(void) {
 		printf("fail at msgq create\r\n");
 	}
 
-	r = task_create(NULL, thingy_main_task, NULL, task_gethighestpriority() - 2, 1024, NULL);
+	r = task_create(NULL, thingy_main_task, NULL, task_gethighestpriority() - 2, 512, NULL);
 	if (r != 0) {
 		printf("== main_task failed\n\r");
 	} else {
