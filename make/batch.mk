@@ -8,7 +8,7 @@
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 	@echo ""
 	@echo ""
-	make -f makefile.mk $@ CONFIG_NAME=ex01_nrf52dk
+	make -f makefile.mk $@ CONFIG_NAME=thingy52
 	@echo ""
 	@echo ""
 

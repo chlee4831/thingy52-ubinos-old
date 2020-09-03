@@ -1,3 +1,3 @@
-CONFIG_NAME ?= ex01_nrf52dk
+CONFIG_NAME ?= thingy52
 
 include makefile.mk

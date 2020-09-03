@@ -1,3 +1,9 @@
 [submodule "library/ubinos"]
 	path = library/ubinos
 	url = https://github.com/ubinos/ubinos.git
+[submodule "library/nrf5sdk_wrapper"]
+	path = library/nrf5sdk_wrapper
+	url = https://github.com/ubinos/nrf5sdk_wrapper.git
+[submodule "library/nrf5sdk_v17.00.00_lite"]
+	path = library/nrf5sdk_v17.00.00_lite
+	url = https://github.com/ubinos/nrf5sdk_v17.00.00_lite.git
