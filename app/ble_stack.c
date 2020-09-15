@@ -810,7 +810,7 @@ void BLE_stack_task_init(void){
 		printf("fail at msgq create\r\n");
 	}
 
-	r = task_create(NULL, ble_stack_task, NULL, task_gethighestpriority(), 1024, NULL);
+	r = task_create(NULL, ble_stack_task, NULL, task_gethighestpriority(), 512, NULL);
 	if (r != 0) {
 		printf("== ble_task failed\n\r");
 	} else {
