@@ -28,110 +28,9 @@
 #include "LAP_api.h"
 #include "LAP_main.h"
 
-#include "twi_manager.h"
 #include "thingy_main.h"
 
-#include "m_environment.h"
-#include "support_func.h"
-
 static msgq_pt main_msgq;
-
-static const nrf_drv_twi_t     m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
-
-//============================================================================================
-/**@brief Function for initializing the Thingy.
- */
-static void thingy_init(void)
-{
-    uint32_t                 err_code;
-//    m_ui_init_t              ui_params;
-    m_environment_init_t     env_params;
-//    m_motion_init_t          motion_params;
-//    m_ble_init_t             ble_params;
-//    batt_meas_init_t         batt_meas_init = BATT_MEAS_PARAM_CFG;
-
-    /**@brief Initialize the TWI manager. */
-    err_code = twi_manager_init(APP_IRQ_PRIORITY_THREAD);
-    APP_ERROR_CHECK(err_code);
-
-//    /**@brief Initialize LED and button UI module. */
-//    ui_params.p_twi_instance = &m_twi_sensors;
-//    err_code = m_ui_init(&m_ble_service_handles[THINGY_SERVICE_UI],
-//                         &ui_params);
-//    APP_ERROR_CHECK(err_code);
-
-    /**@brief Initialize environment module. */
-    env_params.p_twi_instance = &m_twi_sensors;
-    err_code = m_environment_init(&env_params);
-    APP_ERROR_CHECK(err_code);
-
-//    /**@brief Initialize motion module. */
-//    motion_params.p_twi_instance = &m_twi_sensors;
-//
-//    err_code = m_motion_init(&m_ble_service_handles[THINGY_SERVICE_MOTION],
-//                             &motion_params);
-//    APP_ERROR_CHECK(err_code);
-//
-//    err_code = m_sound_init(&m_ble_service_handles[THINGY_SERVICE_SOUND]);
-//    APP_ERROR_CHECK(err_code);
-//
-//    /**@brief Initialize the battery measurement. */
-//    batt_meas_init.evt_handler = m_batt_meas_handler;
-//    err_code = m_batt_meas_init(&m_ble_service_handles[THINGY_SERVICE_BATTERY], &batt_meas_init);
-//    APP_ERROR_CHECK(err_code);
-//
-//    err_code = m_batt_meas_enable(BATT_MEAS_INTERVAL_MS);
-//    APP_ERROR_CHECK(err_code);
-//
-//    /**@brief Initialize BLE handling module. */
-//    ble_params.evt_handler       = thingy_ble_evt_handler;
-//    ble_params.p_service_handles = m_ble_service_handles;
-//    ble_params.service_num       = THINGY_SERVICES_MAX;
-//
-//    err_code = m_ble_init(&ble_params);
-//    APP_ERROR_CHECK(err_code);
-//
-//    err_code = m_ui_led_set_event(M_UI_BLE_DISCONNECTED);
-//    APP_ERROR_CHECK(err_code);
-}
-
-
-static void board_init(void)
-{
-    uint32_t            err_code;
-    drv_ext_gpio_init_t ext_gpio_init;
-
-    #if defined(THINGY_HW_v0_7_0)
-        #error   "HW version v0.7.0 not supported."
-    #elif defined(THINGY_HW_v0_8_0)
-        NRF_LOG_WARNING("FW compiled for depricated Thingy HW v0.8.0 \r\n");
-    #elif defined(THINGY_HW_v0_9_0)
-        NRF_LOG_WARNING("FW compiled for depricated Thingy HW v0.9.0 \r\n");
-    #endif
-
-    static const nrf_drv_twi_config_t twi_config =
-    {
-        .scl                = TWI_SCL,
-        .sda                = TWI_SDA,
-        .frequency          = NRF_TWI_FREQ_400K,
-        .interrupt_priority = APP_IRQ_PRIORITY_LOW
-    };
-
-    static const drv_sx1509_cfg_t sx1509_cfg =
-    {
-        .twi_addr       = SX1509_ADDR,
-        .p_twi_instance = &m_twi_sensors,
-        .p_twi_cfg      = &twi_config
-    };
-
-    ext_gpio_init.p_cfg = &sx1509_cfg;
-
-    err_code = support_func_configure_io_startup(&ext_gpio_init);
-    APP_ERROR_CHECK(err_code);
-
-    task_sleepms(100);
-}
-//============================================================================================
 
 void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t *msg) {
 
@@ -156,26 +55,11 @@ void thingy_main_task(void *arg) {
 
 	task_sleepms(1000);
 
-	board_init();
-	thingy_init();
-
-	m_environment_start();
-
 	while (1) {
 		r = msgq_receive(main_msgq, (unsigned char*) &read_msg);
 		if (0 != r) {
 			logme("fail at msgq_receive\r\n");
 		} else {
-			switch (read_msg.event) {
-
-			case THINGY_EVT_TEST_TIMEOUT:
-
-				break;
-
-			case THINGY_EVT_BUTTON:
-
-				break;
-			}
 
 			if (read_msg.msg != NULL) {
 				free(read_msg.msg);

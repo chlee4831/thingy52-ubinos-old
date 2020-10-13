@@ -35,6 +35,7 @@
 #include "ble_process.h"
 #include "LAP_main.h"
 #include "LAP_api.h"
+#include "sampling.h"
 #include "thingy_main.h"
 
 int appmain(int argc, char * argv[]) {
@@ -69,8 +70,11 @@ int appmain(int argc, char * argv[]) {
 	//LAP protocol task init
 	LAP_main_task_init();
 
+	//sampling task init
+	sampling_task_init();
+
 	//main task init
-	thingy_main_task_init();
+//	thingy_main_task_init();
 
 	//Kernel Scheduler Start
 	ubik_comp_start();
