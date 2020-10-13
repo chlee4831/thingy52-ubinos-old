@@ -46,6 +46,7 @@ include_directories(${_tmpdir}/lib_thingy/include/board)
 include_directories(${_tmpdir}/lib_thingy/include/macros)
 include_directories(${_tmpdir}/lib_thingy/include/util)
 include_directories(${_tmpdir}/lib_thingy/include/drivers)
+include_directories(${_tmpdir}/lib_thingy/include/modules)
 
 include_directories(${_tmpdir}/modules)
 
