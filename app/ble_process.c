@@ -114,6 +114,8 @@ static void processing_BLE_Central_Scan_Start(BLEPEvt_msgt BLE_evt_msg)
 		clear_scan_target_paar_id();
 	}
 
+	printf("BLE Scan Start.\r\n");
+
 	PAAR_scan_start();
 }
 

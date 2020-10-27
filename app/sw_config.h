@@ -12,14 +12,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define TEST_TARTGET_DEVICE_ID	0xD4
+#define EDGE_TAG_DEVICE_ID	0xD8
 
 // Definition : PAAR ID(4 Byte)
 
 #define PAAR_ID_0					0x01
 #define PAAR_ID_1					0x00
-#define PAAR_ID_2					0x00
-#define PAAR_ID_3					TEST_TARTGET_DEVICE_ID
+#define PAAR_ID_2					0x01	//edge ID
+#define PAAR_ID_3					EDGE_TAG_DEVICE_ID
 
 #define TEST_SEND_MSG_DELAY			500
 #define TEST_SEND_CCCD_MSG_DELAY	100
@@ -39,6 +39,8 @@
 
 /* status byte in Advertising packet payloads */
 #define LIDx_STATUS									0x00
+
+
 #define PNIP_STATUS									0x01
 #define REQ_CONN_SOSP_STATUS						0x02
 #define REQ_CONN_SMARTDEVICE_STATUS					0x04

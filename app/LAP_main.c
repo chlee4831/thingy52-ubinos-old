@@ -21,6 +21,7 @@
 #include "ble_profile.h"
 
 #include "sw_config.h"
+#include "cell_management.h"
 
 uint16_t test_target_conn_handle = BLE_CONN_HANDLE_INVALID;
 paar_uuidhandle test_target_uuid_handle;
@@ -37,61 +38,65 @@ bool get_test_ble_connected() {
 }
 
 static void process_LAP_scan_timeout() {
-	//nothing...
+	processing_cell_management();
+	printf("Cell Management\r\n");
+
+//	LAP_start_ble_scan(NULL);
+
+//app_timer_stop(scan_fail_timeout_timer);
+//app_timer_start(scan_fail_timeout_timer, APP_TIMER_TICKS(5000), NULL);
 }
 
 static void processing_LAP_Central_Conn_timeout(LAPEvt_msgt LAP_evt_msg) {
-	//nothing...
+	cell_management_connect_timeout();
+
+	LAP_start_ble_scan(NULL);
 }
 
 static void processing_LAP_Central_Scan_timeout(LAPEvt_msgt LAP_evt_msg) {
-	//nothing...
-
+	process_LAP_scan_timeout();
 }
 
 static void processing_LAP_Central_Scan_result(LAPEvt_msgt LAP_evt_msg) {
 	//nothing...
 }
 
-static void send_test_msg_central(uint16_t conn_handle, uint16_t handle) {
-	uint8_t *temp_packet;
-
-	temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
+static void send_packet_central(uint16_t conn_handle, uint16_t handle, paar_packet_t *packet) {
+	uint8_t *temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
 
 	if (temp_packet != NULL) {
 		memset(temp_packet, 0, PAAR_MAXIMUM_PACKET_SIZE);
-		temp_packet[0] = test_send_count++;
-		if (test_send_count >= 4)
-			test_send_count = 1;
-
-		printf("BLE send msg : test_msg %d\r\n", temp_packet[0]);
-
+		memcpy(temp_packet, packet, PAAR_MAXIMUM_PACKET_SIZE);
 		LAP_send_ble_msg_central(conn_handle, handle, temp_packet, PAAR_MAXIMUM_PACKET_SIZE);
 	}
 }
 
-void send_test_msg_peripheral(uint8_t event) {
-	uint8_t *temp_packet;
-
-	temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
-
-	memset(temp_packet, 0, PAAR_MAXIMUM_PACKET_SIZE);
+static void send_ack_central(uint16_t conn_handle, uint16_t handle, paar_packet_t *packet) {
+	uint8_t *temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
 
 	if (temp_packet != NULL) {
-		temp_packet[0] = event;
+		memset(temp_packet, 0, PAAR_MAXIMUM_PACKET_SIZE);
+		memcpy(temp_packet, packet, PAAR_ACK_PACKET_SIZE);
+		LAP_send_ble_msg_central(conn_handle, handle, temp_packet, PAAR_MAXIMUM_PACKET_SIZE);
+	}
+}
 
-		printf("BLE send msg : test_msg %d\r\n", temp_packet[0]);
+static void send_packet_peripheral(paar_packet_t *packet) {
+	uint8_t *temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
 
+	if (temp_packet != NULL) {
+		memset(temp_packet, 0, PAAR_MAXIMUM_PACKET_SIZE);
+		memcpy(temp_packet, packet, PAAR_MAXIMUM_PACKET_SIZE);
 		LAP_send_ble_msg_peripheral(temp_packet, PAAR_MAXIMUM_PACKET_SIZE);
 	}
 }
 
-void send_packet_peripheral(void *packet, uint8_t size) {
-	uint8_t *temp_packet;
-	temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
+static void send_ack_peripheral(paar_packet_t *packet) {
+	uint8_t *temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
 
 	if (temp_packet != NULL) {
-		memcpy(temp_packet, packet, size);
+		memset(temp_packet, 0, PAAR_MAXIMUM_PACKET_SIZE);
+		memcpy(temp_packet, packet, PAAR_ACK_PACKET_SIZE);
 		LAP_send_ble_msg_peripheral(temp_packet, PAAR_MAXIMUM_PACKET_SIZE);
 	}
 }
@@ -113,14 +118,59 @@ static void send_cccd_handle_enable(uint16_t conn_handle, uint16_t cccd_handle) 
 }
 
 static void processing_LAP_Central_Connected(LAPEvt_msgt LAP_evt_msg) {
+	printf("BLE Central connect\r\n");
 
+	uuidhandle temp_uuid_handle;
+
+	int r;
+	r = cell_management_current_cccd_handle(&temp_uuid_handle);
+	if (r == -1) {
+		return;
+	}
+
+	//save test_connection_handle
+	test_target_conn_handle = LAP_evt_msg.conn_handle;
+
+	task_sleep(TEST_SEND_CCCD_MSG_DELAY);
+
+	//send cccd enable
+	send_cccd_handle_enable(test_target_conn_handle, temp_uuid_handle.cccd_handle);
+
+	task_sleep(TEST_SEND_CCCD_MSG_DELAY);
+
+	//	//send test msg
+	//	send_test_msg_central(test_target_conn_handle, test_target_uuid_handle.rx_handle);
+
+	cell_management_check_connection(LAP_evt_msg.conn_handle);
+
+	task_sleep(200);
+
+	LAP_start_ble_scan(NULL);
 }
 
 static void processing_LAP_Central_Disconnected(LAPEvt_msgt LAP_evt_msg) {
+	uint8_t index;
+	index = cell_management_search_data_index_by_connhandle(LAP_evt_msg.conn_handle);
+	if (index != 0xFF) {
+		cell_management_data_delete(index);
+	}
 
+	printf("BLE Central disconnect\r\n");
 }
 
 static void processing_LAP_Central_Data_Received(LAPEvt_msgt LAP_evt_msg) {
+	//todo 하단 노드에서 연결한 디바이스 정보 받아서 라우팅 테이블 생성
+	//todo 데이터 받아서 상단 노드로 전달
+	printf("data received!!\r\n");
+	printf("data packet : ");
+	uint8_t i;
+
+	printf("0x");
+	for (i = 0; i < LAP_evt_msg.msg_len; i++)
+		printf("%02X ", LAP_evt_msg.msg[i]);
+
+	printf("\r\n");
+	printf("\r\n");
 
 }
 
@@ -138,18 +188,32 @@ static void processing_LAP_Peripheral_Disconnected(LAPEvt_msgt LAP_evt_msg) {
 }
 
 static void processing_LAP_Peripheral_Data_Received(LAPEvt_msgt LAP_evt_msg) {
-	printf("data received!!\r\n");
-	printf("data packet : ");
-	uint8_t i;
+	//todo Scan 명령 받아서 처리, ACK 송신
+	paar_packet_t *packet = (paar_packet_t*) LAP_evt_msg.msg;
+	paar_data_t *packet_data = (paar_data_t*)packet->data;
 
-	printf("0x");
-	for (i = 0; i < LAP_evt_msg.msg_len; i++)
-		printf("%02X ", LAP_evt_msg.msg[i]);
+	int i;
+	uint8_t *packet_arr = (uint8_t*) packet;
+	printf("Received Packet: 0x");
+	for (i = 0; i < PAAR_MAXIMUM_PACKET_SIZE; i++) {
+		if (packet_arr[i] != NULL) {
+			printf("%02X ", packet_arr[i]);
+		}
+	}
+//	printf("\r\n");
+	printf("\r\n");	//print packet
 
-	printf("\r\n");
-	printf("\r\n");
+	send_ack_peripheral(packet);
 
-//	send_test_msg_peripheral();
+	if (packet_data->cmd == PAAR_EDGE_CMD_SCAN_START) {
+		packet_data->data[0] -= 1;
+		if (packet_data->data[0] == 0) {
+
+			task_sleepms(100);
+
+			LAP_start_ble_scan(NULL);
+		}
+	}
 }
 
 static void processing_LAP_Peripheral_CCCD_Enabled(LAPEvt_msgt LAP_evt_msg) {
@@ -233,6 +297,8 @@ void LAP_main_task(void *arg) {
 	ble_stack_init_wait();
 
 	LAP_Protocol_start_operation();
+
+	cell_management_data_init();
 
 	for (;;) {
 		r = msgq_receive(LAP_msgq, (unsigned char*) &LAP_evt_msg);

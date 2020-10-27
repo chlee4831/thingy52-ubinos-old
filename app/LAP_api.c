@@ -26,6 +26,7 @@
 #include "LAP_api.h"
 #include "LAP_main.h"
 #include "sw_config.h"
+#include "cell_management.h"
 
 static scanDevRev_t scanDevList[DEFAULT_MAX_SCAN_RES];
 static uint8_t		scanDevCnt = 0;
@@ -186,6 +187,8 @@ bool is_LAP_adv_packet(LAP_ble_adv_report* pPkt)
 
 int process_LAP_location_request_packet(LAP_ble_adv_report* pPkt)
 {
+	cell_management_data_add(pPkt);
+
 	return 0;
 }
 

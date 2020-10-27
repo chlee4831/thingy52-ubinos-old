@@ -71,7 +71,7 @@ int appmain(int argc, char * argv[]) {
 	LAP_main_task_init();
 
 	//sampling task init
-	sampling_task_init();
+//	sampling_task_init();
 
 	//main task init
 //	thingy_main_task_init();
