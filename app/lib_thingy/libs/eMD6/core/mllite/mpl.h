@@ -1,7 +1,7 @@
 /*
  $License:
-    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
-    See included License.txt for License information.
+ Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
+ See included License.txt for License information.
  $
  */
 #include "mltypes.h"
@@ -10,7 +10,8 @@
 #define INV_MPL_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 inv_error_t inv_init_mpl(void);

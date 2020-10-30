@@ -1,6 +1,6 @@
 /*
  $License:
-    Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
+ Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
  $
  */
 #ifndef DMPKEY_H__
@@ -284,7 +284,8 @@
 
 #define NUM_KEYS                    (KEY_STREAM_P_ACCEL_Z + 1)
 
-typedef struct {
+typedef struct
+{
     unsigned short key;
     unsigned short addr;
 } tKeyLabel;
@@ -389,7 +390,6 @@ typedef struct {
 #define DINAB6 0xb6
 #define DINAB4 0xb4
 
-
 #define DINC00 0x00
 #define DINC01 0x01
 #define DINC02 0x02
@@ -460,7 +460,6 @@ typedef struct {
 
 #define DIND40 0x40
 
-
 #define DINA80 0x80
 #define DINA90 0x90
 #define DINAA0 0xa0
@@ -488,7 +487,5 @@ typedef struct {
 #define DINBC2 0xc2
 #define DINBC4 0xc4
 #define DINBC6 0xc6
-
-
 
 #endif // DMPKEY_H__

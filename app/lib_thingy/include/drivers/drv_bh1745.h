@@ -1,39 +1,39 @@
 /*
-  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
-  All rights reserved.
+ Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+ All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification,
-  are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
 
-  1. Redistributions of source code must retain the above copyright notice, this
-     list of conditions and the following disclaimer.
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
 
-  2. Redistributions in binary form, except as embedded into a Nordic
-     Semiconductor ASA integrated circuit in a product or a software update for
-     such product, must reproduce the above copyright notice, this list of
-     conditions and the following disclaimer in the documentation and/or other
-     materials provided with the distribution.
+ 2. Redistributions in binary form, except as embedded into a Nordic
+ Semiconductor ASA integrated circuit in a product or a software update for
+ such product, must reproduce the above copyright notice, this list of
+ conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
 
-  3. Neither the name of Nordic Semiconductor ASA nor the names of its
-     contributors may be used to endorse or promote products derived from this
-     software without specific prior written permission.
+ 3. Neither the name of Nordic Semiconductor ASA nor the names of its
+ contributors may be used to endorse or promote products derived from this
+ software without specific prior written permission.
 
-  4. This software, with or without modification, must only be used with a
-     Nordic Semiconductor ASA integrated circuit.
+ 4. This software, with or without modification, must only be used with a
+ Nordic Semiconductor ASA integrated circuit.
 
-  5. Any software provided in binary form under this license must not be reverse
-     engineered, decompiled, modified and/or disassembled.
+ 5. Any software provided in binary form under this license must not be reverse
+ engineered, decompiled, modified and/or disassembled.
 
-  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
-  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+ OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 /** @file BH1745 color sensor driver
@@ -90,14 +90,13 @@
 
 #define REG_PERSISTENCE_PERSISTENCE_Msk  0x03
 
-
 /**@brief BH1745 configuration.
  */
 typedef struct
 {
-    uint8_t                      twi_addr;        ///< TWI address of BH1745.
-    nrf_drv_twi_t        const * p_twi_instance;  ///< The instance of TWI master to be used for transactions.
-    nrf_drv_twi_config_t const * p_twi_cfg;       ///< The TWI configuration to use while the driver is enabled.
+    uint8_t twi_addr;        ///< TWI address of BH1745.
+    nrf_drv_twi_t const *p_twi_instance;  ///< The instance of TWI master to be used for transactions.
+    nrf_drv_twi_config_t const *p_twi_cfg;       ///< The TWI configuration to use while the driver is enabled.
 } drv_bh1745_cfg_t;
 
 /**@brief Measurement time.
@@ -151,7 +150,7 @@ uint32_t drv_bh1745_init(void);
  *
  * @return Codes from the underlying drivers.
  */
-uint32_t drv_bh1745_open(drv_bh1745_cfg_t const * const p_cfg);
+uint32_t drv_bh1745_open(drv_bh1745_cfg_t const *const p_cfg);
 
 /**@brief Function for closing the BH1745 driver.
  *
@@ -166,7 +165,7 @@ uint32_t drv_bh1745_close(void);
  * @return NRF_ERROR_INVALID_STATE  The driver was not open.
  * @return Codes from the underlying drivers.
  */
-uint32_t drv_bh1745_manu_id_get(uint8_t * p_manu_id);
+uint32_t drv_bh1745_manu_id_get(uint8_t *p_manu_id);
 
 /**@brief Function for getting the BH1745 part ID.
  *
@@ -176,7 +175,7 @@ uint32_t drv_bh1745_manu_id_get(uint8_t * p_manu_id);
  * @return NRF_ERROR_INVALID_STATE  The driver was not open.
  * @return Codes from the underlying drivers.
  */
-uint32_t drv_bh1745_part_id_get(uint8_t * p_part_id);
+uint32_t drv_bh1745_part_id_get(uint8_t *p_part_id);
 
 /**@brief Function for resetting the BH1745 registers.
  *
@@ -219,7 +218,7 @@ uint32_t drv_bh1745_meas_enable(bool enable);
  * @return NRF_ERROR_INVALID_STATE  The driver was not open.
  * @return Codes from the underlying drivers.
  */
- uint32_t drv_bh1745_gain_set(drv_bh1745_gain_t gain);
+uint32_t drv_bh1745_gain_set(drv_bh1745_gain_t gain);
 
 /**@brief Function for getting the BH1745 data.
  *
@@ -229,7 +228,7 @@ uint32_t drv_bh1745_meas_enable(bool enable);
  * @return NRF_ERROR_NULL           A NULL pointer was supplied.
  * @return Codes from the underlying drivers.
  */
- uint32_t drv_bh1745_data_get(drv_bh1745_data_t * p_data);
+uint32_t drv_bh1745_data_get(drv_bh1745_data_t *p_data);
 
 /**@brief Function for getting the BH1745 interrupt register.
  *
@@ -238,7 +237,7 @@ uint32_t drv_bh1745_meas_enable(bool enable);
  * @return NRF_ERROR_INVALID_STATE  The driver was not open.
  * @return Codes from the underlying drivers.
  */
-uint32_t drv_bh1745_int_get(uint8_t * p_int_reg);
+uint32_t drv_bh1745_int_get(uint8_t *p_int_reg);
 
 /**@brief Function for setting the BH1745 interrupt register.
  *
@@ -257,7 +256,7 @@ uint32_t drv_bh1745_int_set(uint8_t int_reg);
  * @return NRF_ERROR_INVALID_STATE  The driver was not open.
  * @return Codes from the underlying drivers.
  */
-uint32_t drv_bh1745_persistance_get(uint8_t * p_per_reg);
+uint32_t drv_bh1745_persistance_get(uint8_t *p_per_reg);
 
 /**@brief Function for setting the BH1745 persistance register.
  *
@@ -277,7 +276,7 @@ uint32_t drv_bh1745_persistance_set(uint8_t per_reg);
  * @return NRF_ERROR_INVALID_STATE  The driver was not open.
  * @return Codes from the underlying drivers.
  */
-uint32_t drv_bh1745_threshold_get(drv_bh1745_threshold_t * p_th);
+uint32_t drv_bh1745_threshold_get(drv_bh1745_threshold_t *p_th);
 
 /**@brief Function for setting the BH1745 threshold.
  *
@@ -287,7 +286,7 @@ uint32_t drv_bh1745_threshold_get(drv_bh1745_threshold_t * p_th);
  * @return NRF_ERROR_INVALID_STATE  The driver was not open.
  * @return Codes from the underlying drivers.
  */
-uint32_t drv_bh1745_threshold_set(drv_bh1745_threshold_t const * p_th);
+uint32_t drv_bh1745_threshold_set(drv_bh1745_threshold_t const *p_th);
 
 #endif
 

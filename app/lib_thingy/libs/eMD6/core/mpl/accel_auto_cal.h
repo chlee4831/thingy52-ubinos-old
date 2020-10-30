@@ -1,7 +1,7 @@
 /*
  $License:
-    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
-    See included License.txt for License information.
+ Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
+ See included License.txt for License information.
  $
  */
 
@@ -17,7 +17,8 @@
 #include "mltypes.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 inv_error_t inv_enable_in_use_auto_calibration(void);

@@ -1,39 +1,39 @@
 /*
-  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
-  All rights reserved.
+ Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+ All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification,
-  are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
 
-  1. Redistributions of source code must retain the above copyright notice, this
-     list of conditions and the following disclaimer.
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
 
-  2. Redistributions in binary form, except as embedded into a Nordic
-     Semiconductor ASA integrated circuit in a product or a software update for
-     such product, must reproduce the above copyright notice, this list of
-     conditions and the following disclaimer in the documentation and/or other
-     materials provided with the distribution.
+ 2. Redistributions in binary form, except as embedded into a Nordic
+ Semiconductor ASA integrated circuit in a product or a software update for
+ such product, must reproduce the above copyright notice, this list of
+ conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
 
-  3. Neither the name of Nordic Semiconductor ASA nor the names of its
-     contributors may be used to endorse or promote products derived from this
-     software without specific prior written permission.
+ 3. Neither the name of Nordic Semiconductor ASA nor the names of its
+ contributors may be used to endorse or promote products derived from this
+ software without specific prior written permission.
 
-  4. This software, with or without modification, must only be used with a
-     Nordic Semiconductor ASA integrated circuit.
+ 4. This software, with or without modification, must only be used with a
+ Nordic Semiconductor ASA integrated circuit.
 
-  5. Any software provided in binary form under this license must not be reverse
-     engineered, decompiled, modified and/or disassembled.
+ 5. Any software provided in binary form under this license must not be reverse
+ engineered, decompiled, modified and/or disassembled.
 
-  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
-  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+ OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 /** @file GPIO extender
@@ -95,7 +95,7 @@ typedef enum
 {
     DRV_EXT_GPIO_PIN_DRIVE_PUSHPULL,    ///< Standard push-pull operation.
     DRV_EXT_GPIO_PIN_DRIVE_OPENDRAIN    ///< Open drain.
-}drv_ext_gpio_pin_drive_type_t;
+} drv_ext_gpio_pin_drive_type_t;
 
 /**@brief Regular or increased slew rate.
  */
@@ -103,7 +103,7 @@ typedef enum
 {
     DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_DISABLED, ///< No slew rate alteration.
     DRV_EXT_GPIO_PIN_INCREASED_SLEWRATE_ENABLED   ///< Increased slew rate.
-}drv_ext_gpio_pin_slew_rate_t;
+} drv_ext_gpio_pin_slew_rate_t;
 
 /**@brief Pin configuration function.
  *
@@ -122,19 +122,14 @@ typedef enum
  * @return DRV_EXT_GPIO_STATUS_CODE_INVALID_PIN     Pin number not available.
  * @return Other codes from the underlying driver.
  */
-uint32_t drv_ext_gpio_cfg(
-    uint32_t                      pin_number,
-    drv_ext_gpio_pin_dir_t        dir,
-    drv_ext_gpio_pin_input_buf_t  input_buf,
-    drv_ext_gpio_pin_pull_t       pull_config,
-    drv_ext_gpio_pin_drive_type_t drive_type,
-    drv_ext_gpio_pin_slew_rate_t  slew_rate);
+uint32_t drv_ext_gpio_cfg(uint32_t pin_number, drv_ext_gpio_pin_dir_t dir, drv_ext_gpio_pin_input_buf_t input_buf, drv_ext_gpio_pin_pull_t pull_config,
+        drv_ext_gpio_pin_drive_type_t drive_type, drv_ext_gpio_pin_slew_rate_t slew_rate);
 
 /**@brief GPIO extender driver configuration.
  */
 typedef struct
 {
-    drv_sx1509_cfg_t const * p_cfg;
+    drv_sx1509_cfg_t const *p_cfg;
 } drv_ext_gpio_init_t;
 
 /**@brief Function for resetting all the registers of the GPIO extender to their default values.
@@ -334,7 +329,7 @@ uint32_t drv_ext_gpio_pin_write(uint32_t pin_number, uint32_t value);
  * @return DRV_EXT_GPIO_STATUS_CODE_INVALID_PIN     Pin number not available.
  * @return Other codes from the underlying driver.
  */
-uint32_t drv_ext_gpio_pin_read(uint32_t pin_number, uint32_t * const p_pin);
+uint32_t drv_ext_gpio_pin_read(uint32_t pin_number, uint32_t *const p_pin);
 
 /**@brief Function for reading the input level of all GPIO pins.
  *
@@ -347,7 +342,7 @@ uint32_t drv_ext_gpio_pin_read(uint32_t pin_number, uint32_t * const p_pin);
  * @return DRV_EXT_GPIO_STATUS_CODE_INVALID_PIN     Pin number not available.
  * @return Other codes from the underlying driver.
  */
-uint32_t drv_ext_gpio_pins_read(uint32_t * const p_pins);
+uint32_t drv_ext_gpio_pins_read(uint32_t *const p_pins);
 
 /**@brief Function for initializing the GPIO extender.
  *
@@ -358,7 +353,7 @@ uint32_t drv_ext_gpio_pins_read(uint32_t * const p_pins);
  * @return DRV_EXT_GPIO_STATUS_CODE_SUCCESS         If the call was successful.
  * @return Other codes from the underlying driver.
  */
-uint32_t drv_ext_gpio_init(drv_ext_gpio_init_t const * const p_init, bool on_init_reset);
+uint32_t drv_ext_gpio_init(drv_ext_gpio_init_t const *const p_init, bool on_init_reset);
 
 #endif
 

@@ -38,277 +38,332 @@ mutex_pt cell_mutex;
 
 #define ENABLE_MUTEX		1
 
-uint8_t get_cell_management_data_count() {
-	return cell_management_data_count;
+uint8_t get_cell_management_data_count()
+{
+    return cell_management_data_count;
 }
 
-void cell_management_data_init() {
-	cell_management_data_count = 0;
-	cell_management_connection_count = 0;
-	memset(cell_management_data, 0, sizeof(CellManagement_data_t) * CELL_MANAGEMENT_DATA_MAX_COUNT);
+void cell_management_data_init()
+{
+    cell_management_data_count = 0;
+    cell_management_connection_count = 0;
+    memset(cell_management_data, 0, sizeof(CellManagement_data_t) * CELL_MANAGEMENT_DATA_MAX_COUNT);
 
-	uint8_t i;
-	for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++) {
-		cell_management_data[i].is_empty = true;
-	}
+    uint8_t i;
+    for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++)
+    {
+        cell_management_data[i].is_empty = true;
+    }
 
-	int r;
-	r = mutex_create(&cell_mutex);
-	if (r != 0) {
-		printf("fail at mutex_create : cell_mutex");
-	}
+    int r;
+    r = mutex_create(&cell_mutex);
+    if (r != 0)
+    {
+        printf("fail at mutex_create : cell_mutex");
+    }
 }
 
-uint8_t cell_management_search_data_index(uint8_t *PAAR_id) {
-	uint8_t i;
-	for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++) {
-		if (cell_management_data[i].is_empty == true)
-			continue;
+uint8_t cell_management_search_data_index(uint8_t *PAAR_id)
+{
+    uint8_t i;
+    for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++)
+    {
+        if (cell_management_data[i].is_empty == true)
+            continue;
 
-		if (memcmp(&cell_management_data[i].paarID[0], PAAR_id, PAAR_ID_SIZE) == 0)
-			return i;
-	}
-	return 0xFF;
+        if (memcmp(&cell_management_data[i].paarID[0], PAAR_id, PAAR_ID_SIZE) == 0)
+            return i;
+    }
+    return 0xFF;
 }
 
-uint8_t cell_management_search_data_index_by_connhandle(uint16_t connhandle) {
-	uint8_t i;
-	for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++) {
-		if (cell_management_data[i].conn_handle == connhandle)
-			return i;
-	}
-	return 0xFF;
+uint8_t cell_management_search_data_index_by_connhandle(uint16_t connhandle)
+{
+    uint8_t i;
+    for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++)
+    {
+        if (cell_management_data[i].conn_handle == connhandle)
+            return i;
+    }
+    return 0xFF;
 }
 
-uint8_t* cell_management_search_paar_id_by_connhandle(uint16_t connhandle) {
-	uint8_t i;
-	for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++) {
-		if (cell_management_data[i].conn_handle == connhandle) {
-			if (cell_management_data[i].is_empty == false) {
-				return &(cell_management_data[i].paarID);
-			}
-		}
-	}
+uint8_t* cell_management_search_paar_id_by_connhandle(uint16_t connhandle)
+{
+    uint8_t i;
+    for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++)
+    {
+        if (cell_management_data[i].conn_handle == connhandle)
+        {
+            if (cell_management_data[i].is_empty == false)
+            {
+                return &(cell_management_data[i].paarID);
+            }
+        }
+    }
 
-	return NULL;
+    return NULL;
 
 }
 
-uint8_t* cell_management_get_PAAR_ID_by_index(uint8_t index) {
-	if (cell_management_data[index].is_empty == false) {
-		return &(cell_management_data[index].paarID);
-	}
-	return NULL;
+uint8_t* cell_management_get_PAAR_ID_by_index(uint8_t index)
+{
+    if (cell_management_data[index].is_empty == false)
+    {
+        return &(cell_management_data[index].paarID);
+    }
+    return NULL;
 }
 
-static uint8_t cell_management_search_empty_index() {
-	uint8_t i;
-	uint8_t check_paar_id[PAAR_ID_SIZE] = { 0, };
-	for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++) {
-		if (cell_management_data[i].is_empty == true)
-			return i;
-	}
-	return 0xFF;
+uint16_t get_cell_management_connhandle_by_index(uint8_t index)
+{
+    if (cell_management_data[index].is_empty == false)
+    {
+        return cell_management_data[index].conn_handle;
+    }
+    return 0xFF;
 }
 
-int cell_management_data_add(LAP_ble_adv_report *pPkt) {
+static uint8_t cell_management_search_empty_index()
+{
+    uint8_t i;
+//	uint8_t check_paar_id[PAAR_ID_SIZE] = { 0, };
+    for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++)
+    {
+        if (cell_management_data[i].is_empty == true)
+            return i;
+    }
+    return 0xFF;
+}
+
+int cell_management_data_add(LAP_ble_adv_report *pPkt)
+{
 #if(ENABLE_MUTEX == 1)
-	mutex_lock(cell_mutex);
+    mutex_lock(cell_mutex);
 #endif
 
-	if (cell_management_data_count > CELL_MANAGEMENT_DATA_MAX_COUNT) {
+    if (cell_management_data_count > CELL_MANAGEMENT_DATA_MAX_COUNT)
+    {
 #if(ENABLE_MUTEX == 1)
-		mutex_unlock(cell_mutex);
+        mutex_unlock(cell_mutex);
 #endif
-		return -1;
-	}
+        return -1;
+    }
 
-	uint8_t temp_paar_id[4];
+    uint8_t temp_paar_id[4];
 
-	memcpy(temp_paar_id, &(pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID0]), 4);
+    memcpy(temp_paar_id, &(pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID0]), 4);
 
 //#if(SW_MODE_SETUP == SW_MODE_ADL_NEW_DEVICE_CENTRAL)
 //	if(pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID3] != EDGE_TAG_DEVICE_ID)
 //		return -1;
 //#endif
 
-	if (cell_management_search_data_index(&(pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID0])) == 0xFF) {
-		uint8_t index = cell_management_search_empty_index();
+    if (cell_management_search_data_index(&(pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID0])) == 0xFF)
+    {
+        uint8_t index = cell_management_search_empty_index();
 
-		if (index == 0xFF) {
+        if (index == 0xFF)
+        {
 #if(ENABLE_MUTEX == 1)
-			mutex_unlock(cell_mutex);
+            mutex_unlock(cell_mutex);
 #endif
-			return -2;
-		}
+            return -2;
+        }
 
-		//save FE cell Management data
-		cell_management_data[index].is_empty = false;
-		cell_management_data[index].connecting_state = CONNECTING_STATE_DISCONNECTED;
-		cell_management_data[index].is_authourized = false;
-		cell_management_data[index].life_time = CELL_MANAGEMENT_LIFE_TIME;
+        //save FE cell Management data
+        cell_management_data[index].is_empty = false;
+        cell_management_data[index].connecting_state = CONNECTING_STATE_DISCONNECTED;
+        cell_management_data[index].is_authourized = false;
+        cell_management_data[index].life_time = CELL_MANAGEMENT_LIFE_TIME;
 
 //#if(SW_MODE_SETUP == SW_MODE_ADL_NEW_DEVICE_CENTRAL)
-		cell_management_data[index].is_authourized = true;
+//		cell_management_data[index].is_authourized = true;
 //#endif
 
-		cell_management_data[index].conn_handle = PAAR_BLE_CONN_HANDLE_INVALID;
-		cell_management_data[index].connection_retry_cnt = CELL_MANAGEMENT_DEFAULT_CONNECTION_RETRY_COUNT;
+        cell_management_data[index].conn_handle = PAAR_BLE_CONN_HANDLE_INVALID;
+        cell_management_data[index].connection_retry_cnt = CELL_MANAGEMENT_DEFAULT_CONNECTION_RETRY_COUNT;
 
-		memcpy(&cell_management_data[index].paarID[0], &(pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID0]), PAAR_ID_SIZE);
-		memcpy(&cell_management_data[index].gap_addr, &pPkt->peer_address, sizeof(ble_gap_addr_t));
+        memcpy(&cell_management_data[index].paarID[0], &(pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID0]), PAAR_ID_SIZE);
+        memcpy(&cell_management_data[index].gap_addr, &pPkt->peer_address, sizeof(ble_gap_addr_t));
 
-		//save attribute handle value
-		cell_management_data[index].profile_data.tx_handle = (pPkt->data[LAP_ADV_IDX_NOTIFICATION_HANDLE + 1] << 8)
-				| (pPkt->data[LAP_ADV_IDX_NOTIFICATION_HANDLE]);
+        //save attribute handle value
+        cell_management_data[index].profile_data.tx_handle = (pPkt->data[LAP_ADV_IDX_NOTIFICATION_HANDLE + 1] << 8)
+                | (pPkt->data[LAP_ADV_IDX_NOTIFICATION_HANDLE]);
 
-		cell_management_data[index].profile_data.rx_handle = (pPkt->data[LAP_ADV_IDX_WRITE_REQUEST_HANDLE + 1] << 8)
-				| (pPkt->data[LAP_ADV_IDX_WRITE_REQUEST_HANDLE]);
+        cell_management_data[index].profile_data.rx_handle = (pPkt->data[LAP_ADV_IDX_WRITE_REQUEST_HANDLE + 1] << 8)
+                | (pPkt->data[LAP_ADV_IDX_WRITE_REQUEST_HANDLE]);
 
-		cell_management_data[index].profile_data.cccd_handle = (pPkt->data[LAP_ADV_IDX_NOTI_EN_HANDLE + 1] << 8) | (pPkt->data[LAP_ADV_IDX_NOTI_EN_HANDLE]);
+        cell_management_data[index].profile_data.cccd_handle = (pPkt->data[LAP_ADV_IDX_NOTI_EN_HANDLE + 1] << 8) | (pPkt->data[LAP_ADV_IDX_NOTI_EN_HANDLE]);
 
-		cell_management_data[index].conn_delay = CELL_MANAGEMENT_CONN_DELAY_TIME;
-		cell_management_data_count++;
+        cell_management_data[index].conn_delay = CELL_MANAGEMENT_CONN_DELAY_TIME;
+        cell_management_data_count++;
+
+        printf("Cell managemnet add : %02X %02X %02X %02X\r\n", pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID0], pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID1],
+                pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID2], pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID3]);
+#if(ENABLE_MUTEX == 1)
+        mutex_unlock(cell_mutex);
+#endif
+        return 0;
+    }
+    else
+    {
+        uint8_t index = cell_management_search_data_index(&(pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID0]));
+        if (cell_management_data[index].connecting_state != CONNECTING_STATE_DISCONNECTED)
+            return -1;
+
+        cell_management_data[index].life_time = CELL_MANAGEMENT_LIFE_TIME;
+    }
 
 #if(ENABLE_MUTEX == 1)
-		mutex_unlock(cell_mutex);
+    mutex_unlock(cell_mutex);
 #endif
-		return 0;
-	} else {
-		uint8_t index = cell_management_search_data_index(&(pPkt->data[LAP_ADV_IDX_PAAR_DEVICE_ID0]));
-		if (cell_management_data[index].connecting_state != CONNECTING_STATE_DISCONNECTED)
-			return -1;
-
-		cell_management_data[index].life_time = CELL_MANAGEMENT_LIFE_TIME;
-	}
-
-#if(ENABLE_MUTEX == 1)
-	mutex_unlock(cell_mutex);
-#endif
-	return -1;
+    return -1;
 }
 
-void cell_management_set_data_authourize(uint8_t index) {
+void cell_management_set_data_authourize(uint8_t index)
+{
 #if(ENABLE_MUTEX == 1)
-	mutex_lock(cell_mutex);
+    mutex_lock(cell_mutex);
 #endif
-	cell_management_data[index].is_authourized = true;
+    cell_management_data[index].is_authourized = true;
 
+    printf("cell authourize : %02X %02X %02X %02X\r\n", cell_management_data[index].paarID[0], cell_management_data[index].paarID[1],
+            cell_management_data[index].paarID[2], cell_management_data[index].paarID[3]);
 #if(ENABLE_MUTEX == 1)
-	mutex_unlock(cell_mutex);
+    mutex_unlock(cell_mutex);
 #endif
 }
 
-int cell_management_data_delete(uint8_t index) {
+int cell_management_data_delete(uint8_t index)
+{
 #if(ENABLE_MUTEX == 1)
-	mutex_lock(cell_mutex);
+    mutex_lock(cell_mutex);
 #endif
-	if (cell_management_data_count <= 0)
-		return -1;
+    if (cell_management_data_count <= 0)
+        return -1;
 
-	memset(&cell_management_data[index], 0, sizeof(CellManagement_data_t));
+    printf("cell delete : %02X %02X %02X %02X\r\n", cell_management_data[index].paarID[0], cell_management_data[index].paarID[1],
+            cell_management_data[index].paarID[2], cell_management_data[index].paarID[3]);
+    memset(&cell_management_data[index], 0, sizeof(CellManagement_data_t));
 
-	cell_management_data[index].is_empty = true;
-	cell_management_data[index].is_authourized = false;
-	cell_management_data[index].connection_retry_cnt = 3;
-	cell_management_data[index].life_time = 0;
-	cell_management_data[index].conn_handle = PAAR_BLE_CONN_HANDLE_INVALID;
-	cell_management_data[index].connecting_state = CONNECTING_STATE_DISCONNECTED;
+    cell_management_data[index].is_empty = true;
+    cell_management_data[index].is_authourized = false;
+    cell_management_data[index].connection_retry_cnt = 3;
+    cell_management_data[index].life_time = 0;
+    cell_management_data[index].conn_handle = PAAR_BLE_CONN_HANDLE_INVALID;
+    cell_management_data[index].connecting_state = CONNECTING_STATE_DISCONNECTED;
 
-	cell_management_data_count--;
+    cell_management_data_count--;
 #if(ENABLE_MUTEX == 1)
-	mutex_unlock(cell_mutex);
+    mutex_unlock(cell_mutex);
 #endif
-	return 0;
+    return 0;
 }
 
-uint8_t cell_management_check_connection(uint16_t conn_handle) {
+uint8_t cell_management_check_connection(uint16_t conn_handle)
+{
 #if(ENABLE_MUTEX == 1)
-	mutex_lock(cell_mutex);
+    mutex_lock(cell_mutex);
 #endif
-	if (current_connecting_index != 0xFF) {
-		cell_management_data[current_connecting_index].connecting_state = CONNECTING_STATE_CONNECTED;
-		cell_management_data[current_connecting_index].conn_handle = conn_handle;
-		cell_management_data[current_connecting_index].heart_beat_cnt = CELL_MANAGEMENT_HB_COUNT;
+    if (current_connecting_index != 0xFF)
+    {
+        cell_management_data[current_connecting_index].connecting_state = CONNECTING_STATE_CONNECTED;
+        cell_management_data[current_connecting_index].conn_handle = conn_handle;
+        cell_management_data[current_connecting_index].heart_beat_cnt = CELL_MANAGEMENT_HB_COUNT;
 
-		current_connecting_index = 0xFF;
+        printf("cell check connection\r\n");
+        current_connecting_index = 0xFF;
 #if(ENABLE_MUTEX == 1)
-		mutex_unlock(cell_mutex);
+        mutex_unlock(cell_mutex);
 #endif
-		return 0;
-	} else {
-		task_sleep(500);
+        return 0;
+    }
+    else
+    {
+        task_sleep(500);
 
-		PAAR_ble_gap_disconnect(conn_handle);
-	}
+        PAAR_ble_gap_disconnect(conn_handle);
+    }
 #if(ENABLE_MUTEX == 1)
-	mutex_unlock(cell_mutex);
+    mutex_unlock(cell_mutex);
 #endif
-	return 0xFF;
+    return 0xFF;
 }
 
-int get_cell_management_profile_data_by_index(uint8_t index, uuidhandle *handle) {
+int get_cell_management_profile_data_by_index(uint8_t index, uuidhandle *handle)
+{
 
-	if (index >= CELL_MANAGEMENT_DATA_MAX_COUNT)
-		return -1;
+    if (index >= CELL_MANAGEMENT_DATA_MAX_COUNT)
+        return -1;
 
-	if (cell_management_data[index].is_empty == false) {
-		memcpy(handle, &(cell_management_data[index].profile_data), sizeof(uuidhandle));
-		return 0;
-	} else {
-		return -1;
-	}
+    if (cell_management_data[index].is_empty == false)
+    {
+        memcpy(handle, &(cell_management_data[index].profile_data), sizeof(uuidhandle));
+        return 0;
+    }
+    else
+    {
+        return -1;
+    }
 
 }
 
-int cell_management_current_cccd_handle(uuidhandle *handle) {
-	if (current_connecting_index != 0xFF) {
-		memcpy(handle, &(cell_management_data[current_connecting_index].profile_data), sizeof(uuidhandle));
-		return 0;
-	}
+int cell_management_current_cccd_handle(uuidhandle *handle)
+{
+    if (current_connecting_index != 0xFF)
+    {
+        memcpy(handle, &(cell_management_data[current_connecting_index].profile_data), sizeof(uuidhandle));
+        return 0;
+    }
 
-	return -1;
+    return -1;
 }
 
 uint8_t test_connecting_index = 0;
 
-static int processing_cell_index(uint8_t index) {
-	if (cell_management_data[index].is_empty == true)
-		return 0;
+static int processing_cell_index(uint8_t index)
+{
+    if (cell_management_data[index].is_empty == true)
+        return 0;
 
-	//check Location authorization
-	if (cell_management_data[index].is_authourized == false) {
-		if (cell_management_data[index].conn_delay > 0) {
-			cell_management_data[index].conn_delay--;
-			return 0;
-		}
+    //check Location authorization
+    if (cell_management_data[index].is_authourized == false)
+    {
+        if (cell_management_data[index].conn_delay > 0)
+        {
+            cell_management_data[index].conn_delay--;
+            return 0;
+        }
 
 //		FE_send_msg_location_request((uint8_t*) &(cell_management_data[index].paarID) );
 
-		cell_management_data[index].life_time--;
+        cell_management_data[index].life_time--;
 
-		if (cell_management_data[index].life_time <= 0)
-			cell_management_data_delete(index);
+        if (cell_management_data[index].life_time <= 0)
+            cell_management_data_delete(index);
 
-		return 0;
-	}
+        return 0;
+    }
 
-	if (cell_management_data[index].connecting_state == CONNECTING_STATE_CONNECTED) {
+    if (cell_management_data[index].connecting_state == CONNECTING_STATE_CONNECTED)
+    {
 //		send_FE_adv_report_dummy((uint8_t*) &(cell_management_data[index].paarID));
 
-		uint32_t r;
+        uint32_t r;
 
-		cell_management_data[index].heart_beat_cnt--;
+        cell_management_data[index].heart_beat_cnt--;
 
-		if (cell_management_data[index].heart_beat_cnt <= 0) {
-			uint8_t FE_HB_packet[CELL_MANAGEMENT_HB_PACKET_SIZE];
+        if (cell_management_data[index].heart_beat_cnt <= 0)
+        {
+            uint8_t HB_packet[CELL_MANAGEMENT_HB_PACKET_SIZE];
 
-			memset(FE_HB_packet, 0, CELL_MANAGEMENT_HB_PACKET_SIZE);
+            memset(HB_packet, 0, CELL_MANAGEMENT_HB_PACKET_SIZE);
 
-#if(FE_SW_CONFIG_HB_ENABLE == 1)
+#if(SW_CONFIG_HB_ENABLE == 1)
 			cell_management_data[index].heart_beat_cnt = CELL_MANAGEMENT_HB_COUNT;
 			r = PAAR_send_ble_test_msg_central(cell_management_data[index].conn_handle,
-					cell_management_data[index].profile_data.rx_handle, FE_HB_packet, CELL_MANAGEMENT_HB_PACKET_SIZE);
+					cell_management_data[index].profile_data.rx_handle, HB_packet, CELL_MANAGEMENT_HB_PACKET_SIZE);
 			task_sleep(50);
 			if(r != NRF_SUCCESS && r != NRF_ERROR_BUSY)
 			{
@@ -316,67 +371,84 @@ static int processing_cell_index(uint8_t index) {
 				cell_management_data_delete(index);
 			}
 #endif
-		}
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	if (cell_management_data[index].connecting_state == CONNECTING_STATE_DISCONNECTED) {
-		if (current_connecting_index != 0xFF)
-			return 0;
+    if (cell_management_data[index].connecting_state == CONNECTING_STATE_DISCONNECTED)
+    {
+        if (current_connecting_index != 0xFF)
+            return 0;
 
-		ble_gap_addr_t *target_address = (ble_gap_addr_t*) malloc(sizeof(ble_gap_addr_t));
+        ble_gap_addr_t *target_address = NULL;
 
-		memcpy(target_address, &(cell_management_data[index].gap_addr), sizeof(ble_gap_addr_t));
+        target_address = (ble_gap_addr_t*) malloc(sizeof(ble_gap_addr_t));
 
-		cell_management_data[index].connecting_state = CONNECTING_STATE_CONNECTING;
+        if (target_address == NULL)
+        {
+            printf("malloc error : processing_cell_index \r\n");
+            return -1;
+        }
+        else
+        {
+            printf("malloc processing_cell_index\r\n");
+        }
+        memcpy(target_address, &(cell_management_data[index].gap_addr), sizeof(ble_gap_addr_t));
 
-		cell_management_data[index].life_time = CELL_MANAGEMENT_LIFE_TIME_CONNECTING;
+        cell_management_data[index].connecting_state = CONNECTING_STATE_CONNECTING;
 
-		current_connecting_index = index;
+        cell_management_data[index].life_time = CELL_MANAGEMENT_LIFE_TIME_CONNECTING;
 
-		BLE_process_event_send(BLE_CENTRAL_EVT, BLE_CENTRAL_CMD_CONNECT,
-		PAAR_BLE_CONN_HANDLE_INVALID, 0, sizeof(target_address), (uint8_t*) target_address);
+        current_connecting_index = index;
 
-		task_sleep(1500);
+        BLE_process_event_send(BLE_CENTRAL_EVT, BLE_CENTRAL_CMD_CONNECT, PAAR_BLE_CONN_HANDLE_INVALID, 0, sizeof(target_address), (uint8_t*) target_address);
 
-		return 0xFF;
-	}
+        task_sleep(1500);
 
-	if (cell_management_data[index].connecting_state == CONNECTING_STATE_CONNECTING) {
-		cell_management_data[index].life_time--;
+        return 0xFF;
+    }
 
-		if (cell_management_data[index].life_time <= 0) {
-			cell_management_data_delete(index);
-			current_connecting_index = 0xFF;
-		}
+    if (cell_management_data[index].connecting_state == CONNECTING_STATE_CONNECTING)
+    {
+        cell_management_data[index].life_time--;
 
-		return 0;
-	}
+        if (cell_management_data[index].life_time <= 0)
+        {
+            cell_management_data_delete(index);
+            current_connecting_index = 0xFF;
+        }
 
-	return 0;
+        return 0;
+    }
+
+    return 0;
 
 }
 
-void processing_cell_management() {
-	if (cell_management_data_count == 0)
-		return;
+uint8_t processing_cell_management()
+{
+    if (cell_management_data_count == 0)
+        return 0;
 
-	uint8_t i, result;
-	for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++) {
-		result = processing_cell_index(i);
-		if (result == 0xFF)
-			break;
-	}
+    uint8_t i, result = 0;
+    for (i = 0; i < CELL_MANAGEMENT_DATA_MAX_COUNT; i++)
+    {
+        result = processing_cell_index(i);
+        if (result == 0xFF)
+            return result;
+    }
+    return result;
 }
 
-void cell_management_connect_timeout() {
-//	if(current_connecting_index < CELL_MANAGEMENT_DATA_MAX_COUNT)
-//	{
-//		cell_management_data_delete(current_connecting_index);
-//		current_connecting_index = 0xFF;
-//	}
+void cell_management_connect_timeout()
+{
+    if (current_connecting_index < CELL_MANAGEMENT_DATA_MAX_COUNT)
+    {
+        cell_management_data_delete(current_connecting_index);
+        current_connecting_index = 0xFF;
+    }
 
-//cell_management_data[current_connecting_index].connecting_state = FE_CONNECTING_STATE_DISCONNECTED;
+//	cell_management_data[current_connecting_index].connecting_state = CONNECTING_STATE_DISCONNECTED;
 }
 

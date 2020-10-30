@@ -1,7 +1,7 @@
 /*
  $License:
-    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
-    See included License.txt for License information.
+ Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
+ See included License.txt for License information.
  $
  */
 #include "mltypes.h"
@@ -10,13 +10,12 @@
 #define INV_STORAGE_MANAGER_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-inv_error_t inv_register_load_store(
-                           inv_error_t (*load_func)(const unsigned char *data),
-                           inv_error_t (*save_func)(unsigned char *data), 
-                           size_t size, unsigned int key);
+inv_error_t inv_register_load_store(inv_error_t (*load_func)(const unsigned char *data), inv_error_t (*save_func)(unsigned char *data), size_t size,
+        unsigned int key);
 void inv_init_storage_manager(void);
 
 inv_error_t inv_get_mpl_state_size(size_t *size);

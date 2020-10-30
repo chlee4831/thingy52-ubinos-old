@@ -1,6 +1,6 @@
 /*
  $License:
-    Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
+ Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
  $
  */
 #ifndef INV_INCLUDE_H__

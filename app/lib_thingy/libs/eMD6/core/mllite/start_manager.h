@@ -1,14 +1,15 @@
 /*
  $License:
-    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
-    See included License.txt for License information.
+ Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
+ See included License.txt for License information.
  $
  */
 #ifndef INV_START_MANAGER_H__
 #define INV_START_MANAGER_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "mltypes.h"

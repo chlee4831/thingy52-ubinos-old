@@ -1,6 +1,6 @@
 /*
  $License:
-    Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
+ Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
  $
  */
 
@@ -17,19 +17,21 @@
 #include "mltypes.h"
 #endif
 
-struct mpu_read_write {
-	/* Memory address or register address depending on ioctl */
-	__u16 address;
-	__u16 length;
-	__u8 *data;
+struct mpu_read_write
+{
+    /* Memory address or register address depending on ioctl */
+    __u16 address;
+    __u16 length;
+    __u8 *data;
 };
 
-enum mpuirq_data_type {
-	MPUIRQ_DATA_TYPE_MPU_DATA_READY_IRQ,
-	MPUIRQ_DATA_TYPE_MPU_FIFO_READY_IRQ,
-	MPUIRQ_DATA_TYPE_SLAVE_IRQ,
-	MPUIRQ_DATA_TYPE_PM_EVENT,
-	MPUIRQ_DATA_TYPE_NUM_TYPES,
+enum mpuirq_data_type
+{
+    MPUIRQ_DATA_TYPE_MPU_DATA_READY_IRQ,
+    MPUIRQ_DATA_TYPE_MPU_FIFO_READY_IRQ,
+    MPUIRQ_DATA_TYPE_SLAVE_IRQ,
+    MPUIRQ_DATA_TYPE_PM_EVENT,
+    MPUIRQ_DATA_TYPE_NUM_TYPES,
 };
 
 /* User space PM event notification */
@@ -43,69 +45,72 @@ enum mpuirq_data_type {
  * @data_type		: The type of this IRQ enum mpuirq_data_type
  * @data		: Data associated with this IRQ
  */
-struct mpuirq_data {
-	__u32 interruptcount;
+struct mpuirq_data
+{
+    __u32 interruptcount;
 #ifdef EMPL_NO_64BIT
 	__s32 irqtime_ns;
 #else
-	__s64 irqtime_ns;
+    __s64 irqtime_ns;
 #endif
-	__u32 data_type;
-	__s32 data;
+    __u32 data_type;
+    __s32 data;
 };
 
-enum ext_slave_config_key {
-	/* TODO: Remove these first six. */
-	MPU_SLAVE_CONFIG_ODR_SUSPEND,
-	MPU_SLAVE_CONFIG_ODR_RESUME,
-	MPU_SLAVE_CONFIG_FSR_SUSPEND,
-	MPU_SLAVE_CONFIG_FSR_RESUME,
-	MPU_SLAVE_CONFIG_IRQ_SUSPEND,
-	MPU_SLAVE_CONFIG_IRQ_RESUME,
-	MPU_SLAVE_CONFIG_ODR,
-	MPU_SLAVE_CONFIG_FSR,
-	MPU_SLAVE_CONFIG_MOT_THS,
-	MPU_SLAVE_CONFIG_NMOT_THS,
-	MPU_SLAVE_CONFIG_MOT_DUR,
-	MPU_SLAVE_CONFIG_NMOT_DUR,
-	MPU_SLAVE_CONFIG_IRQ,
-	MPU_SLAVE_WRITE_REGISTERS,
-	MPU_SLAVE_READ_REGISTERS,
-	MPU_SLAVE_CONFIG_INTERNAL_REFERENCE,
-	/* AMI 306 specific config keys */
-	MPU_SLAVE_PARAM,
-	MPU_SLAVE_WINDOW,
-	MPU_SLAVE_READWINPARAMS,
-	MPU_SLAVE_SEARCHOFFSET,
-	/* MPU3050 and MPU6050 Keys */
-	MPU_SLAVE_INT_CONFIG,
-	MPU_SLAVE_EXT_SYNC,
-	MPU_SLAVE_FULL_SCALE,
-	MPU_SLAVE_LPF,
-	MPU_SLAVE_CLK_SRC,
-	MPU_SLAVE_DIVIDER,
-	MPU_SLAVE_DMP_ENABLE,
-	MPU_SLAVE_FIFO_ENABLE,
-	MPU_SLAVE_DMP_CFG1,
-	MPU_SLAVE_DMP_CFG2,
-	MPU_SLAVE_TC,
-	MPU_SLAVE_GYRO,
-	MPU_SLAVE_ADDR,
-	MPU_SLAVE_PRODUCT_REVISION,
-	MPU_SLAVE_SILICON_REVISION,
-	MPU_SLAVE_PRODUCT_ID,
-	MPU_SLAVE_GYRO_SENS_TRIM,
-	MPU_SLAVE_ACCEL_SENS_TRIM,
-	MPU_SLAVE_RAM,
-	/* -------------------------- */
-	MPU_SLAVE_CONFIG_NUM_CONFIG_KEYS
+enum ext_slave_config_key
+{
+    /* TODO: Remove these first six. */
+    MPU_SLAVE_CONFIG_ODR_SUSPEND,
+    MPU_SLAVE_CONFIG_ODR_RESUME,
+    MPU_SLAVE_CONFIG_FSR_SUSPEND,
+    MPU_SLAVE_CONFIG_FSR_RESUME,
+    MPU_SLAVE_CONFIG_IRQ_SUSPEND,
+    MPU_SLAVE_CONFIG_IRQ_RESUME,
+    MPU_SLAVE_CONFIG_ODR,
+    MPU_SLAVE_CONFIG_FSR,
+    MPU_SLAVE_CONFIG_MOT_THS,
+    MPU_SLAVE_CONFIG_NMOT_THS,
+    MPU_SLAVE_CONFIG_MOT_DUR,
+    MPU_SLAVE_CONFIG_NMOT_DUR,
+    MPU_SLAVE_CONFIG_IRQ,
+    MPU_SLAVE_WRITE_REGISTERS,
+    MPU_SLAVE_READ_REGISTERS,
+    MPU_SLAVE_CONFIG_INTERNAL_REFERENCE,
+    /* AMI 306 specific config keys */
+    MPU_SLAVE_PARAM,
+    MPU_SLAVE_WINDOW,
+    MPU_SLAVE_READWINPARAMS,
+    MPU_SLAVE_SEARCHOFFSET,
+    /* MPU3050 and MPU6050 Keys */
+    MPU_SLAVE_INT_CONFIG,
+    MPU_SLAVE_EXT_SYNC,
+    MPU_SLAVE_FULL_SCALE,
+    MPU_SLAVE_LPF,
+    MPU_SLAVE_CLK_SRC,
+    MPU_SLAVE_DIVIDER,
+    MPU_SLAVE_DMP_ENABLE,
+    MPU_SLAVE_FIFO_ENABLE,
+    MPU_SLAVE_DMP_CFG1,
+    MPU_SLAVE_DMP_CFG2,
+    MPU_SLAVE_TC,
+    MPU_SLAVE_GYRO,
+    MPU_SLAVE_ADDR,
+    MPU_SLAVE_PRODUCT_REVISION,
+    MPU_SLAVE_SILICON_REVISION,
+    MPU_SLAVE_PRODUCT_ID,
+    MPU_SLAVE_GYRO_SENS_TRIM,
+    MPU_SLAVE_ACCEL_SENS_TRIM,
+    MPU_SLAVE_RAM,
+    /* -------------------------- */
+    MPU_SLAVE_CONFIG_NUM_CONFIG_KEYS
 };
 
 /* For the MPU_SLAVE_CONFIG_IRQ_SUSPEND and MPU_SLAVE_CONFIG_IRQ_RESUME */
-enum ext_slave_config_irq_type {
-	MPU_SLAVE_IRQ_TYPE_NONE,
-	MPU_SLAVE_IRQ_TYPE_MOTION,
-	MPU_SLAVE_IRQ_TYPE_DATA_READY,
+enum ext_slave_config_irq_type
+{
+    MPU_SLAVE_IRQ_TYPE_NONE,
+    MPU_SLAVE_IRQ_TYPE_MOTION,
+    MPU_SLAVE_IRQ_TYPE_DATA_READY,
 };
 
 /* Structure for the following IOCTS's
@@ -127,75 +132,79 @@ enum ext_slave_config_irq_type {
  *        before calling the slaves .config or .get_config funcion
  * @data pointer to the data to confgure or get
  */
-struct ext_slave_config {
-	__u8 key;
-	__u16 len;
-	__u8 apply;
-	void *data;
+struct ext_slave_config
+{
+    __u8 key;
+    __u16 len;
+    __u8 apply;
+    void *data;
 };
 
-enum ext_slave_type {
-	EXT_SLAVE_TYPE_GYROSCOPE,
-	EXT_SLAVE_TYPE_ACCEL,
-	EXT_SLAVE_TYPE_COMPASS,
-	EXT_SLAVE_TYPE_PRESSURE,
-	/*EXT_SLAVE_TYPE_TEMPERATURE */
+enum ext_slave_type
+{
+    EXT_SLAVE_TYPE_GYROSCOPE,
+    EXT_SLAVE_TYPE_ACCEL,
+    EXT_SLAVE_TYPE_COMPASS,
+    EXT_SLAVE_TYPE_PRESSURE,
+    /*EXT_SLAVE_TYPE_TEMPERATURE */
 
-	EXT_SLAVE_NUM_TYPES
+    EXT_SLAVE_NUM_TYPES
 };
 
-enum ext_slave_id {
-	ID_INVALID = 0,
-	GYRO_ID_MPU3050,
-	GYRO_ID_MPU6050A2,
-	GYRO_ID_MPU6050B1,
-	GYRO_ID_MPU6050B1_NO_ACCEL,
-	GYRO_ID_ITG3500,
+enum ext_slave_id
+{
+    ID_INVALID = 0,
+    GYRO_ID_MPU3050,
+    GYRO_ID_MPU6050A2,
+    GYRO_ID_MPU6050B1,
+    GYRO_ID_MPU6050B1_NO_ACCEL,
+    GYRO_ID_ITG3500,
 
-	ACCEL_ID_LIS331,
-	ACCEL_ID_LSM303DLX,
-	ACCEL_ID_LIS3DH,
-	ACCEL_ID_KXSD9,
-	ACCEL_ID_KXTF9,
-	ACCEL_ID_BMA150,
-	ACCEL_ID_BMA222,
-	ACCEL_ID_BMA250,
-	ACCEL_ID_ADXL34X,
-	ACCEL_ID_MMA8450,
-	ACCEL_ID_MMA845X,
-	ACCEL_ID_MPU6050,
+    ACCEL_ID_LIS331,
+    ACCEL_ID_LSM303DLX,
+    ACCEL_ID_LIS3DH,
+    ACCEL_ID_KXSD9,
+    ACCEL_ID_KXTF9,
+    ACCEL_ID_BMA150,
+    ACCEL_ID_BMA222,
+    ACCEL_ID_BMA250,
+    ACCEL_ID_ADXL34X,
+    ACCEL_ID_MMA8450,
+    ACCEL_ID_MMA845X,
+    ACCEL_ID_MPU6050,
 
-	COMPASS_ID_AK8975,
-	COMPASS_ID_AK8972,
-	COMPASS_ID_AMI30X,
-	COMPASS_ID_AMI306,
-	COMPASS_ID_YAS529,
-	COMPASS_ID_YAS530,
-	COMPASS_ID_HMC5883,
-	COMPASS_ID_LSM303DLH,
-	COMPASS_ID_LSM303DLM,
-	COMPASS_ID_MMC314X,
-	COMPASS_ID_HSCDTD002B,
-	COMPASS_ID_HSCDTD004A,
+    COMPASS_ID_AK8975,
+    COMPASS_ID_AK8972,
+    COMPASS_ID_AMI30X,
+    COMPASS_ID_AMI306,
+    COMPASS_ID_YAS529,
+    COMPASS_ID_YAS530,
+    COMPASS_ID_HMC5883,
+    COMPASS_ID_LSM303DLH,
+    COMPASS_ID_LSM303DLM,
+    COMPASS_ID_MMC314X,
+    COMPASS_ID_HSCDTD002B,
+    COMPASS_ID_HSCDTD004A,
 
-	PRESSURE_ID_BMA085,
+    PRESSURE_ID_BMA085,
 };
 
 #define INV_PROD_KEY(ver, rev) (ver * 100 + rev)
 
-enum ext_slave_endian {
-	EXT_SLAVE_BIG_ENDIAN,
-	EXT_SLAVE_LITTLE_ENDIAN,
-	EXT_SLAVE_FS8_BIG_ENDIAN,
-	EXT_SLAVE_FS16_BIG_ENDIAN,
+enum ext_slave_endian
+{
+    EXT_SLAVE_BIG_ENDIAN,
+    EXT_SLAVE_LITTLE_ENDIAN,
+    EXT_SLAVE_FS8_BIG_ENDIAN,
+    EXT_SLAVE_FS16_BIG_ENDIAN,
 };
 
-enum ext_slave_bus {
-	EXT_SLAVE_BUS_INVALID = -1,
-	EXT_SLAVE_BUS_PRIMARY = 0,
-	EXT_SLAVE_BUS_SECONDARY = 1
+enum ext_slave_bus
+{
+    EXT_SLAVE_BUS_INVALID = -1,
+    EXT_SLAVE_BUS_PRIMARY = 0,
+    EXT_SLAVE_BUS_SECONDARY = 1
 };
-
 
 /**
  *  struct ext_slave_platform_data - Platform data for mpu3050 and mpu6050
@@ -217,30 +226,33 @@ enum ext_slave_bus {
  * platform orientation.  The values must be one of 0, 1, or -1 and each row and
  * column should have exactly 1 non-zero value.
  */
-struct ext_slave_platform_data {
-	__u8 type;
-	__u32 irq;
-	__u32 adapt_num;
-	__s32 bus;
-	__u8 address;
-	__s8 orientation[9];
-	void *irq_data;
-	void *private_data;
+struct ext_slave_platform_data
+{
+    __u8 type;
+    __u32 irq;
+    __u32 adapt_num;
+    __s32 bus;
+    __u8 address;
+    __s8 orientation[9];
+    void *irq_data;
+    void *private_data;
 };
 
-struct fix_pnt_range {
-	__s32 mantissa;
-	__s32 fraction;
+struct fix_pnt_range
+{
+    __s32 mantissa;
+    __s32 fraction;
 };
 
 static inline long range_fixedpoint_to_long_mg(struct fix_pnt_range rng)
 {
-	return (long)(rng.mantissa * 1000 + rng.fraction / 10);
+    return (long) (rng.mantissa * 1000 + rng.fraction / 10);
 }
 
-struct ext_slave_read_trigger {
-	__u8 reg;
-	__u8 value;
+struct ext_slave_read_trigger
+{
+    __u8 reg;
+    __u8 value;
 };
 
 /**
@@ -267,40 +279,24 @@ struct ext_slave_read_trigger {
  *  Defines the functions and information about the slave the mpu3050 and
  *  mpu6050 needs to use the slave device.
  */
-struct ext_slave_descr {
-	int (*init) (void *mlsl_handle,
-		     struct ext_slave_descr *slave,
-		     struct ext_slave_platform_data *pdata);
-	int (*exit) (void *mlsl_handle,
-		     struct ext_slave_descr *slave,
-		     struct ext_slave_platform_data *pdata);
-	int (*suspend) (void *mlsl_handle,
-			struct ext_slave_descr *slave,
-			struct ext_slave_platform_data *pdata);
-	int (*resume) (void *mlsl_handle,
-		       struct ext_slave_descr *slave,
-		       struct ext_slave_platform_data *pdata);
-	int (*read) (void *mlsl_handle,
-		     struct ext_slave_descr *slave,
-		     struct ext_slave_platform_data *pdata,
-		     __u8 *data);
-	int (*config) (void *mlsl_handle,
-		       struct ext_slave_descr *slave,
-		       struct ext_slave_platform_data *pdata,
-		       struct ext_slave_config *config);
-	int (*get_config) (void *mlsl_handle,
-			   struct ext_slave_descr *slave,
-			   struct ext_slave_platform_data *pdata,
-			   struct ext_slave_config *config);
+struct ext_slave_descr
+{
+    int (*init)(void *mlsl_handle, struct ext_slave_descr *slave, struct ext_slave_platform_data *pdata);
+    int (*exit)(void *mlsl_handle, struct ext_slave_descr *slave, struct ext_slave_platform_data *pdata);
+    int (*suspend)(void *mlsl_handle, struct ext_slave_descr *slave, struct ext_slave_platform_data *pdata);
+    int (*resume)(void *mlsl_handle, struct ext_slave_descr *slave, struct ext_slave_platform_data *pdata);
+    int (*read)(void *mlsl_handle, struct ext_slave_descr *slave, struct ext_slave_platform_data *pdata, __u8 *data);
+    int (*config)(void *mlsl_handle, struct ext_slave_descr *slave, struct ext_slave_platform_data *pdata, struct ext_slave_config *config);
+    int (*get_config)(void *mlsl_handle, struct ext_slave_descr *slave, struct ext_slave_platform_data *pdata, struct ext_slave_config *config);
 
-	char *name;
-	__u8 type;
-	__u8 id;
-	__u8 read_reg;
-	__u8 read_len;
-	__u8 endian;
-	struct fix_pnt_range range;
-	struct ext_slave_read_trigger *trigger;
+    char *name;
+    __u8 type;
+    __u8 id;
+    __u8 read_reg;
+    __u8 read_len;
+    __u8 endian;
+    struct fix_pnt_range range;
+    struct ext_slave_read_trigger *trigger;
 };
 
 /**
@@ -315,10 +311,11 @@ struct ext_slave_descr {
  * platform orientation.  The values must be one of 0, 1, or -1 and each row and
  * column should have exactly 1 non-zero value.
  */
-struct mpu_platform_data {
-	__u8 int_config;
-	__u8 level_shifter;
-	__s8 orientation[9];
+struct mpu_platform_data
+{
+    __u8 int_config;
+    __u8 level_shifter;
+    __s8 orientation[9];
 };
 
 #if defined __KERNEL__ || defined LINUX

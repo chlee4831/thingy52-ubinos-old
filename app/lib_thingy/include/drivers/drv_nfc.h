@@ -1,41 +1,41 @@
 /*
-  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
-  All rights reserved.
+ Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+ All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification,
-  are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
 
-  1. Redistributions of source code must retain the above copyright notice, this
-     list of conditions and the following disclaimer.
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
 
-  2. Redistributions in binary form, except as embedded into a Nordic
-     Semiconductor ASA integrated circuit in a product or a software update for
-     such product, must reproduce the above copyright notice, this list of
-     conditions and the following disclaimer in the documentation and/or other
-     materials provided with the distribution.
+ 2. Redistributions in binary form, except as embedded into a Nordic
+ Semiconductor ASA integrated circuit in a product or a software update for
+ such product, must reproduce the above copyright notice, this list of
+ conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
 
-  3. Neither the name of Nordic Semiconductor ASA nor the names of its
-     contributors may be used to endorse or promote products derived from this
-     software without specific prior written permission.
+ 3. Neither the name of Nordic Semiconductor ASA nor the names of its
+ contributors may be used to endorse or promote products derived from this
+ software without specific prior written permission.
 
-  4. This software, with or without modification, must only be used with a
-     Nordic Semiconductor ASA integrated circuit.
+ 4. This software, with or without modification, must only be used with a
+ Nordic Semiconductor ASA integrated circuit.
 
-  5. Any software provided in binary form under this license must not be reverse
-     engineered, decompiled, modified and/or disassembled.
+ 5. Any software provided in binary form under this license must not be reverse
+ engineered, decompiled, modified and/or disassembled.
 
-  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
-  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+ OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 /** @file NFC driver
  *
  * @defgroup NFC_driver NFC driver
@@ -44,14 +44,13 @@
  * @brief Near Field Communnication (NFC) driver API.
  *
  */
- 
+
 #ifndef __DRV_NFC_H__
 #define __DRV_NFC_H__
 
 #include "nrf_error.h"
 #include "nfc_uri_rec.h"
 #include <stdint.h>
-
 
 /**@brief Function for adding a string record to an NDEF NFC message.
  *
@@ -64,8 +63,7 @@
  * @retval NRF_ERROR_INVALID_LENGTH The length is 1 or 0. 
  * @retval Other errors from the underlying drivers.
  */
-ret_code_t drv_nfc_string_record_add(char const * const p_string, uint8_t str_len);
-
+ret_code_t drv_nfc_string_record_add(char const *const p_string, uint8_t str_len);
 
 /**@brief Function for adding a URI record to an NDEF NFC message.
  *
@@ -79,8 +77,7 @@ ret_code_t drv_nfc_string_record_add(char const * const p_string, uint8_t str_le
  * @retval NRF_ERROR_INVALID_LENGTH The length is 1 or 0. 
  * @retval Other errors from the underlying drivers.
  */
-ret_code_t drv_nfc_uri_record_add(nfc_uri_id_t uri_id, char const * const p_uri, uint32_t uri_length);
-
+ret_code_t drv_nfc_uri_record_add(nfc_uri_id_t uri_id, char const *const p_uri, uint32_t uri_length);
 
 /**@brief Function for adding an Android Application Record (AAR) to an NDEF NFC message.
  *
@@ -93,8 +90,7 @@ ret_code_t drv_nfc_uri_record_add(nfc_uri_id_t uri_id, char const * const p_uri,
  * @retval NRF_ERROR_INVALID_LENGTH The length is 1 or 0. 
  * @retval Other errors from the underlying drivers.
  */
-ret_code_t drv_nfc_app_launch_android_record_add(char const * const p_android_package_name, uint32_t package_name_length);
-
+ret_code_t drv_nfc_app_launch_android_record_add(char const *const p_android_package_name, uint32_t package_name_length);
 
 /**@brief Function for enabling NFC.
  *
@@ -105,7 +101,6 @@ ret_code_t drv_nfc_app_launch_android_record_add(char const * const p_android_pa
  */
 ret_code_t drv_nfc_enable(void);
 
-
 /**@brief Function for disabling NFC.
  *
  * @note This function deletes all stored NDEF records.
@@ -115,7 +110,6 @@ ret_code_t drv_nfc_enable(void);
  * @retval Other errors from the underlying drivers.
  */
 ret_code_t drv_nfc_disable(void);
-
 
 /**@brief Function for initializing NFC.
  *

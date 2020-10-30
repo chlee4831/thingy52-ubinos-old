@@ -1,39 +1,39 @@
 /*
-  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
-  All rights reserved.
+ Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+ All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification,
-  are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
 
-  1. Redistributions of source code must retain the above copyright notice, this
-     list of conditions and the following disclaimer.
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
 
-  2. Redistributions in binary form, except as embedded into a Nordic
-     Semiconductor ASA integrated circuit in a product or a software update for
-     such product, must reproduce the above copyright notice, this list of
-     conditions and the following disclaimer in the documentation and/or other
-     materials provided with the distribution.
+ 2. Redistributions in binary form, except as embedded into a Nordic
+ Semiconductor ASA integrated circuit in a product or a software update for
+ such product, must reproduce the above copyright notice, this list of
+ conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
 
-  3. Neither the name of Nordic Semiconductor ASA nor the names of its
-     contributors may be used to endorse or promote products derived from this
-     software without specific prior written permission.
+ 3. Neither the name of Nordic Semiconductor ASA nor the names of its
+ contributors may be used to endorse or promote products derived from this
+ software without specific prior written permission.
 
-  4. This software, with or without modification, must only be used with a
-     Nordic Semiconductor ASA integrated circuit.
+ 4. This software, with or without modification, must only be used with a
+ Nordic Semiconductor ASA integrated circuit.
 
-  5. Any software provided in binary form under this license must not be reverse
-     engineered, decompiled, modified and/or disassembled.
+ 5. Any software provided in binary form under this license must not be reverse
+ engineered, decompiled, modified and/or disassembled.
 
-  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
-  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+ OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef DRV_CCS811_H__
@@ -58,7 +58,7 @@ enum
 {
     DRV_CCS811_STATUS_CODE_SUCCESS,      ///< Successful.
     DRV_CCS811_STATUS_CODE_DISALLOWED,   ///< Disallowed.
-    DRV_CCS811_STATUS_CODE_INVALID_PARAM,///< Invalid parameters.
+    DRV_CCS811_STATUS_CODE_INVALID_PARAM,   ///< Invalid parameters.
     DRV_CCS811_STATUS_CODE_NOT_SUPPORTED ///< Not supported.
 };
 
@@ -66,31 +66,31 @@ enum
  */
 typedef struct
 {
-    uint8_t                      twi_addr;        ///< TWI address of the CCS811.
-    nrf_drv_twi_t        const * p_twi_instance;  ///< The instance of TWI master to be used for transactions.
-    nrf_drv_twi_config_t const * p_twi_cfg;       ///< The TWI configuration to use while the driver is enabled.
+    uint8_t twi_addr;        ///< TWI address of the CCS811.
+    nrf_drv_twi_t const *p_twi_instance;  ///< The instance of TWI master to be used for transactions.
+    nrf_drv_twi_config_t const *p_twi_cfg;       ///< The TWI configuration to use while the driver is enabled.
 } drv_ccs811_cfg_t;
 
 /** @brief Descriptor of the CCS811 result data format.
  */
 typedef enum
 {
-	DRV_CCS811_ALG_RESULT_DESCR_ECO2_ONLY = 0,  ///< Only the equivalent CO2 (eCO2) value.
-	DRV_CCS811_ALG_RESULT_DESCR_TVOC_ONLY,      ///< Only the Total Volatile Organic Compound (TVOC) value.
-	DRV_CCS811_ALG_RESULT_DESCR_ECO2_TVOC,      ///< Both eCO2 and TVOC values, but no additional information.
-	DRV_CCS811_ALG_RESULT_DESCR_ECO2_TVOC_STAT, ///< Both eCO2 and TVOC values + status.
-	DRV_CCS811_ALG_RESULT_DESCR_ALL,            ///< All available result data (eCO2 and TVOC, status, error ID, and raw data).
+    DRV_CCS811_ALG_RESULT_DESCR_ECO2_ONLY = 0,  ///< Only the equivalent CO2 (eCO2) value.
+    DRV_CCS811_ALG_RESULT_DESCR_TVOC_ONLY,      ///< Only the Total Volatile Organic Compound (TVOC) value.
+    DRV_CCS811_ALG_RESULT_DESCR_ECO2_TVOC,      ///< Both eCO2 and TVOC values, but no additional information.
+    DRV_CCS811_ALG_RESULT_DESCR_ECO2_TVOC_STAT, ///< Both eCO2 and TVOC values + status.
+    DRV_CCS811_ALG_RESULT_DESCR_ALL,            ///< All available result data (eCO2 and TVOC, status, error ID, and raw data).
 } drv_ccs811_alg_result_descr_t;
 
 /** @brief The algorithm result data of the CCS811 device.
  */
 typedef struct
 {
-	uint16_t	ec02_ppm; ///< The equivalent CO2 (eCO2) value in parts per million (ppm).
-	uint16_t	tvoc_ppb; ///< The Total Volatile Organic Compound (TVOC) value in parts per billion (ppb).
-	uint8_t		status;   ///< The status according to the CCS811 status format (@ref drv_ccs811_status_get).
-	uint8_t		err_id;   ///< The err_id according to the CCS811 err_id format (@ref drv_ccs811_err_id_get).
-	uint16_t	raw_data; ///< The raw_data according to the CCS811 raw_data format (@ref drv_ccs811_raw_data_get)
+    uint16_t ec02_ppm; ///< The equivalent CO2 (eCO2) value in parts per million (ppm).
+    uint16_t tvoc_ppb; ///< The Total Volatile Organic Compound (TVOC) value in parts per billion (ppb).
+    uint8_t status;   ///< The status according to the CCS811 status format (@ref drv_ccs811_status_get).
+    uint8_t err_id;   ///< The err_id according to the CCS811 err_id format (@ref drv_ccs811_err_id_get).
+    uint16_t raw_data; ///< The raw_data according to the CCS811 raw_data format (@ref drv_ccs811_raw_data_get)
 } drv_ccs811_alg_result_t;
 
 /**@brief Function for initializing the CCS811 driver.
@@ -104,7 +104,7 @@ void drv_ccs811_init(void);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS    If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_open(drv_ccs811_cfg_t const * const p_drv_ccs811_cfg);
+uint32_t drv_ccs811_open(drv_ccs811_cfg_t const *const p_drv_ccs811_cfg);
 
 /**@brief Function for getting the status of the CCS811 device.
  *
@@ -113,7 +113,7 @@ uint32_t drv_ccs811_open(drv_ccs811_cfg_t const * const p_drv_ccs811_cfg);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_status_get(uint8_t * p_status);
+uint32_t drv_ccs811_status_get(uint8_t *p_status);
 
 /**@brief Function for getting the measurement mode of the CCS811 device.
  *
@@ -122,7 +122,7 @@ uint32_t drv_ccs811_status_get(uint8_t * p_status);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_meas_mode_get(uint8_t * p_meas_mode);
+uint32_t drv_ccs811_meas_mode_get(uint8_t *p_meas_mode);
 
 /**@brief Function for modifying the measurement mode register of the CCS811 device.
  *
@@ -144,7 +144,7 @@ uint32_t drv_ccs811_meas_mode_modify(uint8_t set_mask, uint8_t clr_mask);
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED       If the call was not allowed at this time.
  * @return DRV_CCS811_STATUS_CODE_INVALID_PARAM    If specified masks overlap.
  */
-uint32_t drv_ccs811_alg_result_data_get(drv_ccs811_alg_result_descr_t alg_result_descr, drv_ccs811_alg_result_t * p_alg_result_data);
+uint32_t drv_ccs811_alg_result_data_get(drv_ccs811_alg_result_descr_t alg_result_descr, drv_ccs811_alg_result_t *p_alg_result_data);
 
 /**@brief Function for getting the raw data of the CCS811 device.
  *
@@ -153,7 +153,7 @@ uint32_t drv_ccs811_alg_result_data_get(drv_ccs811_alg_result_descr_t alg_result
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_raw_data_get(uint16_t * p_raw_data);
+uint32_t drv_ccs811_raw_data_get(uint16_t *p_raw_data);
 
 /**@brief Function for setting the environmental data of the CCS811 device.
  *
@@ -176,7 +176,7 @@ uint32_t drv_ccs811_env_data_set(uint16_t rh_ppth, int32_t temp_mdeg);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_thresholds_get(uint16_t * p_low_to_medium, uint16_t * p_medium_to_high, uint8_t * p_hysteresis);
+uint32_t drv_ccs811_thresholds_get(uint16_t *p_low_to_medium, uint16_t *p_medium_to_high, uint8_t *p_hysteresis);
 
 /**@brief Function for setting the thresholds of the CCS811 device.
  *
@@ -197,7 +197,7 @@ uint32_t drv_ccs811_thresholds_set(uint16_t low_to_medium, uint16_t medium_to_hi
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_ntc_get(uint16_t * p_r_ref_mv, uint16_t * p_r_ntc_mv);
+uint32_t drv_ccs811_ntc_get(uint16_t *p_r_ref_mv, uint16_t *p_r_ntc_mv);
 
 /**@brief Function for getting the baseline value from the CCS811 device.
  *
@@ -206,7 +206,7 @@ uint32_t drv_ccs811_ntc_get(uint16_t * p_r_ref_mv, uint16_t * p_r_ntc_mv);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_baseline_get(uint16_t * p_baseline);
+uint32_t drv_ccs811_baseline_get(uint16_t *p_baseline);
 
 /**@brief Function for writing the baseline value to the CCS811 device.
  *
@@ -224,7 +224,7 @@ uint32_t drv_ccs811_baseline_set(uint16_t baseline);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_hw_id_get(uint8_t * p_hw_id);
+uint32_t drv_ccs811_hw_id_get(uint8_t *p_hw_id);
 
 /**@brief Function for getting the hardware version of the CCS811 device.
  *
@@ -233,7 +233,7 @@ uint32_t drv_ccs811_hw_id_get(uint8_t * p_hw_id);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_hw_version_get(uint8_t * p_hw_version);
+uint32_t drv_ccs811_hw_version_get(uint8_t *p_hw_version);
 
 /**@brief Function for getting the version of the firmware bootloader of the CCS811 device.
  *
@@ -242,7 +242,7 @@ uint32_t drv_ccs811_hw_version_get(uint8_t * p_hw_version);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_fw_boot_version_get(uint16_t * p_fw_boot_version);
+uint32_t drv_ccs811_fw_boot_version_get(uint16_t *p_fw_boot_version);
 
 /**@brief Function for getting the version of the firmware application of the CCS811 device.
  *
@@ -251,7 +251,7 @@ uint32_t drv_ccs811_fw_boot_version_get(uint16_t * p_fw_boot_version);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_fw_app_version_get(uint16_t * p_fw_app_version);
+uint32_t drv_ccs811_fw_app_version_get(uint16_t *p_fw_app_version);
 
 /**@brief Function for getting the error identifier of the CCS811 device.
  *
@@ -260,7 +260,7 @@ uint32_t drv_ccs811_fw_app_version_get(uint16_t * p_fw_app_version);
  * @return DRV_CCS811_STATUS_CODE_SUCCESS      If the call was successful.
  * @return DRV_CCS811_STATUS_CODE_DISALLOWED   If the call was not allowed at this time.
  */
-uint32_t drv_ccs811_err_id_get(uint8_t * p_err_id);
+uint32_t drv_ccs811_err_id_get(uint8_t *p_err_id);
 
 /**@brief Function for starting the application of the CCS811 device.
  *

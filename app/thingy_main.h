@@ -8,17 +8,16 @@
 #ifndef APP_THINGY_MAIN_H_
 #define APP_THINGY_MAIN_H_
 
-
 #include <stdint.h>
 
 typedef struct
 {
-	uint8_t event;
-	uint8_t state;
-	uint8_t* msg;
-}mainEvt_msgt;
+    uint8_t event;
+    uint8_t state;
+    uint8_t *msg;
+} mainEvt_msgt;
 
-void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t * msg);
+void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t *msg);
 
 void thingy_main_task_init(void);
 

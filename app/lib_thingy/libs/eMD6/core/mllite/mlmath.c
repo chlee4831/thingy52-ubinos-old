@@ -1,7 +1,7 @@
 /*
  $License:
-    Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
-    See included License.txt for License information.
+ Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
+ See included License.txt for License information.
  $
  */
 /*******************************************************************************

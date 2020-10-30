@@ -18,26 +18,29 @@
 /* 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                 */
 /*****************************************************************************/
 
-
 /*****************************************************************************
-  stblchck.c : Common Floating-Point Library: return stability flag (LSPs)
+ stblchck.c : Common Floating-Point Library: return stability flag (LSPs)
 
-  $Log$
-******************************************************************************/
+ $Log$
+ ******************************************************************************/
 
 #include "typedef.h"
 
-int stblchck(Float *x, int vdim){
+int stblchck(Float *x, int vdim)
+{
 
-   int k, stbl;
+    int k, stbl;
 
-  	if (x[0] < 0.0f)
-      stbl = 0;
-   else {
-      stbl = 1;
-      for (k=1; k<vdim; k++) {
-         if (x[k]-x[k-1] < 0.0f) stbl = 0;
-      }
-   }
-   return stbl;
+    if (x[0] < 0.0f)
+        stbl = 0;
+    else
+    {
+        stbl = 1;
+        for (k = 1; k < vdim; k++)
+        {
+            if (x[k] - x[k - 1] < 0.0f)
+                stbl = 0;
+        }
+    }
+    return stbl;
 }

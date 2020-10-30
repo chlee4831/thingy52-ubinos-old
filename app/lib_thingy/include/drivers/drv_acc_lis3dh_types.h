@@ -1,39 +1,39 @@
 /*
-  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
-  All rights reserved.
+ Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+ All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification,
-  are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
 
-  1. Redistributions of source code must retain the above copyright notice, this
-     list of conditions and the following disclaimer.
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
 
-  2. Redistributions in binary form, except as embedded into a Nordic
-     Semiconductor ASA integrated circuit in a product or a software update for
-     such product, must reproduce the above copyright notice, this list of
-     conditions and the following disclaimer in the documentation and/or other
-     materials provided with the distribution.
+ 2. Redistributions in binary form, except as embedded into a Nordic
+ Semiconductor ASA integrated circuit in a product or a software update for
+ such product, must reproduce the above copyright notice, this list of
+ conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
 
-  3. Neither the name of Nordic Semiconductor ASA nor the names of its
-     contributors may be used to endorse or promote products derived from this
-     software without specific prior written permission.
+ 3. Neither the name of Nordic Semiconductor ASA nor the names of its
+ contributors may be used to endorse or promote products derived from this
+ software without specific prior written permission.
 
-  4. This software, with or without modification, must only be used with a
-     Nordic Semiconductor ASA integrated circuit.
+ 4. This software, with or without modification, must only be used with a
+ Nordic Semiconductor ASA integrated circuit.
 
-  5. Any software provided in binary form under this license must not be reverse
-     engineered, decompiled, modified and/or disassembled.
+ 5. Any software provided in binary form under this license must not be reverse
+ engineered, decompiled, modified and/or disassembled.
 
-  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
-  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+ OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 /** @file LIS3DH accelerometer
@@ -53,90 +53,90 @@
  */
 typedef enum
 {
-  ODR_1Hz                 = 0x01,   ///< High resolution/normal/low power mode    1 Hz.
-  ODR_10Hz                = 0x02,   ///< High resolution/normal/low power mode   10 Hz.
-  ODR_25Hz                = 0x03,   ///< High resolution/normal/low power mode   25 Hz.
-  ODR_50Hz                = 0x04,   ///< High resolution/normal/low power mode   50 Hz.
-  ODR_100Hz               = 0x05,   ///< High resolution/normal/low power mode  100 Hz.
-  ODR_200Hz               = 0x06,   ///< High resolution/normal/low power mode  200 Hz.
-  ODR_400Hz               = 0x07,   ///< High resolution/normal/low power mode  400 Hz.
-  ODR_1620Hz_LP           = 0x08,   ///< Low power mode, 1620 Hz.
-  ODR_1344Hz_NP_5367HZ_LP = 0x09    ///< High resolution/normal mode 1344 Hz, low power mode 5376 Hz.
+    ODR_1Hz = 0x01,   ///< High resolution/normal/low power mode    1 Hz.
+    ODR_10Hz = 0x02,   ///< High resolution/normal/low power mode   10 Hz.
+    ODR_25Hz = 0x03,   ///< High resolution/normal/low power mode   25 Hz.
+    ODR_50Hz = 0x04,   ///< High resolution/normal/low power mode   50 Hz.
+    ODR_100Hz = 0x05,   ///< High resolution/normal/low power mode  100 Hz.
+    ODR_200Hz = 0x06,   ///< High resolution/normal/low power mode  200 Hz.
+    ODR_400Hz = 0x07,   ///< High resolution/normal/low power mode  400 Hz.
+    ODR_1620Hz_LP = 0x08,   ///< Low power mode, 1620 Hz.
+    ODR_1344Hz_NP_5367HZ_LP = 0x09    ///< High resolution/normal mode 1344 Hz, low power mode 5376 Hz.
 } ODR_t;
 
 /** @brief Operation modes.
  */
 typedef enum
 {
-  POWER_DOWN              = 0x00,   ///< Acclerometer powered down.
-  LOW_POWER               = 0x01,   ///< Low power mode.
-  NORMAL                  = 0x02    ///< Normal mode.
+    POWER_DOWN = 0x00,   ///< Acclerometer powered down.
+    LOW_POWER = 0x01,   ///< Low power mode.
+    NORMAL = 0x02    ///< Normal mode.
 } Mode_t;
 
 /** @brief Acceleration ranges.
  */
 typedef enum
 {
-  FULLSCALE_2             = 0x00,   ///<  2 G full scale.
-  FULLSCALE_4             = 0x01,   ///<  4 G full scale.
-  FULLSCALE_8             = 0x02,   ///<  8 G full scale.
-  FULLSCALE_16            = 0x03    ///< 16 G full scale.
+    FULLSCALE_2 = 0x00,   ///<  2 G full scale.
+    FULLSCALE_4 = 0x01,   ///<  4 G full scale.
+    FULLSCALE_8 = 0x02,   ///<  8 G full scale.
+    FULLSCALE_16 = 0x03    ///< 16 G full scale.
 } Fullscale_t;
 
 /** @brief Axis selection.
  */
 typedef enum
 {
-  X_ENABLE                = 0x01,   ///< X axis enabled.
-  Y_ENABLE                = 0x02,   ///< Y axis enabled.
-  Z_ENABLE                = 0x04,   ///< Z axis enabled.
+    X_ENABLE = 0x01,   ///< X axis enabled.
+    Y_ENABLE = 0x02,   ///< Y axis enabled.
+    Z_ENABLE = 0x04,   ///< Z axis enabled.
 } AXISenable_t;
 
 /** @brief Interrupt modes.
  */
 typedef enum
 {
-  IntOR                   = 0x00,   ///< Sources are ORed.
-  Int6DMov                = 0x01,   ///< 6 direction movement interrupt.
-  IntAND                  = 0x02,   ///< Sources are ANDed.
-  Int6DPos                = 0x03,   ///< 6 direction position change interrupt.
-  Int4DMov                = 0x05,   ///< 4 direction movement interrupt.
-  Int4DPos                = 0x07,   ///< 4 direction position interrupt.
+    IntOR = 0x00,   ///< Sources are ORed.
+    Int6DMov = 0x01,   ///< 6 direction movement interrupt.
+    IntAND = 0x02,   ///< Sources are ANDed.
+    Int6DPos = 0x03,   ///< 6 direction position change interrupt.
+    Int4DMov = 0x05,   ///< 4 direction movement interrupt.
+    Int4DPos = 0x07,   ///< 4 direction position interrupt.
 } IntMode_t;
 
 /** @brief Interrupt pin polarity.
  */
 typedef enum
 {
-  IntActiveHigh           = 0x00,   ///< Active hight interrupt.
-  IntActiveLow            = 0x02    ///< Active low interrupt.
+    IntActiveHigh = 0x00,   ///< Active hight interrupt.
+    IntActiveLow = 0x02    ///< Active low interrupt.
 } IntPolarity_t;
 
 /** @brief Click interrupt modes.
  */
 typedef enum
 {
-  ClickSingle             = 0x00,    ///< Single-click interrupt.
-  ClickDouble             = 0x01,    ///< Double-click interrupt.
+    ClickSingle = 0x00,    ///< Single-click interrupt.
+    ClickDouble = 0x01,    ///< Double-click interrupt.
 } ClickMode_t;
 
 /** @brief High-pass filter modes.
  */
 typedef enum
 {
-  HPNormalRes             = 0x00,    ///< Normal mode, reference register reset when read.
-  HPReference             = 0x01,    ///< Reference mode.
-  HPNormal                = 0x02,    ///< Normal mode.
-  HPAutoResInt            = 0x03     ///< Autoreset upon interrupt.
+    HPNormalRes = 0x00,    ///< Normal mode, reference register reset when read.
+    HPReference = 0x01,    ///< Reference mode.
+    HPNormal = 0x02,    ///< Normal mode.
+    HPAutoResInt = 0x03     ///< Autoreset upon interrupt.
 } HPFilterMode_t;
 
 /** @brief Acceleration data struct.
  */
 typedef struct
 {
-  int16_t AXIS_X;
-  int16_t AXIS_Y;
-  int16_t AXIS_Z;
+    int16_t AXIS_X;
+    int16_t AXIS_Y;
+    int16_t AXIS_Z;
 } AccAxesRaw_t;
 
 // Aux status register.

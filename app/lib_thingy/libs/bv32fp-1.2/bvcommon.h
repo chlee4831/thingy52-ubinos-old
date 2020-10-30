@@ -18,74 +18,64 @@
 /* 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                 */
 /*****************************************************************************/
 
-
 /*****************************************************************************
-  bvcommon.h : Common #defines and prototypes
+ bvcommon.h : Common #defines and prototypes
 
-  $Log$
-******************************************************************************/
+ $Log$
+ ******************************************************************************/
 
 #ifndef  BVCOMMON_H
 #define  BVCOMMON_H
 
 /* Function Prototypes */
 
+void pp3dec(short idx, Float *b);
 
-void pp3dec(
-short	idx,
-Float	*b);
+void apfilter(Float *a, /* (i) a[m+1] prediction coefficients   (m=10)  */
+int m, /* (i) LPC order                                */
+Float *x, /* (i) input signal                             */
+Float *y, /* (o) output signal                            */
+int lg, /* (i) size of filtering                        */
+Float *mem, /* (i/o) input memory                           */
+short update);/* (i) flag for memory update                   */
 
-void apfilter(
-    Float   *a,     /* (i) a[m+1] prediction coefficients   (m=10)  */
-    int     m,      /* (i) LPC order                                */
-    Float   *x,     /* (i) input signal                             */
-    Float   *y,     /* (o) output signal                            */
-    int     lg,     /* (i) size of filtering                        */
-    Float   *mem,   /* (i/o) input memory                           */
-    short   update);/* (i) flag for memory update                   */
+void azfilter(Float *a, /* (i) prediction coefficients                  */
+int m, /* (i) LPC order                                */
+Float *x, /* (i) input signal vector                      */
+Float *y, /* (o) output signal vector                     */
+int lg, /* (i) size of filtering                        */
+Float *mem, /* (i/o) filter memory before filtering         */
+short update); /* (i) flag for memory update                   */
 
-void azfilter(
-    Float   *a,     /* (i) prediction coefficients                  */
-    int     m,      /* (i) LPC order                                */
-    Float   *x,     /* (i) input signal vector                      */
-    Float   *y,     /* (o) output signal vector                     */
-    int     lg,     /* (i) size of filtering                        */
-    Float   *mem,   /* (i/o) filter memory before filtering         */
-    short   update); /* (i) flag for memory update                   */
+void Autocor(Float *r, /* (o) : Autocorrelations     */
+Float *x, /* (i) : Input signal         */
+Float *window, /* (i) : LPC Analysis window  */
+int l_window,/* (i) : window length        */
+int m); /* (i) : LPC order            */
 
-void Autocor(
-Float   *r,      /* (o) : Autocorrelations     */
-Float   *x,      /* (i) : Input signal         */
-Float   *window, /* (i) : LPC Analysis window  */
-int     l_window,/* (i) : window length        */
-int     m);      /* (i) : LPC order            */
+void Levinson(Float *r, /* (i): autocorrelation coefficients         */
+Float *a, /* (o): LPC coefficients                     */
+Float *old_a, /* (i/o): LPC coefficients of previous frame */
+int m); /* (i): LPC order                            */
 
-void Levinson(
-Float	*r,	   /* (i): autocorrelation coefficients         */
-Float	*a,	   /* (o): LPC coefficients                     */
-Float	*old_a,	/* (i/o): LPC coefficients of previous frame */
-int	m);      /* (i): LPC order                            */
-
-void a2lsp(
-Float pc[],       /* (i) input the np+1 predictor coeff.          */
-Float lsp[],      /* (o) line spectral pairs                      */
+void a2lsp(Float pc[], /* (i) input the np+1 predictor coeff.          */
+Float lsp[], /* (o) line spectral pairs                      */
 Float old_lsp[]); /* (i/o) old lsp[] (in case not found 10 roots) */
 
-void lsp2a(
-Float *lsp,	/* (i) LSP vector       */
-Float *a); 	/* (o) LPC coefficients */
+void lsp2a(Float *lsp, /* (i) LSP vector       */
+Float *a); /* (o) LPC coefficients */
 
 void stblz_lsp(Float *lsp, int order);
 int stblchck(Float *x, int vdim);
 
 /* LPC to LSP Conversion */
-extern	Float grid[];
+extern Float grid[];
 
 /* LPC bandwidth expansion */
-extern	Float bwel[];
+extern Float bwel[];
 
 /* LPC WEIGHTING FILTER */
-extern	Float	STWAL[];
+extern Float STWAL[];
 
 /* ----- Basic Codec Parameters ----- */
 #define LPCO  8 /* LPC Order  */
