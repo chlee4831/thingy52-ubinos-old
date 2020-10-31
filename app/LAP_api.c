@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <malloc.h>
+#include "malloc.h"
 
 #include "nrf.h"
 #include "nrf_sdh_ble.h"

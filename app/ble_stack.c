@@ -110,7 +110,7 @@ ble_rx_msgt temp_ble_cent_rx_buf;
 ble_rx_msgt temp_ble_periph_buf;
 ble_rx_msgt temp_ble_periph_adv_buf;
 
-#define MAX_SIZE_TEMP_ADV_BUFFER	10
+#define MAX_SIZE_TEMP_ADV_BUFFER	30
 #define TEMP_ADV_MSG_INDEX			0
 
 uint8_t temp_adv_buffer_index = 0;
@@ -327,9 +327,11 @@ void PAAR_scan_start(void)
     ret = nrf_ble_scan_start(&m_scan);
     if (ret != NRF_SUCCESS)
     {
-        printf("BLE erros : SCAN_fail! %ld\r\n", ret);
+        printf("BLE erros : SCAN_fail! %d\r\n", ret);
         temp_test_cnt++;
     }
+    printf("Scan result : %d \r\n", ret);
+
     APP_ERROR_CHECK(ret);
 
 }
@@ -380,7 +382,9 @@ void PAAR_set_adv_data(uint8_t *adv_data, uint16_t adv_data_len, uint8_t *scan_r
  */
 void PAAR_ble_gap_connect(ble_gap_addr_t *peer_addr)
 {
-    sd_ble_gap_connect(peer_addr, &m_scan_params, &m_connection_param, APP_BLE_CONN_CFG_TAG);
+    uint32_t r;
+    r = sd_ble_gap_connect(peer_addr, &m_scan_params, &m_connection_param, APP_BLE_CONN_CFG_TAG);
+    printf("connecting result : %d\r\n", r);
 }
 
 /**@brief Function for BLE gap disconnection
@@ -495,6 +499,10 @@ static void on_ble_evt(ble_evt_t *p_ble_evt, void *p_context)
             if (r == 0)
             {
                 temp_adv_buffer_count++;
+            }
+            else
+            {
+                printf("msgq send error : ble rx msg\r\n");
             }
         }
         break;
@@ -756,8 +764,17 @@ void ble_stack_task(void *arg)
             //central rx message
             case BLE_STACK_CENTRAL_EVT:
             {
-                uint8_t *temp_ble_rx_packet;
+                uint8_t *temp_ble_rx_packet = NULL;
                 temp_ble_rx_packet = (uint8_t*) malloc(ble_rx_msg_buffer.len);
+                if (temp_ble_rx_packet == NULL)
+                {
+                    break;
+                }
+                else
+                {
+                    printf("malloc BLE_STACK_CENTRAL_EVT\r\n");
+                }
+
                 memcpy(temp_ble_rx_packet, &ble_rx_msg_buffer.msg, ble_rx_msg_buffer.len);
                 BLE_process_event_send(BLE_CENTRAL_EVT, BLE_CENTRAL_ST_DATA_RECEIVED, ble_rx_msg_buffer.conn_handle, 0, ble_rx_msg_buffer.len,
                         temp_ble_rx_packet);
@@ -766,8 +783,17 @@ void ble_stack_task(void *arg)
                 //peripheral rx message
             case BLE_STACK_PERIPHERAL_EVT:
             {
-                uint8_t *temp_ble_rx_packet;
+                uint8_t *temp_ble_rx_packet = NULL;
                 temp_ble_rx_packet = (uint8_t*) malloc(ble_rx_msg_buffer.len);
+                if (temp_ble_rx_packet == NULL)
+                {
+                    break;
+                }
+                else
+                {
+                    printf("malloc BLE_STACK_PERIPHERAL_EVT\r\n");
+                }
+
                 memcpy(temp_ble_rx_packet, &ble_rx_msg_buffer.msg, ble_rx_msg_buffer.len);
                 BLE_process_event_send(BLE_PERIPHERAL_EVT, BLE_PERIPHERAL_ST_DATA_RECEIVED, ble_rx_msg_buffer.conn_handle, 0, ble_rx_msg_buffer.len,
                         temp_ble_rx_packet);
@@ -822,7 +848,7 @@ void BLE_stack_task_init(void)
         printf("fail to sem_create\n\r");
     }
 
-    r = msgq_create(&ble_rx_msgq, sizeof(ble_rx_msgt), 10);
+    r = msgq_create(&ble_rx_msgq, sizeof(ble_rx_msgt), 30);
     if (0 != r)
     {
         printf("fail at msgq create\r\n");

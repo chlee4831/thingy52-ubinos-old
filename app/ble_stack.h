@@ -112,6 +112,8 @@ void set_ble_write_rsp_flag_set();
 uint8_t get_ble_write_rsp_flag();
 
 uint8_t* get_hub_sosp_id();
+
+uint8_t get_adv_buffer_count();
 /**********************************************************************************************************************/
 
 #endif /*BLE_H_*/

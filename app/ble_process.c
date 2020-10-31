@@ -49,7 +49,13 @@ void BLE_process_event_send(uint8_t event, uint8_t status, uint16_t conn_handle,
     ble_evt_msg.msg_len = msg_len;
     ble_evt_msg.msg = msg;
 
-    msgq_send(BLE_process_msgq, (unsigned char*) &ble_evt_msg);
+    int r;
+    r = msgq_send(BLE_process_msgq, (unsigned char*) &ble_evt_msg);
+    if (r != 0)
+    {
+        printf("BLE event send error : %d\r\n", r);
+    }
+
 }
 
 void clear_scan_target_paar_id()
@@ -95,8 +101,17 @@ static void processing_BLE_Central_Data_Received(BLEPEvt_msgt BLE_evt_msg)
     if (BLE_evt_msg.msg != NULL)
     {
         temp_msg = malloc(BLE_evt_msg.msg_len);
-        if (temp_msg != NULL)
-            memcpy(temp_msg, BLE_evt_msg.msg, BLE_evt_msg.msg_len);
+        if (temp_msg == NULL)
+        {
+            printf("malloc error : BLE_Central_Data_Received\r\n");
+            return;
+        }
+        else
+        {
+            printf("malloc processing_BLE_Central_Data_Received\r\n");
+        }
+
+        memcpy(temp_msg, BLE_evt_msg.msg, BLE_evt_msg.msg_len);
     }
     LAP_event_send(LAP_CENTRAL_EVT, LAP_CENTRAL_ST_DATA_RECEIVED, BLE_evt_msg.conn_handle, BLE_evt_msg.handle, BLE_evt_msg.msg_len, temp_msg);
 }
@@ -154,8 +169,17 @@ static int processing_BLE_Peripheral_Data_Received(BLEPEvt_msgt BLE_evt_msg)
     if (BLE_evt_msg.msg != NULL)
     {
         temp_msg = malloc(BLE_evt_msg.msg_len);
-        if (temp_msg != NULL)
-            memcpy(temp_msg, BLE_evt_msg.msg, BLE_evt_msg.msg_len);
+        if (temp_msg == NULL)
+        {
+            printf("malloc error : BLE Peripheral Data Received \r\n");
+            return -1;
+        }
+        else
+        {
+            printf("malloc processing_BLE_Peripheral_Data_Received\r\n");
+        }
+
+        memcpy(temp_msg, BLE_evt_msg.msg, BLE_evt_msg.msg_len);
     }
 
     return LAP_event_send(LAP_PERIPHERAL_EVT, LAP_PERIPHERAL_ST_DATA_RECEIVED, BLE_evt_msg.conn_handle, BLE_evt_msg.handle, BLE_evt_msg.msg_len, temp_msg);
