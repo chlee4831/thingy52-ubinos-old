@@ -66,7 +66,7 @@ static void processing_LAP_Central_Scan_result(LAPEvt_msgt LAP_evt_msg)
     //nothing...
 }
 
-static void send_packet_central(uint16_t conn_handle, uint16_t handle, paar_packet_t *packet)
+void send_packet_central(uint16_t conn_handle, uint16_t handle, paar_packet_t *packet)
 {
     uint8_t *temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
 
@@ -78,7 +78,7 @@ static void send_packet_central(uint16_t conn_handle, uint16_t handle, paar_pack
     }
 }
 
-static void send_ack_central(uint16_t conn_handle, uint16_t handle, paar_packet_t *packet)
+void send_ack_central(uint16_t conn_handle, uint16_t handle, paar_packet_t *packet)
 {
     uint8_t *temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
 
@@ -90,7 +90,7 @@ static void send_ack_central(uint16_t conn_handle, uint16_t handle, paar_packet_
     }
 }
 
-static void send_packet_peripheral(paar_packet_t *packet)
+void send_packet_peripheral(paar_packet_t *packet)
 {
     uint8_t *temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
 
@@ -102,7 +102,7 @@ static void send_packet_peripheral(paar_packet_t *packet)
     }
 }
 
-static void send_ack_peripheral(paar_packet_t *packet)
+void send_ack_peripheral(paar_packet_t *packet)
 {
     uint8_t *temp_packet = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
 
@@ -136,6 +136,7 @@ static void processing_LAP_Central_Connected(LAPEvt_msgt LAP_evt_msg)
     printf("BLE Central connect\r\n");
 
     uuidhandle temp_uuid_handle;
+    uint8_t cell_index;
 
     int r;
     r = cell_management_current_cccd_handle(&temp_uuid_handle);
@@ -159,6 +160,9 @@ static void processing_LAP_Central_Connected(LAPEvt_msgt LAP_evt_msg)
 
     cell_management_check_connection(LAP_evt_msg.conn_handle);
 
+    cell_index = cell_management_search_data_index_by_connhandle(LAP_evt_msg.conn_handle);
+    edge_manager_branch_add(cell_index);
+
     task_sleep(200);
 
     LAP_start_ble_scan(NULL);
@@ -168,6 +172,9 @@ static void processing_LAP_Central_Disconnected(LAPEvt_msgt LAP_evt_msg)
 {
     uint8_t index;
     index = cell_management_search_data_index_by_connhandle(LAP_evt_msg.conn_handle);
+
+    edge_manager_branch_remove(index);
+
     if (index != 0xFF)
     {
         cell_management_data_delete(index);
@@ -210,36 +217,7 @@ static void processing_LAP_Peripheral_Disconnected(LAPEvt_msgt LAP_evt_msg)
 
 static void processing_LAP_Peripheral_Data_Received(LAPEvt_msgt LAP_evt_msg)
 {
-    //todo Scan 명령 받아서 처리, ACK 송신
-    paar_packet_t *packet = (paar_packet_t*) LAP_evt_msg.msg;
-    paar_data_t *packet_data = (paar_data_t*) packet->data;
-
-    int i;
-    uint8_t *packet_arr = (uint8_t*) packet;
-    printf("Received Packet: 0x");
-    for (i = 0; i < PAAR_MAXIMUM_PACKET_SIZE; i++)
-    {
-        if (packet_arr[i] != NULL)
-        {
-            printf("%02X ", packet_arr[i]);
-        }
-    }
-//	printf("\r\n");
-    printf("\r\n");	//print packet
-
-    send_ack_peripheral(packet);
-
-    if (packet_data->cmd == PAAR_EDGE_CMD_SCAN_START)
-    {
-        packet_data->data[0] -= 1;
-        if (packet_data->data[0] == 0)
-        {
-
-            task_sleepms(100);
-
-            LAP_start_ble_scan(NULL);
-        }
-    }
+    edge_manager_peripheral_data_received(LAP_evt_msg);
 }
 
 static void processing_LAP_Peripheral_CCCD_Enabled(LAPEvt_msgt LAP_evt_msg)
@@ -337,6 +315,7 @@ void LAP_main_task(void *arg)
     LAP_Protocol_start_operation();
 
     cell_management_data_init();
+    edge_manager_init();
 
     for (;;)
     {

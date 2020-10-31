@@ -105,6 +105,10 @@ int LAP_event_send(uint8_t evt, uint8_t state, uint16_t conn_handle, uint16_t ha
 
 bool get_test_ble_connected();
 
-void send_test_msg_peripheral(uint8_t event);
+void send_packet_central(uint16_t conn_handle, uint16_t handle, paar_packet_t *packet);
+void send_ack_central(uint16_t conn_handle, uint16_t handle, paar_packet_t *packet);
+
+void send_packet_peripheral(paar_packet_t *packet);
+void send_ack_peripheral(paar_packet_t *packet);
 
 #endif /* APPLICATION_GASTAG_EXE_GASTAG_SRC_LAP_MAIN_H_ */
