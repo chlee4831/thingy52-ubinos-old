@@ -106,6 +106,15 @@ uint8_t* cell_management_search_paar_id_by_connhandle(uint16_t connhandle)
 
 }
 
+uint16_t get_cell_management_connhandle_by_index( index)
+{
+    if (cell_management_data[index].is_empty == false)
+    {
+        return cell_management_data[index].conn_handle;
+    }
+    return 0;
+}
+
 uint8_t* cell_management_get_PAAR_ID_by_index(uint8_t index)
 {
     if (cell_management_data[index].is_empty == false)

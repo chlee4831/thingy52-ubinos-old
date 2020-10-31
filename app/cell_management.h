@@ -55,4 +55,6 @@ int cell_management_current_cccd_handle(uuidhandle *handle);
 
 int get_cell_management_profile_data_by_index(uint8_t index, uuidhandle *handle);
 
+uint16_t get_cell_management_connhandle_by_index(index);
+
 #endif /* APP_CELL_MANAGEMENT_H_ */
