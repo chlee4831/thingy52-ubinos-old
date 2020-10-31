@@ -1,41 +1,41 @@
 /*
- Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
- All rights reserved.
+  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+  All rights reserved.
 
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
 
- 2. Redistributions in binary form, except as embedded into a Nordic
- Semiconductor ASA integrated circuit in a product or a software update for
- such product, must reproduce the above copyright notice, this list of
- conditions and the following disclaimer in the documentation and/or other
- materials provided with the distribution.
+  2. Redistributions in binary form, except as embedded into a Nordic
+     Semiconductor ASA integrated circuit in a product or a software update for
+     such product, must reproduce the above copyright notice, this list of
+     conditions and the following disclaimer in the documentation and/or other
+     materials provided with the distribution.
 
- 3. Neither the name of Nordic Semiconductor ASA nor the names of its
- contributors may be used to endorse or promote products derived from this
- software without specific prior written permission.
+  3. Neither the name of Nordic Semiconductor ASA nor the names of its
+     contributors may be used to endorse or promote products derived from this
+     software without specific prior written permission.
 
- 4. This software, with or without modification, must only be used with a
- Nordic Semiconductor ASA integrated circuit.
+  4. This software, with or without modification, must only be used with a
+     Nordic Semiconductor ASA integrated circuit.
 
- 5. Any software provided in binary form under this license must not be reverse
- engineered, decompiled, modified and/or disassembled.
+  5. Any software provided in binary form under this license must not be reverse
+     engineered, decompiled, modified and/or disassembled.
 
- THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
- OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
- LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+ 
 #ifndef PCA20020_H
 #define PCA20020_H
 
@@ -58,7 +58,7 @@
 #elif defined(THINGY_HW_v0_9_0)
     #define LIS2DH12_ADDR   0x18
 #else
-#define LIS2DH12_ADDR   0x19 ///< On Thingy HW > v1.0.0 this is situated on a different TWI bus.
+    #define LIS2DH12_ADDR   0x19 ///< On Thingy HW > v1.0.0 this is situated on a different TWI bus.
 #endif
 
 #define TWI_SENSOR_INSTANCE 0
@@ -68,7 +68,8 @@ typedef enum
     PIN_CLEAR,
     PIN_SET,
     PIN_NO_OUTPUT
-} pin_output_state_t;
+}pin_output_state_t;
+
 
 // Pin configurations used when powering down
 // Standard output cleared
@@ -145,29 +146,29 @@ typedef enum
 
 typedef struct
 {
-    nrf_gpio_pin_dir_t dir;
+    nrf_gpio_pin_dir_t   dir;
     nrf_gpio_pin_input_t input;
-    nrf_gpio_pin_pull_t pull;
+    nrf_gpio_pin_pull_t  pull;
     nrf_gpio_pin_drive_t drive;
     nrf_gpio_pin_sense_t sense;
-    pin_output_state_t state;
-} nrf_gpio_cfg_t;
+    pin_output_state_t   state;
+}nrf_gpio_cfg_t;
 
 typedef struct
 {
-    drv_ext_gpio_pin_dir_t dir;
-    drv_ext_gpio_pin_input_buf_t input_buf;
-    drv_ext_gpio_pin_pull_t pull_config;
-    drv_ext_gpio_pin_drive_type_t drive_type;
-    drv_ext_gpio_pin_slew_rate_t slew_rate;
-    pin_output_state_t state;
-} sx_gpio_cfg_t;
+    drv_ext_gpio_pin_dir_t          dir;
+    drv_ext_gpio_pin_input_buf_t    input_buf;
+    drv_ext_gpio_pin_pull_t         pull_config;
+    drv_ext_gpio_pin_drive_type_t   drive_type;
+    drv_ext_gpio_pin_slew_rate_t    slew_rate;
+    pin_output_state_t              state;
+}sx_gpio_cfg_t;
 
 typedef enum
 {
-    VDD_ON = true,
+    VDD_ON  = true,
     VDD_OFF = false
-} vdd_state_t;
+}vdd_state_t;
 
 // IO extender pin configuration for system off
 #define SX_IOEXT_NUM_PINS                   16
@@ -188,8 +189,8 @@ typedef enum
     #define SX_BAT_CHG_EN                   3
     #define IOEXT_PIN03_SYSTEM_DEFAULT_CFG  SX_PIN_INPUT_NOPULL
 #else
-#define SX_IOEXT_3                      3
-#define IOEXT_PIN03_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+    #define SX_IOEXT_3                      3
+    #define IOEXT_PIN03_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
 #endif
 
 #if defined(THINGY_HW_v0_7_0)
@@ -199,8 +200,8 @@ typedef enum
     #define SX_SPK_PWR_CTRL                 4
     #define IOEXT_PIN04_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
 #else
-#define SX_BAT_MON_EN                   4
-#define IOEXT_PIN04_SYSTEM_DEFAULT_CFG  SX_PIN_INPUT_NOPULL
+    #define SX_BAT_MON_EN                   4
+    #define IOEXT_PIN04_SYSTEM_DEFAULT_CFG  SX_PIN_INPUT_NOPULL
 #endif
 
 #define SX_LIGHTWELL_G                      5
@@ -222,8 +223,8 @@ typedef enum
     #define SX_MPU_PWR_CTRL                 8
     #define IOEXT_PIN08_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
 #else
-#define SX_MPU_PWR_CTRL                 8
-#define IOEXT_PIN08_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+    #define SX_MPU_PWR_CTRL                 8
+    #define IOEXT_PIN08_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
 #endif
 
 #if defined(THINGY_HW_v0_7_0)
@@ -236,8 +237,8 @@ typedef enum
     #define SX_MIC_PWR_CTRL                 9
     #define IOEXT_PIN09_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
 #else
-#define SX_MIC_PWR_CTRL                 9
-#define IOEXT_PIN09_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+    #define SX_MIC_PWR_CTRL                 9
+    #define IOEXT_PIN09_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
 #endif
 
 #if defined(THINGY_HW_v0_7_0)
@@ -250,8 +251,8 @@ typedef enum
     #define SX_CCS_PWR_CTRL                 10
     #define IOEXT_PIN10_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_SET
 #else
-#define SX_CCS_PWR_CTRL                 10
-#define IOEXT_PIN10_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
+    #define SX_CCS_PWR_CTRL                 10
+    #define IOEXT_PIN10_SYSTEM_DEFAULT_CFG  SX_PIN_OUTPUT_CLEAR
 #endif
 
 #define SX_CCS_RESET                        11
@@ -317,8 +318,8 @@ typedef enum
     #define ANA_DIG3                        5
     #define PIN05_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_PULLDOWN
 #else
-#define IOEXT_OSCIO                     5
-#define PIN05_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_PULLDOWN
+    #define IOEXT_OSCIO                     5
+    #define PIN05_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_PULLDOWN
 #endif
 
 #define MPU_INT                             6
@@ -380,7 +381,7 @@ typedef enum
 #elif  defined(THINGY_HW_v0_9_0)
     #define PIN23_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_NOPULL  
 #else
-#define PIN23_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_PULLDOWN
+    #define PIN23_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_PULLDOWN
 #endif
 
 #define HTS_INT                             24
@@ -391,7 +392,7 @@ typedef enum
 #elif  defined(THINGY_HW_v0_9_0)                                   
     #define PIN24_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_NOPULL  
 #else                                                              
-#define PIN24_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_PULLDOWN
+    #define PIN24_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_PULLDOWN
 #endif
 
 #define MIC_DOUT                            25
@@ -417,13 +418,13 @@ typedef enum
     #define SPK_PWR_CTRL                    29
     #define PIN29_SYSTEM_DEFAULT_CFG        NRF_PIN_OUTPUT_CLEAR
 #else
-#define SPK_PWR_CTRL                    29
-#define PIN29_SYSTEM_DEFAULT_CFG        NRF_PIN_OUTPUT_CLEAR
+    #define SPK_PWR_CTRL                    29
+    #define PIN29_SYSTEM_DEFAULT_CFG        NRF_PIN_OUTPUT_CLEAR
 #endif
 
 /** Thingy VDD power. Is kept on in earlier versions to have power to the low power accelerometer.
- In newer versions, the low power accelerometer is connected to a different power domain, and will
- remain on to wake the system even if VDD is turned off. */
+In newer versions, the low power accelerometer is connected to a different power domain, and will
+remain on to wake the system even if VDD is turned off. */
 #define VDD_PWR_CTRL                        30
 #if defined(THINGY_HW_v0_7_0)
     #define PIN30_SYSTEM_DEFAULT_CFG        NRF_PIN_OUTPUT_SET      /** VDD ON!. */
@@ -432,7 +433,7 @@ typedef enum
 #elif  defined(THINGY_HW_v0_9_0)
     #define PIN30_SYSTEM_DEFAULT_CFG        NRF_PIN_OUTPUT_SET      /** VDD ON!. */
 #else
-#define PIN30_SYSTEM_DEFAULT_CFG        NRF_PIN_OUTPUT_CLEAR    /** VDD OFF. */
+    #define PIN30_SYSTEM_DEFAULT_CFG        NRF_PIN_OUTPUT_CLEAR    /** VDD OFF. */
 #endif
 
 #define BH_INT                              31
@@ -443,7 +444,7 @@ typedef enum
 #elif  defined(THINGY_HW_v0_9_0)
     #define PIN31_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_NOPULL
 #else
-#define PIN31_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_PULLDOWN
+    #define PIN31_SYSTEM_DEFAULT_CFG        NRF_PIN_DISCON_PULLDOWN
 #endif
 
 #define NRF_SYSTEM_DEFAULT_PIN_CFG      \
@@ -490,8 +491,8 @@ typedef enum
 #define BATT_VOLTAGE_DIVIDER_R2      180000
 
 #ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
 DRV_EXT_LIGHT_DEF(my_led_0);
@@ -525,128 +526,22 @@ DRV_EXT_LIGHT_DEF(my_led_1);
 #define BATT_MEAS_VOLTAGE_TO_SOC_DELTA_MV  10 // mV between each element in the SoC vector.
 
 /** Converts voltage to state of charge (SoC) [%]. The first element corresponds to the voltage 
- BATT_MEAS_LOW_BATT_LIMIT_MV and each element is BATT_MEAS_VOLTAGE_TO_SOC_DELTA_MV higher than the previous.
- Numbers are obtained via model fed with experimental data. */
-static const uint8_t BATT_MEAS_VOLTAGE_TO_SOC[] =
-{
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        5,
-        5,
-        5,
-        6,
-        6,
-        7,
-        7,
-        8,
-        8,
-        9,
-        9,
-        10,
-        11,
-        12,
-        13,
-        13,
-        14,
-        15,
-        16,
-        18,
-        19,
-        22,
-        25,
-        28,
-        32,
-        36,
-        40,
-        44,
-        47,
-        51,
-        53,
-        56,
-        58,
-        60,
-        62,
-        64,
-        66,
-        67,
-        69,
-        71,
-        72,
-        74,
-        76,
-        77,
-        79,
-        81,
-        82,
-        84,
-        85,
-        85,
-        86,
-        86,
-        86,
-        87,
-        88,
-        88,
-        89,
-        90,
-        91,
-        91,
-        92,
-        93,
-        94,
-        95,
-        96,
-        97,
-        98,
-        99,
-        100,
-        100 };
+BATT_MEAS_LOW_BATT_LIMIT_MV and each element is BATT_MEAS_VOLTAGE_TO_SOC_DELTA_MV higher than the previous.
+Numbers are obtained via model fed with experimental data. */
+static const uint8_t BATT_MEAS_VOLTAGE_TO_SOC[] = { 
+ 0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2,
+ 2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,
+ 4,  5,  5,  5,  6,  6,  7,  7,  8,  8,  9,  9, 10, 11, 12, 13, 13, 14, 15, 16,
+18, 19, 22, 25, 28, 32, 36, 40, 44, 47, 51, 53, 56, 58, 60, 62, 64, 66, 67, 69,
+71, 72, 74, 76, 77, 79, 81, 82, 84, 85, 85, 86, 86, 86, 87, 88, 88, 89, 90, 91,
+91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 100};
 
 #if defined(THINGY_HW_v0_8_0)
     #define BAT_MON_EN_PIN_USED   false
     #define BAT_MON_EN_PIN_NO     BATT_MEAS_INVALID_PIN
 #else
-#define BAT_MON_EN_PIN_USED   true
-#define BAT_MON_EN_PIN_NO     SX_BAT_MON_EN
+    #define BAT_MON_EN_PIN_USED   true
+    #define BAT_MON_EN_PIN_NO     SX_BAT_MON_EN
 #endif
 
 // Battery monitoring setup.

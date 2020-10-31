@@ -1,7 +1,7 @@
 /*
  $License:
- Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
- See included License.txt for License information.
+    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
+    See included License.txt for License information.
  $
  */
 /**
@@ -90,7 +90,8 @@ int dmp_enable_gyro_cal(unsigned char enable);
 /* Read function. This function should be called whenever the MPU interrupt is
  * detected.
  */
-int dmp_read_fifo(short *gyro, short *accel, long *quat, unsigned long *timestamp, short *sensors, unsigned char *more);
+int dmp_read_fifo(short *gyro, short *accel, long *quat,
+    unsigned long *timestamp, short *sensors, unsigned char *more);
 
 #endif  /* #ifndef _INV_MPU_DMP_MOTION_DRIVER_H_ */
 

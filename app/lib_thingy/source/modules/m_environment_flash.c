@@ -1,39 +1,39 @@
 /*
- Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
- All rights reserved.
+  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+  All rights reserved.
 
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
 
- 2. Redistributions in binary form, except as embedded into a Nordic
- Semiconductor ASA integrated circuit in a product or a software update for
- such product, must reproduce the above copyright notice, this list of
- conditions and the following disclaimer in the documentation and/or other
- materials provided with the distribution.
+  2. Redistributions in binary form, except as embedded into a Nordic
+     Semiconductor ASA integrated circuit in a product or a software update for
+     such product, must reproduce the above copyright notice, this list of
+     conditions and the following disclaimer in the documentation and/or other
+     materials provided with the distribution.
 
- 3. Neither the name of Nordic Semiconductor ASA nor the names of its
- contributors may be used to endorse or promote products derived from this
- software without specific prior written permission.
+  3. Neither the name of Nordic Semiconductor ASA nor the names of its
+     contributors may be used to endorse or promote products derived from this
+     software without specific prior written permission.
 
- 4. This software, with or without modification, must only be used with a
- Nordic Semiconductor ASA integrated circuit.
+  4. This software, with or without modification, must only be used with a
+     Nordic Semiconductor ASA integrated circuit.
 
- 5. Any software provided in binary form under this license must not be reverse
- engineered, decompiled, modified and/or disassembled.
+  5. Any software provided in binary form under this license must not be reverse
+     engineered, decompiled, modified and/or disassembled.
 
- THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
- OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
- LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include <stdint.h>
@@ -57,7 +57,7 @@
  */
 typedef struct
 {
-    uint32_t valid;
+    uint32_t         valid;
     tes_config_t config;
 } m_env_flash_config_data_t;
 
@@ -66,14 +66,14 @@ typedef struct
 typedef union
 {
     m_env_flash_config_data_t data;
-    uint32_t padding[CEIL_DIV(sizeof(m_env_flash_config_data_t), 4)];
+    uint32_t               padding[CEIL_DIV(sizeof(m_env_flash_config_data_t), 4)];
 } m_env_flash_config_t;
 
 /**@brief Data structure of gas sensor baseline data stored in flash.
  */
 typedef struct
 {
-    uint32_t valid;
+    uint32_t         valid;
     m_gas_baseline_t baseline;
 } m_env_flash_baseline_data_t;
 
@@ -82,73 +82,75 @@ typedef struct
 typedef union
 {
     m_env_flash_baseline_data_t data;
-    uint32_t padding[CEIL_DIV(sizeof(m_env_flash_baseline_data_t), 4)];
+    uint32_t               padding[CEIL_DIV(sizeof(m_env_flash_baseline_data_t), 4)];
 } m_env_flash_baseline_t;
 
-static fds_record_desc_t m_record_config_desc;
-static fds_record_desc_t m_record_baseline_desc;
-static m_env_flash_config_t m_config;
-static m_env_flash_baseline_t m_gas_baseline;
-static bool m_fds_config_write_success = false;
-static bool m_fds_config_initialized = false;
-static bool m_fds_baseline_write_success = false;
-static bool m_fds_baseline_initialized = false;
+static fds_record_desc_t        m_record_config_desc;
+static fds_record_desc_t        m_record_baseline_desc;
+static m_env_flash_config_t     m_config;
+static m_env_flash_baseline_t   m_gas_baseline;
+static bool                     m_fds_config_write_success = false;
+static bool                     m_fds_config_initialized = false;
+static bool                     m_fds_baseline_write_success = false;
+static bool                     m_fds_baseline_initialized = false;
 
 /**@brief Function for handling flash data storage events.
  */
-static void env_fds_evt_handler(fds_evt_t const *const p_fds_evt)
+static void env_fds_evt_handler( fds_evt_t const * const p_fds_evt )
 {
     switch (p_fds_evt->id)
     {
-    case FDS_EVT_INIT:
-        if (p_fds_evt->result == NRF_SUCCESS)
-        {
-            m_fds_config_initialized = true;
-            m_fds_baseline_initialized = true;
-        }
-        else
-        {
-            // Initialization failed.
-            NRF_LOG_ERROR("FDS init failed!\r\n");
-            APP_ERROR_CHECK_BOOL(false);
-        }
-        break;
-    case FDS_EVT_WRITE:
-        if (p_fds_evt->result == NRF_SUCCESS)
-        {
-            if (p_fds_evt->write.file_id == ENV_FILE_ID)
+        case FDS_EVT_INIT:
+            if (p_fds_evt->result == NRF_SUCCESS)
             {
-                NRF_LOG_INFO("FDS config write success! %d FileId: 0x%x RecKey:0x%x\r\n", p_fds_evt->write.is_record_updated, p_fds_evt->write.file_id,
-                        p_fds_evt->write.record_key);
-                m_fds_config_write_success = true;
+                m_fds_config_initialized = true;
+                m_fds_baseline_initialized = true;
             }
+            else
+            {
+                // Initialization failed.
+                NRF_LOG_ERROR("FDS init failed!\r\n");
+                APP_ERROR_CHECK_BOOL(false);
+            }
+            break;
+        case FDS_EVT_WRITE:
+            if (p_fds_evt->result == NRF_SUCCESS)
+            {
+                if (p_fds_evt->write.file_id == ENV_FILE_ID)
+                {
+                    NRF_LOG_INFO("FDS config write success! %d FileId: 0x%x RecKey:0x%x\r\n",   p_fds_evt->write.is_record_updated,
+                                                                                                p_fds_evt->write.file_id,
+                                                                                                p_fds_evt->write.record_key);
+                    m_fds_config_write_success = true;
+                }
 
-            if (p_fds_evt->write.file_id == ENV_FILE_BASELINE_ID)
-            {
-                NRF_LOG_INFO("FDS baseline write success! %d FileId: 0x%x RecKey:0x%x\r\n", p_fds_evt->write.is_record_updated, p_fds_evt->write.file_id,
-                        p_fds_evt->write.record_key);
-                m_fds_baseline_write_success = true;
+                if (p_fds_evt->write.file_id == ENV_FILE_BASELINE_ID)
+                {
+                    NRF_LOG_INFO("FDS baseline write success! %d FileId: 0x%x RecKey:0x%x\r\n", p_fds_evt->write.is_record_updated,
+                                                                                                p_fds_evt->write.file_id,
+                                                                                                p_fds_evt->write.record_key);
+                    m_fds_baseline_write_success = true;
+                }
             }
-        }
-        else
-        {
-            // Initialization failed.
-            NRF_LOG_ERROR("FDS write failed!\r\n");
-            APP_ERROR_CHECK_BOOL(false);
-        }
-        break;
-    default:
-        NRF_LOG_INFO("FDS handler - %d - %d\r\n", p_fds_evt->id, p_fds_evt->result)
-        ;
-        APP_ERROR_CHECK(p_fds_evt->result);
-        break;
+            else
+            {
+                // Initialization failed.
+                NRF_LOG_ERROR("FDS write failed!\r\n");
+                APP_ERROR_CHECK_BOOL(false);
+            }
+            break;
+        default:
+            NRF_LOG_INFO("FDS handler - %d - %d\r\n", p_fds_evt->id, p_fds_evt->result);
+            APP_ERROR_CHECK(p_fds_evt->result);
+            break;
     }
 }
 
-uint32_t m_env_flash_config_store(const tes_config_t *p_config)
+
+uint32_t m_env_flash_config_store(const tes_config_t * p_config)
 {
-    uint32_t err_code;
-    fds_record_t record;
+    uint32_t            err_code;
+    fds_record_t        record;
 
     NRF_LOG_INFO("Storing configuration\r\n");
 
@@ -158,11 +160,11 @@ uint32_t m_env_flash_config_store(const tes_config_t *p_config)
     m_config.data.valid = WS_FLASH_CONFIG_VALID;
 
     // Set up data.
-    record.data.p_data = &m_config;
-    record.data.length_words = sizeof(m_env_flash_config_t) / 4;
+    record.data.p_data         = &m_config;
+    record.data.length_words   = sizeof(m_env_flash_config_t)/4;
     // Set up record.
-    record.file_id = ENV_FILE_ID;
-    record.key = ENV_REC_KEY;
+    record.file_id              = ENV_FILE_ID;
+    record.key                  = ENV_REC_KEY;
 
     err_code = fds_record_update(&m_record_config_desc, &record);
     RETURN_IF_ERROR(err_code);
@@ -170,11 +172,12 @@ uint32_t m_env_flash_config_store(const tes_config_t *p_config)
     return NRF_SUCCESS;
 }
 
-uint32_t m_env_flash_config_load(tes_config_t **p_config)
+
+uint32_t m_env_flash_config_load(tes_config_t ** p_config)
 {
-    uint32_t err_code;
-    fds_flash_record_t flash_record;
-    fds_find_token_t ftok;
+    uint32_t            err_code;
+    fds_flash_record_t  flash_record;
+    fds_find_token_t    ftok;
 
     memset(&ftok, 0x00, sizeof(fds_find_token_t));
 
@@ -196,10 +199,11 @@ uint32_t m_env_flash_config_load(tes_config_t **p_config)
     return NRF_SUCCESS;
 }
 
-uint32_t m_env_flash_baseline_store(const m_gas_baseline_t *p_baseline)
+
+uint32_t m_env_flash_baseline_store(const m_gas_baseline_t * p_baseline)
 {
-    uint32_t err_code;
-    fds_record_t record;
+    uint32_t            err_code;
+    fds_record_t        record;
 
     NRF_LOG_DEBUG("Storing baseline \r\n");
 
@@ -209,11 +213,11 @@ uint32_t m_env_flash_baseline_store(const m_gas_baseline_t *p_baseline)
     m_gas_baseline.data.valid = WS_FLASH_CONFIG_VALID;
 
     // Set up data.
-    record.data.p_data = &m_gas_baseline;
-    record.data.length_words = sizeof(m_env_flash_baseline_t) / 4;
+    record.data.p_data         = &m_gas_baseline;
+    record.data.length_words   = sizeof(m_env_flash_baseline_t)/4;
     // Set up record.
-    record.file_id = ENV_FILE_BASELINE_ID;
-    record.key = ENV_REC_BASELINE_KEY;
+    record.file_id              = ENV_FILE_BASELINE_ID;
+    record.key                  = ENV_REC_BASELINE_KEY;
 
     err_code = fds_record_update(&m_record_baseline_desc, &record);
     RETURN_IF_ERROR(err_code);
@@ -221,11 +225,12 @@ uint32_t m_env_flash_baseline_store(const m_gas_baseline_t *p_baseline)
     return NRF_SUCCESS;
 }
 
-uint32_t m_env_flash_baseline_load(m_gas_baseline_t **p_baseline)
+
+uint32_t m_env_flash_baseline_load(m_gas_baseline_t ** p_baseline)
 {
-    uint32_t err_code;
-    fds_flash_record_t flash_record;
-    fds_find_token_t ftok;
+    uint32_t            err_code;
+    fds_flash_record_t  flash_record;
+    fds_find_token_t    ftok;
 
     memset(&ftok, 0x00, sizeof(fds_find_token_t));
 
@@ -247,13 +252,16 @@ uint32_t m_env_flash_baseline_load(m_gas_baseline_t **p_baseline)
     return NRF_SUCCESS;
 }
 
-uint32_t m_env_flash_init(const tes_config_t *p_default_config, tes_config_t **p_config, const m_gas_baseline_t *p_default_baseline,
-        m_gas_baseline_t **p_baseline)
+
+uint32_t m_env_flash_init(const tes_config_t * p_default_config,
+                          tes_config_t      ** p_config,
+                          const m_gas_baseline_t * p_default_baseline,
+                          m_gas_baseline_t      ** p_baseline)
 {
     uint32_t err_code;
 
     NRF_LOG_INFO("Initialization\r\n");
-
+    
     NULL_PARAM_CHECK(p_default_config);
     NULL_PARAM_CHECK(p_default_baseline);
 
@@ -269,22 +277,22 @@ uint32_t m_env_flash_init(const tes_config_t *p_default_config, tes_config_t **p
     }
 
     err_code = m_env_flash_config_load(p_config);
-
+    
     if (err_code == FDS_ERR_NOT_FOUND)
     {
         NRF_LOG_INFO("Writing default config\r\n");
 
-        fds_record_t record;
+        fds_record_t        record;
 
         memcpy(&m_config.data.config, p_default_config, sizeof(tes_config_t));
         m_config.data.valid = WS_FLASH_CONFIG_VALID;
 
         // Set up data.
-        record.data.p_data = &m_config;
-        record.data.length_words = sizeof(m_env_flash_config_t) / 4;
+        record.data.p_data         = &m_config;
+        record.data.length_words   = sizeof(m_env_flash_config_t)/4;
         // Set up record.
-        record.file_id = ENV_FILE_ID;
-        record.key = ENV_REC_KEY;
+        record.file_id              = ENV_FILE_ID;
+        record.key                  = ENV_REC_KEY;
 
         m_fds_config_write_success = false;
         err_code = fds_record_write(&m_record_config_desc, &record);
@@ -292,7 +300,7 @@ uint32_t m_env_flash_init(const tes_config_t *p_default_config, tes_config_t **p
 
         *p_config = &m_config.data.config;
 
-        while (m_fds_config_write_success != true)
+        while(m_fds_config_write_success != true)
         {
             app_sched_execute();
         }
@@ -305,20 +313,20 @@ uint32_t m_env_flash_init(const tes_config_t *p_default_config, tes_config_t **p
     err_code = m_env_flash_baseline_load(p_baseline);
     if (err_code == FDS_ERR_NOT_FOUND)
     {
-        fds_record_t record;
+        fds_record_t        record;
 
-        NRF_LOG_INFO("Writing default baseline to flash 0x%04x 0x%04x 0x%04x 0x%04x \r\n", p_default_baseline->mode_250ms, p_default_baseline->mode_1s,
-                p_default_baseline->mode_10s, p_default_baseline->mode_60s);
+        NRF_LOG_INFO("Writing default baseline to flash 0x%04x 0x%04x 0x%04x 0x%04x \r\n",
+        p_default_baseline->mode_250ms, p_default_baseline->mode_1s, p_default_baseline->mode_10s, p_default_baseline->mode_60s);
 
         memcpy(&m_gas_baseline.data.baseline, p_default_baseline, sizeof(m_gas_baseline_t));
         m_gas_baseline.data.valid = WS_FLASH_CONFIG_VALID;
 
         // Set up data.
-        record.data.p_data = &m_gas_baseline;
-        record.data.length_words = sizeof(m_env_flash_baseline_t) / 4;
+        record.data.p_data         = &m_gas_baseline;
+        record.data.length_words   = sizeof(m_env_flash_baseline_t)/4;
         // Set up record.
-        record.file_id = ENV_FILE_BASELINE_ID;
-        record.key = ENV_REC_BASELINE_KEY;
+        record.file_id              = ENV_FILE_BASELINE_ID;
+        record.key                  = ENV_REC_BASELINE_KEY;
 
         m_fds_baseline_write_success = false;
         err_code = fds_record_write(&m_record_baseline_desc, &record);
@@ -326,7 +334,7 @@ uint32_t m_env_flash_init(const tes_config_t *p_default_config, tes_config_t **p
 
         *p_baseline = &m_gas_baseline.data.baseline;
 
-        while (m_fds_baseline_write_success != true)
+        while(m_fds_baseline_write_success != true)
         {
             app_sched_execute();
         }

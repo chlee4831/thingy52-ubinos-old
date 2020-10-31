@@ -1,7 +1,7 @@
 /*
  $License:
- Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
- See included License.txt for License information.
+    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
+    See included License.txt for License information.
  $
  */
 /**
@@ -52,7 +52,7 @@ inv_error_t inv_get_version(char **version)
 {
     INVENSENSE_FUNC_START;
     /* cast out the const */
-    *version = (char*) &ml_ver;
+    *version = (char *)&ml_ver;
     return INV_SUCCESS;
 }
 

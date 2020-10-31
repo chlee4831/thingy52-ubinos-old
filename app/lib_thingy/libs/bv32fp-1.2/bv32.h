@@ -18,19 +18,30 @@
 /* 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                 */
 /*****************************************************************************/
 
+
 /*****************************************************************************
- bv32.h :
+  bv32.h :
 
- $Log$
- ******************************************************************************/
+  $Log$
+******************************************************************************/
 
-extern void Reset_BV32_Coder(struct BV32_Encoder_State *cs);
+extern void Reset_BV32_Coder(
+struct BV32_Encoder_State *cs);
 
-extern void BV32_Encode(struct BV32_Bit_Stream *bs, struct BV32_Encoder_State *cs, short *inx);
+extern void BV32_Encode(
+struct BV32_Bit_Stream *bs,
+struct BV32_Encoder_State *cs,
+short  *inx);
 
-extern void Reset_BV32_Decoder(struct BV32_Decoder_State *ds);
+extern void Reset_BV32_Decoder(
+struct BV32_Decoder_State *ds);
 
-extern void BV32_Decode(struct BV32_Bit_Stream *bs, struct BV32_Decoder_State *ds, short *out);
+extern void BV32_Decode(
+struct BV32_Bit_Stream     *bs,
+struct BV32_Decoder_State  *ds,
+short	*out);
 
-extern void BV32_PLC(struct BV32_Decoder_State *ds, short *out);
+extern void BV32_PLC(
+struct  BV32_Decoder_State   *ds,
+short	*out);
 

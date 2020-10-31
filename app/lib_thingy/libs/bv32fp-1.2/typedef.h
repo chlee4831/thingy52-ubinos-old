@@ -18,15 +18,16 @@
 /* 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                 */
 /*****************************************************************************/
 
-/*****************************************************************************
- typedef.h : Common Floating-Point Library:
 
- $Log$
- ******************************************************************************/
+/*****************************************************************************
+  typedef.h : Common Floating-Point Library:
+
+  $Log$
+******************************************************************************/
 
 #ifndef	__TYPEDEF__
 #define	__TYPEDEF__
-typedef float Float;
-typedef unsigned char UWord8;
-typedef unsigned int UWord32;
+typedef float           Float;
+typedef unsigned char   UWord8;
+typedef unsigned int    UWord32;
 #endif

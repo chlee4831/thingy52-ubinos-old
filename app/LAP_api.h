@@ -112,50 +112,48 @@
 #define DEVICE_ID_HOME_APP_TAG					0xD4
 #define DEVICE_ID_ENVIRONMENT_TAG				0xD8
 
-typedef struct
-{
-    uint16_t tx_handle;
-    uint16_t rx_handle;
-    uint16_t cccd_handle;
+typedef struct {
+	uint16_t tx_handle;
+	uint16_t rx_handle;
+	uint16_t cccd_handle;
 } uuidhandle;
 
-typedef struct
-{
+typedef struct {
 
-    ble_gap_addr_t gap_addr;
-    uint32_t paarID;		// peer device 's device id (4 byte, copyright CSOS)
+	ble_gap_addr_t 	gap_addr;
+	uint32_t 		paarID;		// peer device 's device id (4 byte, copyright CSOS)
 
-    uint8_t status_byte;
-    uint8_t LF_dist;
-    uint8_t RF_rssi;
+	uint8_t 		status_byte;
+	uint8_t 		LF_dist;
+	uint8_t 		RF_rssi;
 
-    uuidhandle profile_data;
-    bool scan_check;
+	uuidhandle 		profile_data;
+	bool 			scan_check;
 } scanDevRev_t;
 
-typedef struct
-{
-    uint16_t connHandle;
-    ble_gap_addr_t peer_addr;
+typedef struct {
+	uint16_t 		connHandle;
+	ble_gap_addr_t 	peer_addr;
 
-    uuidhandle peer_profile;
-    bool is_connected;
+	uuidhandle 		peer_profile;
+	bool			is_connected;
 
-    uint32_t peer_paarID;
-    uint8_t device_type;
-    uint8_t service_type;
+	uint32_t 		peer_paarID;
+	uint8_t			device_type;
+	uint8_t 		service_type;
 } conn_info_t;
+
 
 uint8_t get_scanDevCnt(void);
 void set_scanDevCnt(uint8_t val);
 
-scanDevRev_t* get_scanDevList(void);
+scanDevRev_t* get_scanDevList(void) ;
 void clear_scanDevList(void);
 
-conn_info_t* get_connInfo(void);
+conn_info_t * get_connInfo(void);
 void clear_connInfo(void);
 
-void add_List_LAP_advdata(ble_gap_evt_adv_report_t *pkt);
+void add_List_LAP_advdata(ble_gap_evt_adv_report_t* pkt);
 
 conn_info_t* get_LAP_connInfoList(void);
 
@@ -166,22 +164,22 @@ void LAP_start_ble_adv_LIDx();
 void LAP_stop_ble_adv_LIDx();
 
 //Start BLE Scan
-void LAP_start_ble_scan(uint8_t *target_paar_id);
+void LAP_start_ble_scan(uint8_t* target_paar_id);
 //Start BLE connection(Central Role Mode)
-void LAP_start_ble_connect(ble_gap_evt_adv_report_t *adv_data);
+void LAP_start_ble_connect(ble_gap_evt_adv_report_t* adv_data);
 //Start BLE disconnection(Cenral Role Mode)
 void LAP_start_ble_disconnect(uint16_t conn_handle);
 //Save UUID handle from ble advertising data(PAAR)
-void LAP_save_uuid_handle(ble_gap_evt_adv_report_t *pPkt, paar_uuidhandle *uuid_handle);
+void LAP_save_uuid_handle(ble_gap_evt_adv_report_t* pPkt, paar_uuidhandle* uuid_handle);
 //Send ble msg : Central Connection
-void LAP_send_ble_msg_central(uint16_t conn_handle, uint16_t handle, uint8_t *msg, uint8_t msg_len);
+void LAP_send_ble_msg_central(uint16_t conn_handle, uint16_t handle, uint8_t* msg, uint8_t msg_len);
 
 //Checking LAP ADV Packet
-bool is_LAP_adv_packet(LAP_ble_adv_report *pPkt);
+bool is_LAP_adv_packet(LAP_ble_adv_report* pPkt);
 
 //Checking LAP ADV Packet : Location Request
-int process_LAP_location_request_packet(LAP_ble_adv_report *pPkt);
+int process_LAP_location_request_packet(LAP_ble_adv_report* pPkt);
 
 //send ble peripheral message : PAAR profile
-void LAP_send_ble_msg_peripheral(uint8_t *msg, uint8_t msg_len);
+void LAP_send_ble_msg_peripheral(uint8_t* msg, uint8_t msg_len);
 #endif /* APPLICATION_SPB_EXE_SPB_SRC_LAP_API_H_ */

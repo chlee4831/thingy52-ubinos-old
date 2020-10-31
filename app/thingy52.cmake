@@ -1,5 +1,5 @@
-#set_cache(UBINOS__UBIK__TICK_TYPE "RTC" STRING)
-#set_cache(UBINOS__UBIK__TICK_PER_SEC 1024 STRING)
+set_cache(UBINOS__UBIK__TICK_TYPE "RTC" STRING)
+set_cache(UBINOS__UBIK__TICK_PER_SEC 1024 STRING)
 
 set_cache(NRF5SDK__BOARD_NAME                                                   "PCA10040"  STRING)
 

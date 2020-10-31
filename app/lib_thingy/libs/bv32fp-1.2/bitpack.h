@@ -18,16 +18,17 @@
 /* 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                 */
 /*****************************************************************************/
 
-/*****************************************************************************
- bitpack.h: BV32 bit packing routines
 
- $Log$
- ******************************************************************************/
+/*****************************************************************************
+  bitpack.h: BV32 bit packing routines
+
+  $Log$
+******************************************************************************/
 
 #ifndef BITPACK_H
 #define BITPACK_H
 
-void BV32_BitPack(UWord8 *PackedStream, struct BV32_Bit_Stream *BitStruct);
-void BV32_BitUnPack(UWord8 *PackedStream, struct BV32_Bit_Stream *BitStruct);
+void BV32_BitPack(UWord8 * PackedStream, struct BV32_Bit_Stream * BitStruct);
+void BV32_BitUnPack(UWord8 * PackedStream, struct BV32_Bit_Stream * BitStruct);
 
 #endif

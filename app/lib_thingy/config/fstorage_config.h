@@ -1,39 +1,39 @@
 /*
- Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
- All rights reserved.
+  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+  All rights reserved.
 
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
 
- 2. Redistributions in binary form, except as embedded into a Nordic
- Semiconductor ASA integrated circuit in a product or a software update for
- such product, must reproduce the above copyright notice, this list of
- conditions and the following disclaimer in the documentation and/or other
- materials provided with the distribution.
+  2. Redistributions in binary form, except as embedded into a Nordic
+     Semiconductor ASA integrated circuit in a product or a software update for
+     such product, must reproduce the above copyright notice, this list of
+     conditions and the following disclaimer in the documentation and/or other
+     materials provided with the distribution.
 
- 3. Neither the name of Nordic Semiconductor ASA nor the names of its
- contributors may be used to endorse or promote products derived from this
- software without specific prior written permission.
+  3. Neither the name of Nordic Semiconductor ASA nor the names of its
+     contributors may be used to endorse or promote products derived from this
+     software without specific prior written permission.
 
- 4. This software, with or without modification, must only be used with a
- Nordic Semiconductor ASA integrated circuit.
+  4. This software, with or without modification, must only be used with a
+     Nordic Semiconductor ASA integrated circuit.
 
- 5. Any software provided in binary form under this license must not be reverse
- engineered, decompiled, modified and/or disassembled.
+  5. Any software provided in binary form under this license must not be reverse
+     engineered, decompiled, modified and/or disassembled.
 
- THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
- OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
- LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef FS_CONFIG_H__
@@ -46,6 +46,7 @@
  *
  * @brief fstorage configuration options.
  */
+
 
 /**@brief   Configures the size of fstorage internal queue.
  * @details Increase this if there are many users, or if it is likely that many operation will be
@@ -62,6 +63,7 @@
  */
 #define FS_OP_MAX_RETRIES   (5)
 
+
 /**@brief   Configures the maximum number of words to be written to flash in a single operation.
  *          If data length exceeds this value, the data will be written down in several chunks,
  *          as necessary.
@@ -74,7 +76,7 @@
 #if   defined (NRF51)
     #define FS_MAX_WRITE_SIZE_WORDS     (256)
 #elif defined (NRF52)
-#define FS_MAX_WRITE_SIZE_WORDS     (1024)
+    #define FS_MAX_WRITE_SIZE_WORDS     (1024)
 #endif
 
 /** @} */

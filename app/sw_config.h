@@ -40,6 +40,7 @@
 /* status byte in Advertising packet payloads */
 #define LIDx_STATUS									0x00
 
+
 #define PNIP_STATUS									0x01
 #define REQ_CONN_SOSP_STATUS						0x02
 #define REQ_CONN_SMARTDEVICE_STATUS					0x04

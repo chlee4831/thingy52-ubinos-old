@@ -1,7 +1,7 @@
 /*
  $License:
- Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
- See included License.txt for License information.
+    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
+    See included License.txt for License information.
  $
  */
 #include "mltypes.h"
@@ -10,8 +10,7 @@
 #define INV_DATA_BUILDER_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 // Uncomment this flag to enable playback debug and record or playback scenarios
@@ -60,15 +59,14 @@ extern "C"
 #define INV_PRIORITY_SHAKE                     975
 #define INV_PRIORITY_SM                        1000
 
-struct inv_single_sensor_t
-{
+struct inv_single_sensor_t {
     /** Orientation Descriptor. Describes how to go from the mounting frame to the body frame when
-     * the rotation matrix could be thought of only having elements of 0,1,-1.
-     * 2 bits are used to describe the column of the 1 or -1 and the 3rd bit is used for the sign.
-     * Bit 8 is sign of +/- 1 in third row. Bit 6-7 is column of +/-1 in third row.
-     * Bit 5 is sign of +/- 1 in second row. Bit 3-4 is column of +/-1 in second row.
-     * Bit 2 is sign of +/- 1 in first row. Bit 0-1 is column of +/-1 in first row.
-     */
+    * the rotation matrix could be thought of only having elements of 0,1,-1.
+    * 2 bits are used to describe the column of the 1 or -1 and the 3rd bit is used for the sign.
+    * Bit 8 is sign of +/- 1 in third row. Bit 6-7 is column of +/-1 in third row.
+    * Bit 5 is sign of +/- 1 in second row. Bit 3-4 is column of +/-1 in second row.
+    * Bit 2 is sign of +/- 1 in first row. Bit 0-1 is column of +/-1 in first row.
+    */
     int orientation;
     /** The raw data in raw data units in the mounting frame */
     short raw[3];
@@ -81,9 +79,9 @@ struct inv_single_sensor_t
     long sample_rate_us;
     long sample_rate_ms;
     /** INV_CONTIGUOUS is set for contiguous data. Will not be set if there was a sample
-     * skipped due to power savings turning off this sensor.
-     * INV_NEW_DATA set for a new set of data, cleared if not available.
-     * INV_CALIBRATED_SET if calibrated data has been solved for */
+    * skipped due to power savings turning off this sensor.
+    * INV_NEW_DATA set for a new set of data, cleared if not available.
+    * INV_CALIBRATED_SET if calibrated data has been solved for */
     int status;
     /** 0 to 3 for how well sensor data and biases are known. 3 is most accurate. */
     int accuracy;
@@ -92,21 +90,19 @@ struct inv_single_sensor_t
     /** Bandwidth in Hz */
     int bandwidth;
 };
-struct inv_quat_sensor_t
-{
+struct inv_quat_sensor_t {
     long raw[4];
     /** INV_CONTIGUOUS is set for contiguous data. Will not be set if there was a sample
-     * skipped due to power savings turning off this sensor.
-     * INV_NEW_DATA set for a new set of data, cleared if not available.
-     * INV_CALIBRATED_SET if calibrated data has been solved for */
+    * skipped due to power savings turning off this sensor.
+    * INV_NEW_DATA set for a new set of data, cleared if not available.
+    * INV_CALIBRATED_SET if calibrated data has been solved for */
     int status;
     inv_time_t timestamp;
     long sample_rate_us;
     long sample_rate_ms;
 };
 
-struct inv_soft_iron_t
-{
+struct inv_soft_iron_t {
     long raw[3];
     long trans[3];
     long matrix_d[9];  // Q30 format fixed point. The dynamic range is (-2.0 to 2.0);
@@ -115,8 +111,7 @@ struct inv_soft_iron_t
     int enable;
 };
 
-struct inv_sensor_cal_t
-{
+struct inv_sensor_cal_t {
     struct inv_single_sensor_t gyro;
     struct inv_single_sensor_t accel;
     struct inv_single_sensor_t compass;
@@ -124,21 +119,19 @@ struct inv_sensor_cal_t
     struct inv_quat_sensor_t quat;
     struct inv_soft_iron_t soft_iron;
     /** Combinations of INV_GYRO_NEW, INV_ACCEL_NEW, INV_MAG_NEW to indicate
-     * which data is a new sample as these data points may have different sample rates.
-     */
+    * which data is a new sample as these data points may have different sample rates.
+    */
     int status;
 };
 
 // Useful for debug record and playback
-typedef enum
-{
+typedef enum {
     RD_NO_DEBUG,
     RD_RECORD,
     RD_PLAYBACK
 } rd_dbg_mode;
 
-typedef enum
-{
+typedef enum {
     PLAYBACK_DBG_TYPE_GYRO,
     PLAYBACK_DBG_TYPE_ACCEL,
     PLAYBACK_DBG_TYPE_COMPASS,
@@ -168,8 +161,10 @@ void inv_turn_off_data_logging();
 #endif
 
 void inv_set_gyro_orientation_and_scale(int orientation, long sensitivity);
-void inv_set_accel_orientation_and_scale(int orientation, long sensitivity);
-void inv_set_compass_orientation_and_scale(int orientation, long sensitivity);
+void inv_set_accel_orientation_and_scale(int orientation,
+        long sensitivity);
+void inv_set_compass_orientation_and_scale(int orientation,
+        long sensitivity);
 void inv_set_gyro_sample_rate(long sample_rate_us);
 void inv_set_compass_sample_rate(long sample_rate_us);
 void inv_set_quat_sample_rate(long sample_rate_us);
@@ -182,12 +177,17 @@ void inv_get_gyro_sample_rate_ms(long *sample_rate_ms);
 void inv_get_accel_sample_rate_ms(long *sample_rate_ms);
 void inv_get_compass_sample_rate_ms(long *sample_rate_ms);
 
-inv_error_t inv_register_data_cb(inv_error_t (*func)(struct inv_sensor_cal_t *data), int priority, int sensor_type);
-inv_error_t inv_unregister_data_cb(inv_error_t (*func)(struct inv_sensor_cal_t *data));
+inv_error_t inv_register_data_cb(inv_error_t (*func)
+                                 (struct inv_sensor_cal_t * data), int priority,
+                                 int sensor_type);
+inv_error_t inv_unregister_data_cb(inv_error_t (*func)
+                                   (struct inv_sensor_cal_t * data));
 
 inv_error_t inv_build_gyro(const short *gyro, inv_time_t timestamp);
-inv_error_t inv_build_compass(const long *compass, int status, inv_time_t timestamp);
-inv_error_t inv_build_accel(const long *accel, int status, inv_time_t timestamp);
+inv_error_t inv_build_compass(const long *compass, int status,
+                                  inv_time_t timestamp);
+inv_error_t inv_build_accel(const long *accel, int status,
+                            inv_time_t timestamp);
 inv_error_t inv_build_temp(const long temp, inv_time_t timestamp);
 inv_error_t inv_build_quat(const long *quat, int status, inv_time_t timestamp);
 inv_error_t inv_execute_on_data(void);
@@ -227,10 +227,10 @@ long inv_get_gyro_sensitivity(void);
 long inv_get_accel_sensitivity(void);
 long inv_get_compass_sensitivity(void);
 
-void inv_get_accel_set(long *data, int8_t *accuracy, inv_time_t *timestamp);
-void inv_get_gyro_set(long *data, int8_t *accuracy, inv_time_t *timestamp);
-void inv_get_gyro_set_raw(long *data, int8_t *accuracy, inv_time_t *timestamp);
-void inv_get_compass_set(long *data, int8_t *accuracy, inv_time_t *timestamp);
+void inv_get_accel_set(long *data, int8_t *accuracy, inv_time_t * timestamp);
+void inv_get_gyro_set(long *data, int8_t *accuracy, inv_time_t * timestamp);
+void inv_get_gyro_set_raw(long *data, int8_t *accuracy, inv_time_t * timestamp);
+void inv_get_compass_set(long *data, int8_t *accuracy, inv_time_t * timestamp);
 
 void inv_get_gyro(long *gyro);
 

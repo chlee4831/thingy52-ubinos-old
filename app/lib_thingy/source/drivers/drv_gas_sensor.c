@@ -1,39 +1,39 @@
 /*
- Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
- All rights reserved.
+  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+  All rights reserved.
 
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
 
- 2. Redistributions in binary form, except as embedded into a Nordic
- Semiconductor ASA integrated circuit in a product or a software update for
- such product, must reproduce the above copyright notice, this list of
- conditions and the following disclaimer in the documentation and/or other
- materials provided with the distribution.
+  2. Redistributions in binary form, except as embedded into a Nordic
+     Semiconductor ASA integrated circuit in a product or a software update for
+     such product, must reproduce the above copyright notice, this list of
+     conditions and the following disclaimer in the documentation and/or other
+     materials provided with the distribution.
 
- 3. Neither the name of Nordic Semiconductor ASA nor the names of its
- contributors may be used to endorse or promote products derived from this
- software without specific prior written permission.
+  3. Neither the name of Nordic Semiconductor ASA nor the names of its
+     contributors may be used to endorse or promote products derived from this
+     software without specific prior written permission.
 
- 4. This software, with or without modification, must only be used with a
- Nordic Semiconductor ASA integrated circuit.
+  4. This software, with or without modification, must only be used with a
+     Nordic Semiconductor ASA integrated circuit.
 
- 5. Any software provided in binary form under this license must not be reverse
- engineered, decompiled, modified and/or disassembled.
+  5. Any software provided in binary form under this license must not be reverse
+     engineered, decompiled, modified and/or disassembled.
 
- THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
- OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
- LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "drv_gas_sensor.h"
@@ -70,11 +70,10 @@
     }                                                                                          \
 }
 
-static drv_ccs811_cfg_t m_drv_ccs811_cfg =
-{
-        0 }; ///< Driver configuration.
+
+static drv_ccs811_cfg_t              m_drv_ccs811_cfg = {0}; ///< Driver configuration.
 static drv_gas_sensor_data_handler_t m_data_handler;         ///< Gas sensor data handler.
-static bool m_started = false;      ///< Indicates if the gas sensor is started.
+static bool                          m_started = false;      ///< Indicates if the gas sensor is started.
 
 /**@brief Open gas sensor TWI interface.
  */
@@ -92,6 +91,7 @@ static __inline ret_code_t ccs811_open(void)
     return drv_ccs811_open(&m_drv_ccs811_cfg);
 }
 
+
 /**@brief Close gas sensor TWI interface.
  */
 static __inline ret_code_t ccs811_close(void)
@@ -107,42 +107,42 @@ static __inline ret_code_t ccs811_close(void)
     return NRF_SUCCESS;
 }
 
+
 /**@brief Verfies the hardware ID of the gas sensor.
  */
 static ret_code_t hw_id_verify(void)
 {
-    uint8_t hw_id = 0;
-    bool hw_id_correct = false;
+    uint8_t  hw_id = 0;
+    bool     hw_id_correct = false;
 
-    if (ccs811_open() == NRF_SUCCESS)
+    if(ccs811_open() == NRF_SUCCESS)
     {
-        if (drv_ccs811_hw_id_get(&hw_id) == NRF_SUCCESS)
+        if( drv_ccs811_hw_id_get(&hw_id) == NRF_SUCCESS )
         {
-            CCS811_PRINT_IF_SENSOR_ERROR
-            ;
-            hw_id_correct = (hw_id == GAS_SENSOR_ID) ? true : false;
+            CCS811_PRINT_IF_SENSOR_ERROR;
+            hw_id_correct = ( hw_id == GAS_SENSOR_ID ) ? true : false;
         }
     }
 
-    (void) ccs811_close();
+    (void)ccs811_close();
 
     return hw_id_correct == true ? NRF_SUCCESS : NRF_ERROR_NOT_FOUND;
 }
+
 
 /**@brief Verifes that a valid app version is running on the gas sensor.
  */
 static ret_code_t valid_app_verify(void)
 {
-    ret_code_t err_code;
-    uint8_t status;
+    ret_code_t  err_code;
+    uint8_t     status;
 
     err_code = ccs811_open();
     RETURN_IF_ERROR(err_code);
 
     err_code = drv_ccs811_status_get(&status);
     RETURN_IF_ERROR(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
     err_code = ccs811_close();
     RETURN_IF_ERROR(err_code);
@@ -187,13 +187,14 @@ static ret_code_t valid_app_verify(void)
     }
 #endif
 
+
 /**@brief Get result from gas sensor.
  */
-static void gpiote_evt_sceduled(void *p_event_data, uint16_t event_size)
+static void gpiote_evt_sceduled(void * p_event_data, uint16_t event_size)
 {
-    ret_code_t err_code;
-    drv_ccs811_alg_result_descr_t result_descr = DRV_CCS811_ALG_RESULT_DESCR_ALL;
-    static drv_ccs811_alg_result_t s_result;
+    ret_code_t                      err_code;
+    drv_ccs811_alg_result_descr_t   result_descr = DRV_CCS811_ALG_RESULT_DESCR_ALL;
+    static drv_ccs811_alg_result_t  s_result;
 
     NRF_LOG_DEBUG("Gas sensor pin interrupt detected. \r\n");
 
@@ -202,14 +203,14 @@ static void gpiote_evt_sceduled(void *p_event_data, uint16_t event_size)
 
     err_code = drv_ccs811_alg_result_data_get(result_descr, &s_result);
     APP_ERROR_CHECK(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
     err_code = ccs811_close();
     APP_ERROR_CHECK(err_code);
 
-    m_data_handler((drv_gas_sensor_data_t*) &s_result);
+    m_data_handler((drv_gas_sensor_data_t *)&s_result);
 }
+
 
 /**@brief GPIOTE event handler for gas sensor. Called when the gas sensor signals a pin interrupt (sample finished).
  */
@@ -223,6 +224,7 @@ static void gpiote_evt_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t a
         APP_ERROR_CHECK(err_code);
     }
 }
+
 
 /**@brief Initlialize the GPIOTE for capturing gas sensor pin interrupts.
  */
@@ -238,10 +240,10 @@ static ret_code_t gpiote_init(uint32_t pin)
 
     nrf_drv_gpiote_in_config_t gpiote_in_config;
 
-    gpiote_in_config.is_watcher = false;
+    gpiote_in_config.is_watcher  = false;
     gpiote_in_config.hi_accuracy = false;
-    gpiote_in_config.pull = NRF_GPIO_PIN_PULLUP;
-    gpiote_in_config.sense = NRF_GPIOTE_POLARITY_TOGGLE;
+    gpiote_in_config.pull        = NRF_GPIO_PIN_PULLUP;
+    gpiote_in_config.sense       = NRF_GPIOTE_POLARITY_TOGGLE;
     err_code = nrf_drv_gpiote_in_init(pin, &gpiote_in_config, gpiote_evt_handler);
     RETURN_IF_ERROR(err_code);
 
@@ -258,11 +260,12 @@ static ret_code_t gpiote_uninit(uint32_t pin)
 
 }
 
+
 /**@brief Configures the IO pins of the host controller.
  */
 static ret_code_t io_pins_init(void)
 {
-    ret_code_t err_code;
+    ret_code_t    err_code;
 
     err_code = drv_ext_gpio_cfg_output(SX_CCS_PWR_CTRL);
     RETURN_IF_ERROR(err_code);
@@ -273,16 +276,15 @@ static ret_code_t io_pins_init(void)
     err_code = drv_ext_gpio_cfg_output(SX_CCS_WAKE);
     RETURN_IF_ERROR(err_code);
 
-#if defined(THINGY_HW_v0_7_0)
+    #if defined(THINGY_HW_v0_7_0)
         while (drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL) != NRF_SUCCESS);
     #elif defined(THINGY_HW_v0_8_0)
         while (drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL) != NRF_SUCCESS);
     #elif defined(THINGY_HW_v0_9_0)
         while (drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL) != NRF_SUCCESS);
     #else
-    while (drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL) != NRF_SUCCESS)
-        ;
-#endif
+        while (drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL)   != NRF_SUCCESS);
+    #endif
 
     err_code = drv_ext_gpio_pin_set(SX_CCS_RESET);
     RETURN_IF_ERROR(err_code);
@@ -295,6 +297,7 @@ static ret_code_t io_pins_init(void)
     return NRF_SUCCESS;
 }
 
+
 ret_code_t drv_gas_sensor_calibrate_humid_temp(uint16_t rh_ppth, int32_t temp_mdeg)
 {
     ret_code_t err_code;
@@ -304,8 +307,7 @@ ret_code_t drv_gas_sensor_calibrate_humid_temp(uint16_t rh_ppth, int32_t temp_md
 
     err_code = drv_ccs811_env_data_set(rh_ppth, temp_mdeg);
     RETURN_IF_ERROR(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
     err_code = ccs811_close();
     RETURN_IF_ERROR(err_code);
@@ -313,7 +315,8 @@ ret_code_t drv_gas_sensor_calibrate_humid_temp(uint16_t rh_ppth, int32_t temp_md
     return NRF_SUCCESS;
 }
 
-ret_code_t drv_gas_sensor_baseline_get(uint16_t *p_baseline)
+
+ret_code_t drv_gas_sensor_baseline_get(uint16_t * p_baseline)
 {
     ret_code_t err_code;
 
@@ -322,8 +325,7 @@ ret_code_t drv_gas_sensor_baseline_get(uint16_t *p_baseline)
 
     err_code = drv_ccs811_baseline_get(p_baseline);
     RETURN_IF_ERROR(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
     err_code = ccs811_close();
     RETURN_IF_ERROR(err_code);
@@ -332,6 +334,7 @@ ret_code_t drv_gas_sensor_baseline_get(uint16_t *p_baseline)
 
     return NRF_SUCCESS;
 }
+
 
 ret_code_t drv_gas_sensor_baseline_set(uint16_t baseline)
 {
@@ -342,8 +345,7 @@ ret_code_t drv_gas_sensor_baseline_set(uint16_t baseline)
 
     err_code = drv_ccs811_baseline_set(baseline);
     RETURN_IF_ERROR(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
     err_code = ccs811_close();
     RETURN_IF_ERROR(err_code);
@@ -353,7 +355,8 @@ ret_code_t drv_gas_sensor_baseline_set(uint16_t baseline)
     return NRF_SUCCESS;
 }
 
-ret_code_t drv_gas_sensor_raw_data_get(uint8_t *p_current_selected, uint16_t *p_raw_adc_reading)
+
+ret_code_t drv_gas_sensor_raw_data_get(uint8_t * p_current_selected, uint16_t * p_raw_adc_reading)
 {
     ret_code_t err_code;
 
@@ -375,12 +378,13 @@ ret_code_t drv_gas_sensor_raw_data_get(uint8_t *p_current_selected, uint16_t *p_
     return NRF_SUCCESS;
 }
 
+
 ret_code_t drv_gas_sensor_start(drv_gas_sensor_mode_t mode)
 {
-    ret_code_t err_code;
-    uint8_t status;
-    uint8_t meas_mode_reg;
-    uint8_t drive_mode = DRV_CCS811_MEAS_MODE_DRIVE_MODE_Idle;
+    ret_code_t  err_code;
+    uint8_t     status;
+    uint8_t     meas_mode_reg;
+    uint8_t     drive_mode = DRV_CCS811_MEAS_MODE_DRIVE_MODE_Idle;
 
     if (m_started)
     {
@@ -391,35 +395,34 @@ ret_code_t drv_gas_sensor_start(drv_gas_sensor_mode_t mode)
 
     switch (mode)
     {
-    case DRV_GAS_SENSOR_MODE_250MS:
-        return NRF_ERROR_NOT_SUPPORTED;
-    case DRV_GAS_SENSOR_MODE_1S:
-        drive_mode = DRV_CCS811_MEAS_MODE_DRIVE_MODE_ConstPwr;
-        break;
-    case DRV_GAS_SENSOR_MODE_10S:
-        drive_mode = DRV_CCS811_MEAS_MODE_DRIVE_MODE_PulseHeat;
-        break;
-    case DRV_GAS_SENSOR_MODE_60S:
-        drive_mode = DRV_CCS811_MEAS_MODE_DRIVE_MODE_LowPwrPulseHeat;
-        break;
-    default:
-        return NRF_ERROR_INVALID_PARAM;
+        case DRV_GAS_SENSOR_MODE_250MS:
+            return NRF_ERROR_NOT_SUPPORTED;
+        case DRV_GAS_SENSOR_MODE_1S:
+            drive_mode = DRV_CCS811_MEAS_MODE_DRIVE_MODE_ConstPwr;
+            break;
+        case DRV_GAS_SENSOR_MODE_10S:
+            drive_mode = DRV_CCS811_MEAS_MODE_DRIVE_MODE_PulseHeat;
+            break;
+        case DRV_GAS_SENSOR_MODE_60S:
+            drive_mode = DRV_CCS811_MEAS_MODE_DRIVE_MODE_LowPwrPulseHeat;
+            break;
+        default:
+            return NRF_ERROR_INVALID_PARAM;
     }
-
+    
     err_code = gpiote_init(CCS_INT);
     APP_ERROR_CHECK(err_code);
 
     // Power on gas sensor.
-#if defined(THINGY_HW_v0_7_0)
+    #if defined(THINGY_HW_v0_7_0)
         while (drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL) != NRF_SUCCESS);
     #elif defined(THINGY_HW_v0_8_0)
         while (drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL) != NRF_SUCCESS);
     #elif defined(THINGY_HW_v0_9_0)
         while (drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL) != NRF_SUCCESS);
     #else
-    while (drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL) != NRF_SUCCESS)
-        ;
-#endif
+        while (drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL)   != NRF_SUCCESS);
+    #endif
 
     err_code = drv_ext_gpio_pin_clear(SX_CCS_WAKE);
     APP_ERROR_CHECK(err_code);
@@ -428,7 +431,7 @@ ret_code_t drv_gas_sensor_start(drv_gas_sensor_mode_t mode)
     APP_ERROR_CHECK(err_code);
 
     nrf_delay_ms(GAS_SENSOR_PWR_ON_DELAY_MS); // Allow the CCS811 to power up.
-
+    
     nrf_drv_gpiote_in_event_enable(CCS_INT, true);
 
     err_code = ccs811_open();
@@ -436,13 +439,11 @@ ret_code_t drv_gas_sensor_start(drv_gas_sensor_mode_t mode)
 
     err_code = drv_ccs811_app_start();
     APP_ERROR_CHECK(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
     err_code = drv_ccs811_status_get(&status);
     APP_ERROR_CHECK(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
     if (!(status & DRV_CCS811_STATUS_FW_MODE_Msk))
     {
@@ -453,25 +454,23 @@ ret_code_t drv_gas_sensor_start(drv_gas_sensor_mode_t mode)
     {
         // Dummy readout
         drv_ccs811_alg_result_descr_t result_descr = DRV_CCS811_ALG_RESULT_DESCR_ALL;
-        drv_ccs811_alg_result_t result;
+        drv_ccs811_alg_result_t       result;
 
         err_code = drv_ccs811_alg_result_data_get(result_descr, &result);
         APP_ERROR_CHECK(err_code);
-        CCS811_PRINT_IF_SENSOR_ERROR
-        ;
+        CCS811_PRINT_IF_SENSOR_ERROR;
     }
 
     err_code = drv_ccs811_meas_mode_get(&meas_mode_reg);
     RETURN_IF_ERROR(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
-    meas_mode_reg |= (drive_mode << DRV_CCS811_MEAS_MODE_DRIVE_MODE_Pos) | (DRV_CCS811_MEAS_MODE_INTERRUPT_Enable << DRV_CCS811_MEAS_MODE_INTERRUPT_Pos);
+    meas_mode_reg |= (drive_mode << DRV_CCS811_MEAS_MODE_DRIVE_MODE_Pos) |
+                     (DRV_CCS811_MEAS_MODE_INTERRUPT_Enable << DRV_CCS811_MEAS_MODE_INTERRUPT_Pos);
 
     err_code = drv_ccs811_meas_mode_modify(meas_mode_reg, 0);
     RETURN_IF_ERROR(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
     err_code = ccs811_close();
     RETURN_IF_ERROR(err_code);
@@ -479,10 +478,11 @@ ret_code_t drv_gas_sensor_start(drv_gas_sensor_mode_t mode)
     return NRF_SUCCESS;
 }
 
+
 ret_code_t drv_gas_sensor_stop(void)
 {
-    ret_code_t err_code;
-    uint8_t status;
+    ret_code_t  err_code;
+    uint8_t     status;
 
     if (m_started == false)
     {
@@ -500,16 +500,14 @@ ret_code_t drv_gas_sensor_stop(void)
 
     err_code = drv_ccs811_status_get(&status);
     RETURN_IF_ERROR(err_code);
-    CCS811_PRINT_IF_SENSOR_ERROR
-    ;
+    CCS811_PRINT_IF_SENSOR_ERROR;
 
     if (status & DRV_CCS811_STATUS_FW_MODE_Msk) // Chech that the device is in "application mode" and not "boot mode".
     {
         // Disable interrupt and set idle mode.
         err_code = drv_ccs811_meas_mode_modify(0, DRV_CCS811_MEAS_MODE_DRIVE_MODE_Msk | DRV_CCS811_MEAS_MODE_INTERRUPT_Msk);
         RETURN_IF_ERROR(err_code);
-        CCS811_PRINT_IF_SENSOR_ERROR
-        ;
+        CCS811_PRINT_IF_SENSOR_ERROR;
     }
 
     err_code = ccs811_close();
@@ -522,21 +520,21 @@ ret_code_t drv_gas_sensor_stop(void)
     RETURN_IF_ERROR(err_code);
 
     // Power off gas sensor.
-#if defined(THINGY_HW_v0_7_0)
+    #if defined(THINGY_HW_v0_7_0)
         err_code = drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL);
     #elif defined(THINGY_HW_v0_8_0)
         err_code = drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL);
     #elif defined(THINGY_HW_v0_9_0)
         err_code = drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL);
     #else
-    err_code = drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL);
-#endif
+        err_code = drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL);
+    #endif
     RETURN_IF_ERROR(err_code);
 
     return NRF_SUCCESS;
 }
 
-ret_code_t drv_gas_sensor_init(drv_gas_init_t *p_init)
+ret_code_t drv_gas_sensor_init(drv_gas_init_t * p_init)
 {
     ret_code_t err_code;
 
@@ -545,10 +543,10 @@ ret_code_t drv_gas_sensor_init(drv_gas_init_t *p_init)
     NULL_PARAM_CHECK(p_init->p_twi_cfg);
     NULL_PARAM_CHECK(p_init->data_handler);
 
-    m_drv_ccs811_cfg.p_twi_cfg = p_init->p_twi_cfg;
+    m_drv_ccs811_cfg.p_twi_cfg      = p_init->p_twi_cfg;
     m_drv_ccs811_cfg.p_twi_instance = p_init->p_twi_instance;
-    m_drv_ccs811_cfg.twi_addr = p_init->twi_addr;
-    m_data_handler = p_init->data_handler;
+    m_drv_ccs811_cfg.twi_addr       = p_init->twi_addr;
+    m_data_handler                  = p_init->data_handler;
 
     drv_ccs811_init();
 
@@ -561,7 +559,7 @@ ret_code_t drv_gas_sensor_init(drv_gas_init_t *p_init)
     err_code = valid_app_verify();
     RETURN_IF_ERROR(err_code);
 
-#ifdef GAS_SENSOR_DEBUG // Print all info from the gas sensor.
+    #ifdef GAS_SENSOR_DEBUG // Print all info from the gas sensor.
         uint8_t  hw_id;
         uint8_t  hw_version;
         uint16_t fw_boot_version;
@@ -579,15 +577,15 @@ ret_code_t drv_gas_sensor_init(drv_gas_init_t *p_init)
     err_code = drv_ext_gpio_pin_clear(SX_CCS_WAKE);
     RETURN_IF_ERROR(err_code);
 
-#if defined(THINGY_HW_v0_7_0)
+    #if defined(THINGY_HW_v0_7_0)
         err_code = drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL);
     #elif defined(THINGY_HW_v0_8_0)
         err_code = drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL);
     #elif defined(THINGY_HW_v0_9_0)
         err_code = drv_ext_gpio_pin_set(SX_CCS_PWR_CTRL);
     #else
-    err_code = drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL);
-#endif
+        err_code = drv_ext_gpio_pin_clear(SX_CCS_PWR_CTRL);
+    #endif
     RETURN_IF_ERROR(err_code);
 
     return NRF_SUCCESS;

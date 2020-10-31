@@ -1,6 +1,6 @@
 /*
  $License:
- Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
+    Copyright (C) 2011 InvenSense Corporation, All Rights Reserved.
  $
  */
 
@@ -106,17 +106,17 @@ typedef unsigned long long inv_time_t;
 #endif
 
 #if defined EMPL || (!defined __GNUC__ && !defined __KERNEL__)
-typedef int8_t __s8;
-typedef int16_t __s16;
-typedef int32_t __s32;
+typedef int8_t   __s8;
+typedef int16_t  __s16;
+typedef int32_t  __s32;
 
-typedef uint8_t __u8;
-typedef uint16_t __u16;
-typedef uint32_t __u32;
+typedef uint8_t   __u8;
+typedef uint16_t  __u16;
+typedef uint32_t  __u32;
 
 #ifndef EMPL_NO_64BIT
-typedef int64_t __s64;
-typedef uint64_t __u64;
+typedef int64_t  __s64;
+typedef uint64_t  __u64;
 #endif
 #elif !defined __KERNEL__
 #include <sys/types.h>
@@ -178,6 +178,8 @@ typedef uint64_t __u64;
 #ifndef EPERM
 #define EPERM   (1)
 #endif
+
+
 
 /* Compatibility and other generic error codes */
 #define INV_ERROR_INVALID_PARAMETER             (EINVAL)
@@ -250,6 +252,7 @@ typedef uint64_t __u64;
 #define INV_WARNING_GYRO_MAG                    (INV_ERROR_BASE + 85)
 
 #define INV_WARNING_SEMAPHORE_TIMEOUT           (INV_ERROR_BASE + 86)
+
 
 /* For Linux coding compliance */
 #ifndef __KERNEL__

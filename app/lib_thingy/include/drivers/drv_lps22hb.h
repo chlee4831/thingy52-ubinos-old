@@ -1,42 +1,42 @@
 /*
- Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
- All rights reserved.
+  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
+  All rights reserved.
 
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
 
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
 
- 2. Redistributions in binary form, except as embedded into a Nordic
- Semiconductor ASA integrated circuit in a product or a software update for
- such product, must reproduce the above copyright notice, this list of
- conditions and the following disclaimer in the documentation and/or other
- materials provided with the distribution.
+  2. Redistributions in binary form, except as embedded into a Nordic
+     Semiconductor ASA integrated circuit in a product or a software update for
+     such product, must reproduce the above copyright notice, this list of
+     conditions and the following disclaimer in the documentation and/or other
+     materials provided with the distribution.
 
- 3. Neither the name of Nordic Semiconductor ASA nor the names of its
- contributors may be used to endorse or promote products derived from this
- software without specific prior written permission.
+  3. Neither the name of Nordic Semiconductor ASA nor the names of its
+     contributors may be used to endorse or promote products derived from this
+     software without specific prior written permission.
 
- 4. This software, with or without modification, must only be used with a
- Nordic Semiconductor ASA integrated circuit.
+  4. This software, with or without modification, must only be used with a
+     Nordic Semiconductor ASA integrated circuit.
 
- 5. Any software provided in binary form under this license must not be reverse
- engineered, decompiled, modified and/or disassembled.
+  5. Any software provided in binary form under this license must not be reverse
+     engineered, decompiled, modified and/or disassembled.
 
- THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
- OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
- LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
+  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file LPS22HB Pressure sensor
+ /** @file LPS22HB Pressure sensor
  *
  * @defgroup lps22hb_press_driver LPS22HB pressure sensor
  * @{
@@ -336,23 +336,23 @@
  */
 typedef struct
 {
-    uint8_t int_cfg_reg;
+    uint8_t  int_cfg_reg;
     uint16_t int_threshold;
-    uint8_t ctrl_reg1;
-    uint8_t ctrl_reg2;
-    uint8_t ctrl_reg3;
-    uint8_t fifo_ctrl;
-    uint8_t res_conf;
-} drv_lps22hb_cfg_t;
+    uint8_t  ctrl_reg1;
+    uint8_t  ctrl_reg2;
+    uint8_t  ctrl_reg3;
+    uint8_t  fifo_ctrl;
+    uint8_t  res_conf;
+}drv_lps22hb_cfg_t;
 
 /**@brief Initialization struct for the LPS22HB pressure sensor driver.
  */
 typedef struct
 {
-    uint8_t twi_addr;        ///< TWI address.
-    uint32_t pin_int;         ///< Interrupt pin number.
-    nrf_drv_twi_t const *p_twi_instance;  ///< The instance of TWI master to be used for transactions.
-    nrf_drv_twi_config_t const *p_twi_cfg;       ///< The TWI configuration to use while the driver is enabled.
+    uint8_t                      twi_addr;        ///< TWI address.
+    uint32_t                     pin_int;         ///< Interrupt pin number.
+    nrf_drv_twi_t        const * p_twi_instance;  ///< The instance of TWI master to be used for transactions.
+    nrf_drv_twi_config_t const * p_twi_cfg;       ///< The TWI configuration to use while the driver is enabled.
 } drv_lps22hb_twi_cfg_t;
 
 /**@brief Available data rates.
@@ -365,7 +365,7 @@ typedef enum
     DRV_LPS22HB_ODR_25Hz,
     DRV_LPS22HB_ODR_50Hz,
     DRV_LPS22HB_ODR_75Hz
-} drv_lps22hb_odr_t;
+}drv_lps22hb_odr_t;
 
 /**@brief Function for initializing the LPS22HB driver.
  *
@@ -379,7 +379,7 @@ uint32_t drv_lps22hb_init(void);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_open(drv_lps22hb_twi_cfg_t const *const p_twi_cfg);
+uint32_t drv_lps22hb_open(drv_lps22hb_twi_cfg_t const * const p_twi_cfg);
 
 /**@brief Function for closing the LPS22HB driver.
  *
@@ -393,7 +393,7 @@ uint32_t drv_lps22hb_close(void);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_verify(uint8_t *who_am_i);
+uint32_t drv_lps22hb_verify(uint8_t * who_am_i);
 
 /**@brief Function for configuring the LPS22HB sensor according to the specified configuration.
  *
@@ -401,7 +401,7 @@ uint32_t drv_lps22hb_verify(uint8_t *who_am_i);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_cfg_set(drv_lps22hb_cfg_t const *const p_cfg);
+uint32_t drv_lps22hb_cfg_set(drv_lps22hb_cfg_t const * const p_cfg);
 
 /**@brief Function for reading the configuration of the LPS22HB sensor.
  *
@@ -409,7 +409,7 @@ uint32_t drv_lps22hb_cfg_set(drv_lps22hb_cfg_t const *const p_cfg);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_cfg_get(drv_lps22hb_cfg_t *p_cfg);
+uint32_t drv_lps22hb_cfg_get(drv_lps22hb_cfg_t *  p_cfg);
 
 /**@brief Function for setting reference pressure.
  *
@@ -425,7 +425,7 @@ uint32_t drv_lps22hb_ref_pressure_set(uint32_t ref_press);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_ref_pressure_get(uint32_t *p_ref_press);
+uint32_t drv_lps22hb_ref_pressure_get(uint32_t * p_ref_press);
 
 /**@brief Function for setting pressure offset.
  *
@@ -441,7 +441,7 @@ uint32_t drv_lps22hb_pressure_offset_set(uint16_t offset);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_pressure_offset_get(uint16_t *p_offset);
+uint32_t drv_lps22hb_pressure_offset_get(uint16_t * p_offset);
 
 /**@brief Function for rebooting the LPS22HB memory content.
  *
@@ -467,7 +467,7 @@ uint32_t drv_lps22hb_one_shot(void);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_fifo_status_get(uint8_t *p_status);
+uint32_t drv_lps22hb_fifo_status_get(uint8_t * p_status);
 
 /**@brief Function for getting the status.
  *
@@ -475,7 +475,7 @@ uint32_t drv_lps22hb_fifo_status_get(uint8_t *p_status);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_status_get(uint8_t *p_status);
+uint32_t drv_lps22hb_status_get(uint8_t * p_status);
 
 /**@brief Function for getting the interrupt source register.
  *
@@ -483,7 +483,7 @@ uint32_t drv_lps22hb_status_get(uint8_t *p_status);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_int_source_get(uint8_t *p_source);
+uint32_t drv_lps22hb_int_source_get(uint8_t * p_source);
 
 /**@brief Function for getting the pressure data. To calculate p(hPa) = *p_pressure(LSB) / 4096(LSB/hPa).
  *
@@ -491,7 +491,7 @@ uint32_t drv_lps22hb_int_source_get(uint8_t *p_source);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_pressure_get(uint32_t *p_pressure);
+uint32_t drv_lps22hb_pressure_get(uint32_t * p_pressure);
 
 /**@brief Function for getting the temperature data.
  *
@@ -499,7 +499,7 @@ uint32_t drv_lps22hb_pressure_get(uint32_t *p_pressure);
  *
  * @return NRF_SUCCESS    If the call was successful.
  */
-uint32_t drv_lps22hb_temperature_get(uint16_t *p_temperature);
+uint32_t drv_lps22hb_temperature_get(uint16_t * p_temperature);
 
 /**@brief Function for outputting data rate of the LPS22HB.
  *
