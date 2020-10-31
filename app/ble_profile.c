@@ -26,54 +26,51 @@
  * @param[in] p_nus     Nordic UART Service structure.
  * @param[in] p_ble_evt Pointer to the event received from BLE stack.
  */
-static void on_connect(ble_paar_t * p_ble_paar, ble_evt_t * p_ble_evt)
+static void on_connect(ble_paar_t *p_ble_paar, ble_evt_t *p_ble_evt)
 {
-	p_ble_paar->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+    p_ble_paar->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 }
-
 
 /**@brief Function for handling the @ref BLE_GAP_EVT_DISCONNECTED event from the S110 SoftDevice.
  *
  * @param[in] p_nus     Nordic UART Service structure.
  * @param[in] p_ble_evt Pointer to the event received from BLE stack.
  */
-static void on_disconnect(ble_paar_t * p_ble_paar, ble_evt_t * p_ble_evt)
+static void on_disconnect(ble_paar_t *p_ble_paar, ble_evt_t *p_ble_evt)
 {
     UNUSED_PARAMETER(p_ble_evt);
     p_ble_paar->conn_handle = BLE_CONN_HANDLE_INVALID;
 }
-
 
 /**@brief Function for handling the @ref BLE_GATTS_EVT_WRITE event from the S110 SoftDevice.
  *
  * @param[in] p_nus     Nordic UART Service structure.
  * @param[in] p_ble_evt Pointer to the event received from BLE stack.
  */
-static void on_write(ble_paar_t * p_ble_paar, ble_evt_t * p_ble_evt)
+static void on_write(ble_paar_t *p_ble_paar, ble_evt_t *p_ble_evt)
 {
-    ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
+    ble_gatts_evt_write_t *p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
 
-    if ( (p_evt_write->handle == p_ble_paar->rx_handles.cccd_handle) && (p_evt_write->len == 2) )
+    if ((p_evt_write->handle == p_ble_paar->rx_handles.cccd_handle) && (p_evt_write->len == 2))
     {
         if (ble_srv_is_notification_enabled(p_evt_write->data))
         {
-        	p_ble_paar->is_notification_enabled = true;
+            p_ble_paar->is_notification_enabled = true;
         }
         else
         {
-        	p_ble_paar->is_notification_enabled = false;
+            p_ble_paar->is_notification_enabled = false;
         }
     }
-    else if ( (p_evt_write->handle == p_ble_paar->tx_handles.value_handle) && (p_ble_paar->data_handler != NULL) )
+    else if ((p_evt_write->handle == p_ble_paar->tx_handles.value_handle) && (p_ble_paar->data_handler != NULL))
     {
-    	p_ble_paar->data_handler(p_ble_paar, p_evt_write->data, p_evt_write->len);
+        p_ble_paar->data_handler(p_ble_paar, p_evt_write->data, p_evt_write->len);
     }
     else
     {
         // Do Nothing. This event is not relevant for this service.
     }
 }
-
 
 /**@brief Function for adding RX characteristic.
  *
@@ -82,13 +79,13 @@ static void on_write(ble_paar_t * p_ble_paar, ble_evt_t * p_ble_evt)
  *
  * @return NRF_SUCCESS on success, otherwise an error code.
  */
-static uint32_t tx_char_add(ble_paar_t * p_ble_paar, const ble_paar_init_t * p_ble_paar_init)
+static uint32_t tx_char_add(ble_paar_t *p_ble_paar, const ble_paar_init_t *p_ble_paar_init)
 {
     /**@snippet [Adding proprietary characteristic to S110 SoftDevice] */
     ble_gatts_char_md_t char_md;
     ble_gatts_attr_md_t cccd_md;
-    ble_gatts_attr_t    attr_char_value;
-    ble_uuid_t          ble_uuid;
+    ble_gatts_attr_t attr_char_value;
+    ble_uuid_t ble_uuid;
     ble_gatts_attr_md_t attr_md;
 
     memset(&cccd_md, 0, sizeof(cccd_md));
@@ -101,44 +98,39 @@ static uint32_t tx_char_add(ble_paar_t * p_ble_paar, const ble_paar_init_t * p_b
     memset(&char_md, 0, sizeof(char_md));
 
     char_md.char_props.notify = 1;
-    char_md.p_char_user_desc  = NULL;
-    char_md.p_char_pf         = NULL;
+    char_md.p_char_user_desc = NULL;
+    char_md.p_char_pf = NULL;
 //    char_md.p_user_desc_md    = NULL;
-    char_md.p_cccd_md         = &cccd_md;
-    char_md.p_cccd_md         = NULL;
-    char_md.p_sccd_md         = NULL;
+    char_md.p_cccd_md = &cccd_md;
+    char_md.p_cccd_md = NULL;
+    char_md.p_sccd_md = NULL;
 
     ble_uuid.type = p_ble_paar->uuid_type;
     ble_uuid.uuid = BLE_UUID_PAAR_TX_CHARACTERISTIC;
 
     memset(&attr_md, 0, sizeof(attr_md));
 
-
     BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&attr_md.read_perm);
     BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&attr_md.write_perm);
 //    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.read_perm);
 //    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.write_perm);
 
-    attr_md.vloc    = BLE_GATTS_VLOC_STACK;
+    attr_md.vloc = BLE_GATTS_VLOC_STACK;
     attr_md.rd_auth = 0;
     attr_md.wr_auth = 0;
-    attr_md.vlen    = 1;
+    attr_md.vlen = 1;
 
     memset(&attr_char_value, 0, sizeof(attr_char_value));
 
-    attr_char_value.p_uuid    = &ble_uuid;
+    attr_char_value.p_uuid = &ble_uuid;
     attr_char_value.p_attr_md = &attr_md;
-    attr_char_value.init_len  = sizeof(uint8_t);
+    attr_char_value.init_len = sizeof(uint8_t);
     attr_char_value.init_offs = 0;
-    attr_char_value.max_len   = BLE_PAAR_MAX_RX_CHAR_LEN;
+    attr_char_value.max_len = BLE_PAAR_MAX_RX_CHAR_LEN;
 
-    return sd_ble_gatts_characteristic_add(p_ble_paar->service_handle,
-                                           &char_md,
-                                           &attr_char_value,
-                                           &p_ble_paar->tx_handles);
+    return sd_ble_gatts_characteristic_add(p_ble_paar->service_handle, &char_md, &attr_char_value, &p_ble_paar->tx_handles);
     /**@snippet [Adding proprietary characteristic to S110 SoftDevice] */
 }
-
 
 /**@brief Function for adding TX characteristic.
  *
@@ -147,22 +139,22 @@ static uint32_t tx_char_add(ble_paar_t * p_ble_paar, const ble_paar_init_t * p_b
  *
  * @return NRF_SUCCESS on success, otherwise an error code.
  */
-static uint32_t rx_char_add(ble_paar_t * p_ble_paar, const ble_paar_init_t * p_paar_init)
+static uint32_t rx_char_add(ble_paar_t *p_ble_paar, const ble_paar_init_t *p_paar_init)
 {
     ble_gatts_char_md_t char_md;
-    ble_gatts_attr_t    attr_char_value;
-    ble_uuid_t          ble_uuid;
+    ble_gatts_attr_t attr_char_value;
+    ble_uuid_t ble_uuid;
     ble_gatts_attr_md_t attr_md;
 
     memset(&char_md, 0, sizeof(char_md));
 
-    char_md.char_props.write         = 1;
+    char_md.char_props.write = 1;
     char_md.char_props.write_wo_resp = 1;
-    char_md.p_char_user_desc         = NULL;
-    char_md.p_char_pf                = NULL;
-    char_md.p_user_desc_md           = NULL;
-    char_md.p_cccd_md                = NULL;
-    char_md.p_sccd_md                = NULL;
+    char_md.p_char_user_desc = NULL;
+    char_md.p_char_pf = NULL;
+    char_md.p_user_desc_md = NULL;
+    char_md.p_cccd_md = NULL;
+    char_md.p_sccd_md = NULL;
 
     ble_uuid.type = p_ble_paar->uuid_type;
     ble_uuid.uuid = BLE_UUID_PAAR_RX_CHARACTERISTIC;
@@ -172,27 +164,23 @@ static uint32_t rx_char_add(ble_paar_t * p_ble_paar, const ble_paar_init_t * p_p
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.read_perm);
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.write_perm);
 
-    attr_md.vloc    = BLE_GATTS_VLOC_STACK;
+    attr_md.vloc = BLE_GATTS_VLOC_STACK;
     attr_md.rd_auth = 0;
     attr_md.wr_auth = 0;
-    attr_md.vlen    = 1;
+    attr_md.vlen = 1;
 
     memset(&attr_char_value, 0, sizeof(attr_char_value));
 
-    attr_char_value.p_uuid    = &ble_uuid;
+    attr_char_value.p_uuid = &ble_uuid;
     attr_char_value.p_attr_md = &attr_md;
-    attr_char_value.init_len  = 1;
+    attr_char_value.init_len = 1;
     attr_char_value.init_offs = 0;
-    attr_char_value.max_len   = BLE_PAAR_MAX_TX_CHAR_LEN;
+    attr_char_value.max_len = BLE_PAAR_MAX_TX_CHAR_LEN;
 
-    return sd_ble_gatts_characteristic_add(p_ble_paar->service_handle,
-                                           &char_md,
-                                           &attr_char_value,
-                                           &p_ble_paar->rx_handles);
+    return sd_ble_gatts_characteristic_add(p_ble_paar->service_handle, &char_md, &attr_char_value, &p_ble_paar->rx_handles);
 }
 
-
-void ble_nus_on_ble_evt(ble_paar_t * p_nus, ble_evt_t * p_ble_evt)
+void ble_nus_on_ble_evt(ble_paar_t *p_nus, ble_evt_t *p_ble_evt)
 {
     if ((p_nus == NULL) || (p_ble_evt == NULL))
     {
@@ -201,37 +189,37 @@ void ble_nus_on_ble_evt(ble_paar_t * p_nus, ble_evt_t * p_ble_evt)
 
     switch (p_ble_evt->header.evt_id)
     {
-        case BLE_GAP_EVT_CONNECTED:
-            on_connect(p_nus, p_ble_evt);
-            break;
+    case BLE_GAP_EVT_CONNECTED:
+        on_connect(p_nus, p_ble_evt);
+        break;
 
-        case BLE_GAP_EVT_DISCONNECTED:
-            on_disconnect(p_nus, p_ble_evt);
-            break;
+    case BLE_GAP_EVT_DISCONNECTED:
+        on_disconnect(p_nus, p_ble_evt);
+        break;
 
-        case BLE_GATTS_EVT_WRITE:
-            on_write(p_nus, p_ble_evt);
-            break;
+    case BLE_GATTS_EVT_WRITE:
+        on_write(p_nus, p_ble_evt);
+        break;
 
-        default:
-            // No implementation needed.
-            break;
+    default:
+        // No implementation needed.
+        break;
     }
 }
 
-
-uint32_t ble_paar_service_init(ble_paar_t * p_ble_paar, const ble_paar_init_t * p_paar_init)
+uint32_t ble_paar_service_init(ble_paar_t *p_ble_paar, const ble_paar_init_t *p_paar_init)
 {
-    uint32_t      err_code;
-    ble_uuid_t    ble_uuid;
-    ble_uuid128_t base_uuid = PAAR_BASE_UUID;
+    uint32_t err_code;
+    ble_uuid_t ble_uuid;
+    ble_uuid128_t base_uuid = PAAR_BASE_UUID
+    ;
 
     VERIFY_PARAM_NOT_NULL(p_ble_paar);
     VERIFY_PARAM_NOT_NULL(p_paar_init);
 
     // Initialize the service structure.
-    p_ble_paar->conn_handle             = BLE_CONN_HANDLE_INVALID;
-    p_ble_paar->data_handler            = p_paar_init->data_handler;
+    p_ble_paar->conn_handle = BLE_CONN_HANDLE_INVALID;
+    p_ble_paar->data_handler = p_paar_init->data_handler;
 //    p_ble_paar->is_notification_enabled = true;
 
     /**@snippet [Adding proprietary Service to S110 SoftDevice] */
@@ -243,9 +231,7 @@ uint32_t ble_paar_service_init(ble_paar_t * p_ble_paar, const ble_paar_init_t * 
     ble_uuid.uuid = BLE_UUID_PAAR_SERVICE;
 
     // Add the service.
-    err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY,
-                                        &ble_uuid,
-                                        &p_ble_paar->service_handle);
+    err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY, &ble_uuid, &p_ble_paar->service_handle);
     /**@snippet [Adding proprietary Service to S110 SoftDevice] */
     VERIFY_SUCCESS(err_code);
 
@@ -260,8 +246,7 @@ uint32_t ble_paar_service_init(ble_paar_t * p_ble_paar, const ble_paar_init_t * 
     return NRF_SUCCESS;
 }
 
-
-uint32_t ble_paar_ble_send_msg(ble_paar_t * p_paar_s, uint8_t * msg, uint16_t length)
+uint32_t ble_paar_ble_send_msg(ble_paar_t *p_paar_s, uint8_t *msg, uint16_t length)
 {
     ble_gatts_hvx_params_t hvx_params;
 
@@ -281,13 +266,11 @@ uint32_t ble_paar_ble_send_msg(ble_paar_t * p_paar_s, uint8_t * msg, uint16_t le
 
     hvx_params.handle = p_paar_s->tx_handles.value_handle;
     hvx_params.p_data = msg;
-    hvx_params.p_len  = &length;
-    hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+    hvx_params.p_len = &length;
+    hvx_params.type = BLE_GATT_HVX_NOTIFICATION;
 
     uint32_t temp_result = sd_ble_gatts_hvx(p_paar_s->conn_handle, &hvx_params);
 
     return temp_result;
 }
-
-
 

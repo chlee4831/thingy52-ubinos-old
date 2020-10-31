@@ -61,34 +61,35 @@
 
 typedef struct
 {
-	uint8_t event;
-	uint8_t status;
-	uint16_t conn_handle;
-	uint8_t* msg;
-}BLEEvt_msgt;
+    uint8_t event;
+    uint8_t status;
+    uint16_t conn_handle;
+    uint8_t *msg;
+} BLEEvt_msgt;
 
 enum
 {
-	BLE_STACK_CENTRAL_EVT = 0,
-	BLE_STACK_PERIPHERAL_EVT,
-	BLE_STACK_PERIPHERAL_ADV_EVT,
+    BLE_STACK_CENTRAL_EVT = 0,
+    BLE_STACK_PERIPHERAL_EVT,
+    BLE_STACK_PERIPHERAL_ADV_EVT,
 };
 
 #define LAP_ADV_DATA_LEN		25
 
-typedef struct{
-	ble_gap_addr_t peer_address;
-	ble_gap_addr_t direct_address;
-	int8_t rssi;
-	uint8_t data[LAP_ADV_DATA_LEN];
-	uint16_t data_len;
-}LAP_ble_adv_report;
+typedef struct
+{
+    ble_gap_addr_t peer_address;
+    ble_gap_addr_t direct_address;
+    int8_t rssi;
+    uint8_t data[LAP_ADV_DATA_LEN];
+    uint16_t data_len;
+} LAP_ble_adv_report;
 
 void BLE_stack_task_init(void);
 
-int32_t PAAR_send_ble_msg_central(uint16_t send_conn_handle, uint16_t handle, uint8_t * msg, uint16_t length);
-uint32_t PAAR_send_ble_test_msg_central(uint16_t send_conn_handle, uint16_t handle, uint8_t * msg, uint16_t length);
-int32_t PAAR_send_ble_msg_peripheral(uint8_t * msg, uint16_t length);
+int32_t PAAR_send_ble_msg_central(uint16_t send_conn_handle, uint16_t handle, uint8_t *msg, uint16_t length);
+uint32_t PAAR_send_ble_test_msg_central(uint16_t send_conn_handle, uint16_t handle, uint8_t *msg, uint16_t length);
+int32_t PAAR_send_ble_msg_peripheral(uint8_t *msg, uint16_t length);
 
 void PAAR_scan_start(void);
 void PAAR_scan_stop(void);
@@ -96,12 +97,12 @@ void PAAR_scan_stop(void);
 void PAAR_adv_start();
 void PAAR_adv_restart();
 void PAAR_adv_stop();
-void PAAR_set_adv_data(uint8_t* adv_data, uint16_t adv_data_len, uint8_t* scan_rsp_data, uint16_t scan_rsp_data_len);
+void PAAR_set_adv_data(uint8_t *adv_data, uint16_t adv_data_len, uint8_t *scan_rsp_data, uint16_t scan_rsp_data_len);
 
-void PAAR_ble_gap_connect(ble_gap_addr_t * peer_addr);
+void PAAR_ble_gap_connect(ble_gap_addr_t *peer_addr);
 uint32_t PAAR_ble_gap_disconnect(uint16_t conn_handle);
 
-ble_paar_t * get_peripheral_info(void);
+ble_paar_t* get_peripheral_info(void);
 
 bool get_ble_stack_init_flag();
 
