@@ -13,12 +13,13 @@
 #include <stdbool.h>
 
 #define EDGE_TAG_DEVICE_ID	0xD8
+#define EDGE_ID             0x01
 
 // Definition : PAAR ID(4 Byte)
 
 #define PAAR_ID_0					0x01
 #define PAAR_ID_1					0x00
-#define PAAR_ID_2					0x01	//edge ID
+#define PAAR_ID_2					EDGE_ID	//edge ID
 #define PAAR_ID_3					EDGE_TAG_DEVICE_ID
 
 #define TEST_SEND_MSG_DELAY			500

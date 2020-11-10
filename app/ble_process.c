@@ -268,6 +268,8 @@ void process_ADV_Report(LAP_ble_adv_report *pPkt)
                 //Location Request는 저장 후, Scan Result(timeout evt)이후 처리
             case LAP_ADV_STATUS_BYTE_LOCATION_REQ:
                 process_LAP_location_request_packet(pPkt);
+                LAP_event_send(LAP_CENTRAL_EVT, LAP_CENTRAL_ST_SCAN_RESULT, BLE_CONN_HANDLE_INVALID,
+                        LAP_EVENT_HANDLE_NULL, LAP_EVENT_MSG_LEN_NULL, NULL);
                 break;
             case LAP_ADV_STATUS_BYTE_SLIMHUB_INFO:
                 break;

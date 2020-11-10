@@ -22,6 +22,7 @@
 
 #include "sw_config.h"
 #include "cell_management.h"
+#include "edge_manager.h"
 
 uint16_t test_target_conn_handle = BLE_CONN_HANDLE_INVALID;
 paar_uuidhandle test_target_uuid_handle;
@@ -43,10 +44,7 @@ static void process_LAP_scan_timeout()
     processing_cell_management();
     printf("Cell Management\r\n");
 
-//	LAP_start_ble_scan(NULL);
-
-//app_timer_stop(scan_fail_timeout_timer);
-//app_timer_start(scan_fail_timeout_timer, APP_TIMER_TICKS(5000), NULL);
+    edge_manager_scan_timeout();
 }
 
 static void processing_LAP_Central_Conn_timeout(LAPEvt_msgt LAP_evt_msg)
@@ -63,6 +61,8 @@ static void processing_LAP_Central_Scan_timeout(LAPEvt_msgt LAP_evt_msg)
 
 static void processing_LAP_Central_Scan_result(LAPEvt_msgt LAP_evt_msg)
 {
+    edge_manager_scan_result();
+
     //nothing...
 }
 
@@ -183,21 +183,24 @@ static void processing_LAP_Central_Disconnected(LAPEvt_msgt LAP_evt_msg)
     printf("BLE Central disconnect\r\n");
 }
 
+static void print_packet(uint8_t *msg)
+{
+    uint8_t i;
+
+    printf("0x");
+    for (i = 0; i < PAAR_MAXIMUM_PACKET_SIZE; i++)
+        printf("%02X ", msg[i]);
+
+    printf("\r\n");
+}
 static void processing_LAP_Central_Data_Received(LAPEvt_msgt LAP_evt_msg)
 {
     //todo 하단 노드에서 연결한 디바이스 정보 받아서 라우팅 테이블 생성
     //todo 데이터 받아서 상단 노드로 전달
-    printf("data received!!\r\n");
-    printf("data packet : ");
-    uint8_t i;
+    printf("Central Data Received: ");
+    print_packet(LAP_evt_msg.msg);
 
-    printf("0x");
-    for (i = 0; i < LAP_evt_msg.msg_len; i++)
-        printf("%02X ", LAP_evt_msg.msg[i]);
-
-    printf("\r\n");
-    printf("\r\n");
-
+    edge_manager_central_data_received(LAP_evt_msg);
 }
 
 static void processing_LAP_Peripheral_Connected(LAPEvt_msgt LAP_evt_msg)
@@ -217,6 +220,9 @@ static void processing_LAP_Peripheral_Disconnected(LAPEvt_msgt LAP_evt_msg)
 
 static void processing_LAP_Peripheral_Data_Received(LAPEvt_msgt LAP_evt_msg)
 {
+    printf("Peripheral Data Received: ");
+    print_packet(LAP_evt_msg.msg);
+
     edge_manager_peripheral_data_received(LAP_evt_msg);
 }
 
