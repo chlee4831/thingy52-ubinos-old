@@ -29,6 +29,8 @@
 
 #define SCAN_RETRY_CNT_MAX 3
 
+#define EDGE_MANAGER_HUB_DEVICE 0
+
 static uint8_t edge_manager_branch_count = 0;
 static branch_data_t branch_list[EDGE_MANAGER_MAX_BRANCH_CNT];
 
@@ -67,6 +69,17 @@ static void scan_management_init()
     memset(scan_order_flag, false, EDGE_MANAGER_MAX_BRANCH_CNT);
     memset(scan_order, 0xFF, EDGE_MANAGER_MAX_BRANCH_CNT);
     scan_done_cnt = 0;
+}
+
+static void print_packet(uint8_t *msg)
+{
+    uint8_t i;
+
+    printf("0x");
+    for (i = 0; i < PAAR_MAXIMUM_PACKET_SIZE; i++)
+        printf("%02X ", msg[i]);
+
+    printf("\r\n");
 }
 
 void edge_manager_init()
@@ -118,11 +131,11 @@ uint8_t edge_manager_branch_add(uint8_t cell_index)
         if (current_paar_id_ptr[PAAR_ID_DEVICE_ID_INDEX] == EDGE_TAG_DEVICE_ID)
         {
             mutex_lock(edge_mutex);
-//			if (current_paar_id_ptr[PAAR_ID_EDGE_ID_INDEX] == EDGE_ID)
-//			{
-//				printf("Duplicate Edge ID\r\n");
-//				return 0xFF;
-//			}
+            if (current_paar_id_ptr[PAAR_ID_EDGE_ID_INDEX] == EDGE_ID)
+            {
+                printf("Duplicate Edge ID\r\n");
+                return 0xFF;
+            }
             for (i = 0; i < EDGE_MANAGER_MAX_BRANCH_CNT; i++)
             {
                 if (branch_list[i].is_empty == false && branch_list[i].branch_id == current_paar_id_ptr[PAAR_ID_EDGE_ID_INDEX])
@@ -257,7 +270,7 @@ static void edge_manager_scan_management(paar_packet_t *packet)
 
                     packet_edge_conn_report.service_ID = EDGE_SERVICE_ID;
                     packet_edge_conn_report.seq = 0x11;
-                    packet_edge_conn_report.data_len = 3;
+                    packet_edge_conn_report.data_len = 4;
                     packet_edge_conn_report.cmd = PAAR_EDGE_CMD_EDGE_CONN_REPORT;
                     packet_edge_conn_report.scan_done = true;
                     packet_edge_conn_report.num_of_nodes = 1;
@@ -310,7 +323,6 @@ static void edge_manager_scan_management(paar_packet_t *packet)
 
             tmp_packet.service_ID = EDGE_SERVICE_ID;
             tmp_packet.seq = 0x11;
-            tmp_packet.data_len = 1;
             tmp_packet.cmd = PAAR_EDGE_CMD_EDGE_CONN_REPORT;
             if (scan_done_cnt == edge_manager_branch_count)
                 tmp_packet.scan_done = true;
@@ -326,9 +338,13 @@ static void edge_manager_scan_management(paar_packet_t *packet)
                 memcpy(&tmp_packet.edge_id[edge_id_index], branch_list[i].connected_edge_list, branch_list[i].connected_edge_cnt);
                 edge_id_index += branch_list[i].connected_edge_cnt;
             }
-            tmp_packet.num_of_nodes = edge_id_index;
+            tmp_packet.num_of_nodes = 1 + edge_id_index;
+            tmp_packet.data_len = edge_id_index + 4;
 
             send_packet_peripheral(&tmp_packet);
+
+            printf("conn_report: ");
+            print_packet(&tmp_packet);
 
             scan_management_state = SCAN_MANAGEMENT_STATE_IDLE;
             scan_order_index = 0;
@@ -356,7 +372,7 @@ void edge_manager_central_data_received(LAPEvt_msgt LAP_evt_msg)
         break;
 
     case PAAR_EDGE_CMD_ACTIVITY_REPORT:
-
+        send_packet_peripheral(packet);
         break;
     }
 
@@ -395,13 +411,13 @@ void edge_manager_scan_timeout()
 
         tmp_packet.service_ID = EDGE_SERVICE_ID;
         tmp_packet.seq = 0x11;
-        tmp_packet.data_len = 1 + edge_manager_branch_count;
+        tmp_packet.data_len = 4 + edge_manager_branch_count;
         tmp_packet.cmd = PAAR_EDGE_CMD_EDGE_CONN_REPORT;
         if (edge_manager_branch_count == 0)
             tmp_packet.scan_done = true;
         else
             tmp_packet.scan_done = false;
-        tmp_packet.num_of_nodes = edge_manager_branch_count;
+        tmp_packet.num_of_nodes = 1 + edge_manager_branch_count;
         tmp_packet.my_edge_id = EDGE_ID;
         for (i = 0; i < edge_manager_branch_count; i++)
         {

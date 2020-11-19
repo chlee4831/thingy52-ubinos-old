@@ -80,14 +80,6 @@ typedef struct __attribute__((packed, aligned(1)))
 
 enum
 {
-    PAAR_EDGE_CMD_SCAN_START = 1,
-    PAAR_EDGE_CMD_EDGE_CONN_REPORT,
-    PAAR_EDGE_CMD_DEVICE_CONN_REPORT,
-    PAAR_EDGE_CMD_ACTIVITY_REPORT,
-};
-
-enum
-{
     SCAN_MANAGEMENT_STATE_IDLE,
     SCAN_MANAGEMENT_STATE_SCANNING,
 };
@@ -101,5 +93,9 @@ uint8_t edge_manager_branch_remove(uint8_t cell_index);
 void edge_manager_central_data_received(LAPEvt_msgt LAP_evt_msg);
 
 void edge_manager_peripheral_data_received(LAPEvt_msgt LAP_evt_msg);
+
+void edge_manager_scan_timeout();
+
+void edge_manager_scan_result();
 
 #endif /* APP_EDGE_MANAGER_H_ */

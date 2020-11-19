@@ -86,6 +86,7 @@ void send_ack_central(uint16_t conn_handle, uint16_t handle, paar_packet_t *pack
     {
         memset(temp_packet, 0, PAAR_MAXIMUM_PACKET_SIZE);
         memcpy(temp_packet, packet, PAAR_ACK_PACKET_SIZE);
+        temp_packet[2] = 1;
         LAP_send_ble_msg_central(conn_handle, handle, temp_packet, PAAR_MAXIMUM_PACKET_SIZE);
     }
 }
@@ -110,6 +111,7 @@ void send_ack_peripheral(paar_packet_t *packet)
     {
         memset(temp_packet, 0, PAAR_MAXIMUM_PACKET_SIZE);
         memcpy(temp_packet, packet, PAAR_ACK_PACKET_SIZE);
+        temp_packet[2] = 1;
         LAP_send_ble_msg_peripheral(temp_packet, PAAR_MAXIMUM_PACKET_SIZE);
     }
 }
@@ -193,6 +195,7 @@ static void print_packet(uint8_t *msg)
 
     printf("\r\n");
 }
+
 static void processing_LAP_Central_Data_Received(LAPEvt_msgt LAP_evt_msg)
 {
     //todo 하단 노드에서 연결한 디바이스 정보 받아서 라우팅 테이블 생성
