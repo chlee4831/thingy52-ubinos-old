@@ -17,6 +17,11 @@ typedef struct
     uint8_t *msg;
 } mainEvt_msgt;
 
+enum
+{
+    THINGY_MAIN_EVT_BUTTON,
+};
+
 void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t *msg);
 
 void thingy_main_task_init(void);

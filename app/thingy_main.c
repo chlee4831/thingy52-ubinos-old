@@ -32,6 +32,8 @@
 
 static msgq_pt main_msgq;
 
+static int test_count = 0;
+
 void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t *msg)
 {
 
@@ -44,6 +46,27 @@ void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t *msg)
     msgq_send(main_msgq, (unsigned char*) &main_msg);
 }
 
+void button_init(nrf_drv_gpiote_evt_handler_t handler)
+{
+    nrf_drv_gpiote_in_config_t in_config = GPIOTE_CONFIG_IN_SENSE_HITOLO(false)
+    ;
+    in_config.pull = NRF_GPIO_PIN_PULLUP;
+
+    nrf_drv_gpiote_in_init(BUTTON, &in_config, (nrf_drv_gpiote_evt_handler_t) handler);
+
+    nrf_drv_gpiote_in_event_enable(BUTTON, true);
+}
+
+void button_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
+{
+
+    bsp_busywaitms(10);
+    if ( nrf_drv_gpiote_in_is_set(pin))
+        return;
+
+    thingy_main_event_send(THINGY_MAIN_EVT_BUTTON, 0, NULL);
+}
+
 void thingy_main_task(void *arg)
 {
     int r;
@@ -51,7 +74,7 @@ void thingy_main_task(void *arg)
 
     nrf_drv_gpiote_init();
 
-//	LED_init();
+    button_init(button_handler);
 
     ble_stack_init_wait();
 
@@ -66,7 +89,28 @@ void thingy_main_task(void *arg)
         }
         else
         {
+            switch (read_msg.event)
+            {
 
+            case THINGY_MAIN_EVT_BUTTON:
+            {
+                paar_packet_t tmp_packet;
+
+                tmp_packet.service_ID = ENV_SENSOR_TAG_SERVICE_ID;
+                tmp_packet.seq = 0x11;
+                tmp_packet.data_len = 2;
+                tmp_packet.data[0] = 0x04;
+                tmp_packet.data[1] = test_count;
+
+                test_count++;
+
+                send_packet_peripheral(&tmp_packet);
+
+//                LAP_start_ble_scan(NULL);
+                break;
+            }
+
+            }
             if (read_msg.msg != NULL)
             {
                 free(read_msg.msg);

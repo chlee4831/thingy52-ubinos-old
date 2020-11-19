@@ -13,6 +13,8 @@
 #include <stdbool.h>
 
 #define EDGE_TAG_DEVICE_ID	0xD8
+#define ENV_SENSOR_TAG_SERVICE_ID 0x18
+
 #define EDGE_ID             0x01
 
 // Definition : PAAR ID(4 Byte)

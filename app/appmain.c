@@ -78,7 +78,7 @@ int appmain(int argc, char *argv[])
 //	sampling_task_init();
 
     //main task init
-//	thingy_main_task_init();
+	thingy_main_task_init();
 
     //Kernel Scheduler Start
     ubik_comp_start();
