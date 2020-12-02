@@ -19,6 +19,7 @@
 #include "cell_management.h"
 
 #include "edge_manager.h"
+#include "thingy_main.h"
 
 #define PAAR_ID_DEVICE_ID_INDEX 3
 #define PAAR_ID_EDGE_ID_INDEX 2
@@ -27,9 +28,7 @@
 
 #define PACKET_DATA_SCAN_DEPTH_INDEX 0
 
-#define SCAN_RETRY_CNT_MAX 3
-
-#define EDGE_MANAGER_HUB_DEVICE 0
+#define SCAN_RETRY_CNT_MAX 2
 
 static uint8_t edge_manager_branch_count = 0;
 static branch_data_t branch_list[EDGE_MANAGER_MAX_BRANCH_CNT];
@@ -348,6 +347,13 @@ static void edge_manager_scan_management(paar_packet_t *packet)
 
             scan_management_state = SCAN_MANAGEMENT_STATE_IDLE;
             scan_order_index = 0;
+
+#if EDGE_MANAGER_HUB_DEVICE
+            if (scan_done_cnt < edge_manager_branch_count)
+            {
+                thingy_main_event_send(THINGY_MAIN_EVT_NEXT_SCAN, 0, NULL);
+            }
+#endif
         }
         break;
     }
@@ -427,6 +433,13 @@ void edge_manager_scan_timeout()
         send_packet_peripheral(&tmp_packet);
 
         scan_retry_cnt = SCAN_RETRY_CNT_MAX;
+
+#if EDGE_MANAGER_HUB_DEVICE
+        if (edge_manager_branch_count > 0)
+        {
+            thingy_main_event_send(THINGY_MAIN_EVT_NEXT_SCAN, 0, NULL);
+        }
+#endif
     }
 }
 

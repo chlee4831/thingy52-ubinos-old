@@ -34,6 +34,8 @@ static msgq_pt main_msgq;
 
 static int test_count = 0;
 
+static uint8_t current_scan_depth = 1;
+
 void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t *msg)
 {
 
@@ -46,15 +48,15 @@ void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t *msg)
     msgq_send(main_msgq, (unsigned char*) &main_msg);
 }
 
-void button_init(nrf_drv_gpiote_evt_handler_t handler)
+void button_init(nrf_drv_gpiote_pin_t pin, nrf_drv_gpiote_evt_handler_t handler)
 {
     nrf_drv_gpiote_in_config_t in_config = GPIOTE_CONFIG_IN_SENSE_HITOLO(false)
     ;
     in_config.pull = NRF_GPIO_PIN_PULLUP;
 
-    nrf_drv_gpiote_in_init(BUTTON, &in_config, (nrf_drv_gpiote_evt_handler_t) handler);
+    nrf_drv_gpiote_in_init(pin, &in_config, (nrf_drv_gpiote_evt_handler_t) handler);
 
-    nrf_drv_gpiote_in_event_enable(BUTTON, true);
+    nrf_drv_gpiote_in_event_enable(pin, true);
 }
 
 void button_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
@@ -74,7 +76,7 @@ void thingy_main_task(void *arg)
 
     nrf_drv_gpiote_init();
 
-    button_init(button_handler);
+    button_init(13, button_handler);
 
     ble_stack_init_wait();
 
@@ -94,6 +96,7 @@ void thingy_main_task(void *arg)
 
             case THINGY_MAIN_EVT_BUTTON:
             {
+#if !EDGE_MANAGER_HUB_DEVICE
                 paar_packet_t tmp_packet;
 
                 tmp_packet.service_ID = ENV_SENSOR_TAG_SERVICE_ID;
@@ -106,7 +109,30 @@ void thingy_main_task(void *arg)
 
                 send_packet_peripheral(&tmp_packet);
 
-//                LAP_start_ble_scan(NULL);
+                printf("packet_sent %d\r\n", test_count);
+#endif
+#if EDGE_MANAGER_HUB_DEVICE
+                LAP_start_ble_scan(NULL);
+                current_scan_depth++;
+#endif
+                break;
+
+            }
+
+            case THINGY_MAIN_EVT_NEXT_SCAN:
+            {
+                uint8_t *temp_msg = (uint8_t*) malloc(PAAR_MAXIMUM_PACKET_SIZE);
+
+                memset(temp_msg, 0, PAAR_MAXIMUM_PACKET_SIZE);
+                temp_msg[0] = EDGE_SERVICE_ID;
+                temp_msg[1] = 0x11;
+                temp_msg[2] = 1;
+                temp_msg[3] = 0x01;
+                temp_msg[4] = current_scan_depth;
+
+                current_scan_depth++;
+
+                LAP_event_send(LAP_PERIPHERAL_EVT, LAP_PERIPHERAL_ST_DATA_RECEIVED, NULL, NULL, NULL, temp_msg);
                 break;
             }
 

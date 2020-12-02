@@ -330,7 +330,7 @@ void PAAR_scan_start(void)
         printf("BLE erros : SCAN_fail! %d\r\n", ret);
         temp_test_cnt++;
     }
-    printf("Scan result : %d \r\n", ret);
+//    printf("Scan result : %d \r\n", ret);
 
     APP_ERROR_CHECK(ret);
 
@@ -384,7 +384,7 @@ void PAAR_ble_gap_connect(ble_gap_addr_t *peer_addr)
 {
     uint32_t r;
     r = sd_ble_gap_connect(peer_addr, &m_scan_params, &m_connection_param, APP_BLE_CONN_CFG_TAG);
-    printf("connecting result : %d\r\n", r);
+//    printf("connecting result : %d\r\n", r);
 }
 
 /**@brief Function for BLE gap disconnection
@@ -772,7 +772,7 @@ void ble_stack_task(void *arg)
                 }
                 else
                 {
-                    printf("malloc BLE_STACK_CENTRAL_EVT\r\n");
+//                    printf("malloc BLE_STACK_CENTRAL_EVT\r\n");
                 }
 
                 memcpy(temp_ble_rx_packet, &ble_rx_msg_buffer.msg, ble_rx_msg_buffer.len);
@@ -791,7 +791,7 @@ void ble_stack_task(void *arg)
                 }
                 else
                 {
-                    printf("malloc BLE_STACK_PERIPHERAL_EVT\r\n");
+//                    printf("malloc BLE_STACK_PERIPHERAL_EVT\r\n");
                 }
 
                 memcpy(temp_ble_rx_packet, &ble_rx_msg_buffer.msg, ble_rx_msg_buffer.len);

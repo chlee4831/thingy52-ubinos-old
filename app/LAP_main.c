@@ -127,7 +127,7 @@ static void send_cccd_handle_enable(uint16_t conn_handle, uint16_t cccd_handle)
     temp_packet[0] = NRF_NOTI_INDI_ENABLE;		// ble notification msg 데이터
     temp_packet[1] = 0x00;
 
-    printf("BLE send msg : CCCD enable\r\n");
+//    printf("BLE send msg : CCCD enable\r\n");
 
     LAP_send_ble_msg_central(conn_handle, cccd_handle, temp_packet, 2);
 
@@ -231,7 +231,7 @@ static void processing_LAP_Peripheral_Data_Received(LAPEvt_msgt LAP_evt_msg)
 
 static void processing_LAP_Peripheral_CCCD_Enabled(LAPEvt_msgt LAP_evt_msg)
 {
-    printf("BLE CCCD is enabled. \r\n");
+//    printf("BLE CCCD is enabled. \r\n");
 
 //	task_sleep(TEST_SEND_MSG_DELAY);
 //	send_test_msg_peripheral();
@@ -306,7 +306,9 @@ void processing_LAP_AMD_event(LAPEvt_msgt LAP_evt_msg)
 
 void LAP_Protocol_start_operation()
 {
+#if !EDGE_MANAGER_HUB_DEVICE
     LAP_start_ble_adv_LIDx();
+#endif
 }
 
 void scan_fail_timer_handler()

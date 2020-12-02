@@ -108,7 +108,7 @@ static void processing_BLE_Central_Data_Received(BLEPEvt_msgt BLE_evt_msg)
         }
         else
         {
-            printf("malloc processing_BLE_Central_Data_Received\r\n");
+//            printf("malloc processing_BLE_Central_Data_Received\r\n");
         }
 
         memcpy(temp_msg, BLE_evt_msg.msg, BLE_evt_msg.msg_len);
@@ -176,7 +176,7 @@ static int processing_BLE_Peripheral_Data_Received(BLEPEvt_msgt BLE_evt_msg)
         }
         else
         {
-            printf("malloc processing_BLE_Peripheral_Data_Received\r\n");
+//            printf("malloc processing_BLE_Peripheral_Data_Received\r\n");
         }
 
         memcpy(temp_msg, BLE_evt_msg.msg, BLE_evt_msg.msg_len);

@@ -20,6 +20,7 @@ typedef struct
 enum
 {
     THINGY_MAIN_EVT_BUTTON,
+    THINGY_MAIN_EVT_NEXT_SCAN,
 };
 
 void thingy_main_event_send(uint8_t evt, uint8_t state, uint8_t *msg);

@@ -17,6 +17,8 @@
 
 #define EDGE_ID             0x01
 
+#define EDGE_MANAGER_HUB_DEVICE 0
+
 // Definition : PAAR ID(4 Byte)
 
 #define PAAR_ID_0					0x01
