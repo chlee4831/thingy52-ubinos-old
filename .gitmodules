@@ -7,3 +7,9 @@
 [submodule "library/nrf5sdk_v17.00.00_lite"]
 	path = library/nrf5sdk_v17.00.00_lite
 	url = https://github.com/ubinos/nrf5sdk_v17.00.00_lite.git
+[submodule "library/seggerrtt"]
+	path = library/seggerrtt
+	url = https://github.com/ubinos/seggerrtt.git
+[submodule "library/seggerrtt_wrapper"]
+	path = library/seggerrtt_wrapper
+	url = https://github.com/ubinos/seggerrtt_wrapper.git
