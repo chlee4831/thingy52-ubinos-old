@@ -76,7 +76,7 @@ void thingy_main_task(void *arg)
 
     nrf_drv_gpiote_init();
 
-    button_init(13, button_handler);
+    button_init(BUTTON, button_handler);
 
     ble_stack_init_wait();
 
