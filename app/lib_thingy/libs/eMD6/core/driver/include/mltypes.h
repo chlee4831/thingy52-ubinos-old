@@ -152,10 +152,10 @@ typedef uint64_t  __u64;
 #endif
 
 #ifndef __KERNEL__
-//#ifndef ARRAY_SIZE
-///* Dimension of an array */
-//#define ARRAY_SIZE(array) (sizeof(array)/sizeof((array)[0]))
-//#endif
+#ifndef ARRAY_SIZE
+/* Dimension of an array */
+#define ARRAY_SIZE(array) (sizeof(array)/sizeof((array)[0]))
+#endif
 #endif
 /* - ML Errors. - */
 #define ERROR_NAME(x)   (#x)

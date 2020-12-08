@@ -43,7 +43,7 @@ include_directories(${_tmpdir}/lib_thingy/config)
 include_directories(${_tmpdir}/lib_thingy/libs/bv32fp-1.2)
 include_directories(${_tmpdir}/lib_thingy/libs/dvi_adpcm)
 include_directories(${_tmpdir}/lib_thingy/libs/jlink_monitor)
-#include_directories(${_tmpdir}/lib_thingy/libs/sr3_audio)
+include_directories(${_tmpdir}/lib_thingy/libs/sr3_audio)
 include_directories(${_tmpdir}/lib_thingy/libs/vocal_anr)
 
 include_directories(${_tmpdir}/lib_thingy/libs/eMD6/core/driver/eMPL)
