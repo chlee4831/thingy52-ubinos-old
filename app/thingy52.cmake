@@ -58,12 +58,13 @@ include_directories(${_tmpdir}/lib_thingy/include/macros)
 include_directories(${_tmpdir}/lib_thingy/include/util)
 include_directories(${_tmpdir}/lib_thingy/include/drivers)
 include_directories(${_tmpdir}/lib_thingy/include/modules)
+include_directories(${_tmpdir}/lib_thingy/include/ble_services)
 
-include_directories(${_tmpdir}/modules)
 
-include_directories(${_tmpdir}/../library/nrf5sdk_v17.00.00_lite/components/toolchain/cmsis/dsp/Include)
-
+#NRF SDK libraries
 get_filename_component(_tmp_source_dir "${NRF5SDK__BASE_DIR}" ABSOLUTE)
+
+include_directories(${_tmp_source_dir}/components/toolchain/cmsis/dsp/Include)
 
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_ppi.c)
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_spi.c)
@@ -75,6 +76,8 @@ set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/d
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_twi.c)
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_saadc.c)
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_pdm.c)
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_pwm.c)
+
 
 #MPL library
 find_library(LIBMPLLIB mpllib ${_tmpdir}/lib_thingy/libs/eMD6/core/mpl)

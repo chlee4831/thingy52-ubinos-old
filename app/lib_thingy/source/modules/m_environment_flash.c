@@ -39,8 +39,9 @@
 #include <stdint.h>
 #include <string.h>
 #include "m_environment_flash.h"
+#include "nrf_fstorage.h"
 #include "fds.h"
-#include "tes.h"
+#include "ble_tes.h"
 #include "app_error.h"
 #include "app_scheduler.h"
 #define  NRF_LOG_MODULE_NAME m_env_flash
@@ -58,7 +59,7 @@
 typedef struct
 {
     uint32_t         valid;
-    tes_config_t config;
+    ble_tes_config_t config;
 } m_env_flash_config_data_t;
 
 /**@brief Configuration data with size.
@@ -147,7 +148,7 @@ static void env_fds_evt_handler( fds_evt_t const * const p_fds_evt )
 }
 
 
-uint32_t m_env_flash_config_store(const tes_config_t * p_config)
+uint32_t m_env_flash_config_store(const ble_tes_config_t * p_config)
 {
     uint32_t            err_code;
     fds_record_t        record;
@@ -156,15 +157,14 @@ uint32_t m_env_flash_config_store(const tes_config_t * p_config)
 
     NULL_PARAM_CHECK(p_config);
 
-    memcpy(&m_config.data.config, p_config, sizeof(tes_config_t));
+    memcpy(&m_config.data.config, p_config, sizeof(ble_tes_config_t));
     m_config.data.valid = WS_FLASH_CONFIG_VALID;
 
-    // Set up data.
-    record.data.p_data         = &m_config;
-    record.data.length_words   = sizeof(m_env_flash_config_t)/4;
     // Set up record.
     record.file_id              = ENV_FILE_ID;
     record.key                  = ENV_REC_KEY;
+    record.data.p_data         = &m_config;
+    record.data.length_words   = sizeof(m_env_flash_config_t)/4;
 
     err_code = fds_record_update(&m_record_config_desc, &record);
     RETURN_IF_ERROR(err_code);
@@ -173,7 +173,7 @@ uint32_t m_env_flash_config_store(const tes_config_t * p_config)
 }
 
 
-uint32_t m_env_flash_config_load(tes_config_t ** p_config)
+uint32_t m_env_flash_config_load(ble_tes_config_t ** p_config)
 {
     uint32_t            err_code;
     fds_flash_record_t  flash_record;
@@ -212,12 +212,11 @@ uint32_t m_env_flash_baseline_store(const m_gas_baseline_t * p_baseline)
     memcpy(&m_gas_baseline.data.baseline, p_baseline, sizeof(m_gas_baseline_t));
     m_gas_baseline.data.valid = WS_FLASH_CONFIG_VALID;
 
-    // Set up data.
-    record.data.p_data         = &m_gas_baseline;
-    record.data.length_words   = sizeof(m_env_flash_baseline_t)/4;
     // Set up record.
     record.file_id              = ENV_FILE_BASELINE_ID;
     record.key                  = ENV_REC_BASELINE_KEY;
+    record.data.p_data         = &m_gas_baseline;
+    record.data.length_words   = sizeof(m_env_flash_baseline_t)/4;
 
     err_code = fds_record_update(&m_record_baseline_desc, &record);
     RETURN_IF_ERROR(err_code);
@@ -253,8 +252,8 @@ uint32_t m_env_flash_baseline_load(m_gas_baseline_t ** p_baseline)
 }
 
 
-uint32_t m_env_flash_init(const tes_config_t * p_default_config,
-                          tes_config_t      ** p_config,
+uint32_t m_env_flash_init(const ble_tes_config_t * p_default_config,
+                          ble_tes_config_t      ** p_config,
                           const m_gas_baseline_t * p_default_baseline,
                           m_gas_baseline_t      ** p_baseline)
 {
@@ -284,15 +283,14 @@ uint32_t m_env_flash_init(const tes_config_t * p_default_config,
 
         fds_record_t        record;
 
-        memcpy(&m_config.data.config, p_default_config, sizeof(tes_config_t));
+        memcpy(&m_config.data.config, p_default_config, sizeof(ble_tes_config_t));
         m_config.data.valid = WS_FLASH_CONFIG_VALID;
 
-        // Set up data.
-        record.data.p_data         = &m_config;
-        record.data.length_words   = sizeof(m_env_flash_config_t)/4;
         // Set up record.
         record.file_id              = ENV_FILE_ID;
         record.key                  = ENV_REC_KEY;
+        record.data.p_data         = &m_config;
+        record.data.length_words   = sizeof(m_env_flash_config_t)/4;
 
         m_fds_config_write_success = false;
         err_code = fds_record_write(&m_record_config_desc, &record);
@@ -321,12 +319,11 @@ uint32_t m_env_flash_init(const tes_config_t * p_default_config,
         memcpy(&m_gas_baseline.data.baseline, p_default_baseline, sizeof(m_gas_baseline_t));
         m_gas_baseline.data.valid = WS_FLASH_CONFIG_VALID;
 
-        // Set up data.
-        record.data.p_data         = &m_gas_baseline;
-        record.data.length_words   = sizeof(m_env_flash_baseline_t)/4;
         // Set up record.
         record.file_id              = ENV_FILE_BASELINE_ID;
         record.key                  = ENV_REC_BASELINE_KEY;
+        record.data.p_data         = &m_gas_baseline;
+        record.data.length_words   = sizeof(m_env_flash_baseline_t)/4;
 
         m_fds_baseline_write_success = false;
         err_code = fds_record_write(&m_record_baseline_desc, &record);

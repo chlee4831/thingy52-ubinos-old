@@ -513,7 +513,8 @@ uint32_t drv_speaker_tone_start(uint16_t freq_hz, uint32_t duration_ms, uint8_t 
 
     for (uint32_t i = 0; i < num; i++)
     {
-        ram_buf[i] = (uint16_t)(((float)volume * 125.0f * arm_sin_f32(2.0f * PI * freq_hz * i * 16.0e-6f - PI/2) / 100.0f) + 125.0f);
+        //todo arm_math error
+//        ram_buf[i] = (uint16_t)(((float)volume * 125.0f * arm_sin_f32(2.0f * PI * freq_hz * i * 16.0e-6f - PI/2) / 100.0f) + 125.0f);
     }
 
     nrf_pwm_sequence_t const seq =
