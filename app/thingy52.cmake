@@ -1,5 +1,5 @@
-set_cache(UBINOS__UBIK__TICK_TYPE "RTC" STRING)
-set_cache(UBINOS__UBIK__TICK_PER_SEC 1024 STRING)
+#set_cache(UBINOS__UBIK__TICK_TYPE "RTC" STRING)
+#set_cache(UBINOS__UBIK__TICK_PER_SEC 1024 STRING)
 
 set_cache(NRF5SDK__BOARD_NAME                                                   "PCA10040"  STRING)
 
@@ -27,6 +27,9 @@ set(INCLUDE__APP TRUE)
 set(APP__NAME "appmain")
 
 get_filename_component(_tmpdir "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
+get_filename_component(_tmp_source_dir "${NRF5SDK__BASE_DIR}" ABSOLUTE)
+
+include_directories(${_tmp_source_dir}/components/toolchain/cmsis/dsp/Include)
 
 file(GLOB_RECURSE _tmpsrc
     "${_tmpdir}/*.c"
@@ -62,10 +65,6 @@ include_directories(${_tmpdir}/lib_thingy/include/ble_services)
 
 
 #NRF SDK libraries
-get_filename_component(_tmp_source_dir "${NRF5SDK__BASE_DIR}" ABSOLUTE)
-
-include_directories(${_tmp_source_dir}/components/toolchain/cmsis/dsp/Include)
-
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_ppi.c)
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_spi.c)
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_twi.c)
