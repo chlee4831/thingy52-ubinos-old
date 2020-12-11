@@ -1,5 +1,5 @@
-#set_cache(UBINOS__UBIK__TICK_TYPE "RTC" STRING)
-#set_cache(UBINOS__UBIK__TICK_PER_SEC 1024 STRING)
+set_cache(UBINOS__UBIK__TICK_TYPE "RTC" STRING)
+set_cache(UBINOS__UBIK__TICK_PER_SEC 1024 STRING)
 
 set_cache(NRF5SDK__BOARD_NAME                                                   "PCA10040"  STRING)
 
@@ -26,10 +26,27 @@ add_compile_definitions(BLE_STACK_SUPPORT_REQD NRF52_PAN_12 NRF52_PAN_15 NRF52_P
 set(INCLUDE__APP TRUE)
 set(APP__NAME "appmain")
 
-get_filename_component(_tmpdir "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
+
+#NRF SDK libraries
 get_filename_component(_tmp_source_dir "${NRF5SDK__BASE_DIR}" ABSOLUTE)
 
 include_directories(${_tmp_source_dir}/components/toolchain/cmsis/dsp/Include)
+
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_ppi.c)
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_spi.c)
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_twi.c)
+
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_timer.c)
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_ppi.c)
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_spi.c)
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_twi.c)
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_saadc.c)
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_pdm.c)
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_pwm.c)
+
+
+#APP
+get_filename_component(_tmpdir "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
 
 file(GLOB_RECURSE _tmpsrc
     "${_tmpdir}/*.c"
@@ -48,7 +65,6 @@ include_directories(${_tmpdir}/lib_thingy/libs/dvi_adpcm)
 include_directories(${_tmpdir}/lib_thingy/libs/jlink_monitor)
 include_directories(${_tmpdir}/lib_thingy/libs/sr3_audio)
 include_directories(${_tmpdir}/lib_thingy/libs/vocal_anr)
-
 include_directories(${_tmpdir}/lib_thingy/libs/eMD6/core/driver/eMPL)
 include_directories(${_tmpdir}/lib_thingy/libs/eMD6/core/driver/include)
 include_directories(${_tmpdir}/lib_thingy/libs/eMD6/core/driver/nRF52)
@@ -62,20 +78,6 @@ include_directories(${_tmpdir}/lib_thingy/include/util)
 include_directories(${_tmpdir}/lib_thingy/include/drivers)
 include_directories(${_tmpdir}/lib_thingy/include/modules)
 include_directories(${_tmpdir}/lib_thingy/include/ble_services)
-
-
-#NRF SDK libraries
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_ppi.c)
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_spi.c)
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/integration/nrfx/legacy/nrf_drv_twi.c)
-
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_timer.c)
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_ppi.c)
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_spi.c)
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_twi.c)
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_saadc.c)
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_pdm.c)
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_pwm.c)
 
 
 #MPL library
