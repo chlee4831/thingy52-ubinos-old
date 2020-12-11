@@ -400,7 +400,7 @@ void BLE_process_task_init(void)
         printf("fail at msgq create\r\n");
     }
 
-    r = task_create(NULL, BLE_Process_task, NULL, task_gethighestpriority() - 1, 1024, NULL);
+    r = task_create(NULL, BLE_Process_task, NULL, task_gethighestpriority() - 1, 512, NULL);
     if (r != 0)
     {
         printf("== LAP_main_task failed \n\r");
