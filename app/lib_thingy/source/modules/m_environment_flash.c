@@ -110,7 +110,7 @@ static void env_fds_evt_handler( fds_evt_t const * const p_fds_evt )
             else
             {
                 // Initialization failed.
-                NRF_LOG_ERROR("FDS init failed!\r\n");
+                printf("FDS init failed!\r\n");
                 APP_ERROR_CHECK_BOOL(false);
             }
             break;
@@ -119,7 +119,7 @@ static void env_fds_evt_handler( fds_evt_t const * const p_fds_evt )
             {
                 if (p_fds_evt->write.file_id == ENV_FILE_ID)
                 {
-                    NRF_LOG_INFO("FDS config write success! %d FileId: 0x%x RecKey:0x%x\r\n",   p_fds_evt->write.is_record_updated,
+                    printf("FDS config write success! %d FileId: 0x%x RecKey:0x%x\r\n",   p_fds_evt->write.is_record_updated,
                                                                                                 p_fds_evt->write.file_id,
                                                                                                 p_fds_evt->write.record_key);
                     m_fds_config_write_success = true;
@@ -127,7 +127,7 @@ static void env_fds_evt_handler( fds_evt_t const * const p_fds_evt )
 
                 if (p_fds_evt->write.file_id == ENV_FILE_BASELINE_ID)
                 {
-                    NRF_LOG_INFO("FDS baseline write success! %d FileId: 0x%x RecKey:0x%x\r\n", p_fds_evt->write.is_record_updated,
+                    printf("FDS baseline write success! %d FileId: 0x%x RecKey:0x%x\r\n", p_fds_evt->write.is_record_updated,
                                                                                                 p_fds_evt->write.file_id,
                                                                                                 p_fds_evt->write.record_key);
                     m_fds_baseline_write_success = true;
@@ -136,12 +136,12 @@ static void env_fds_evt_handler( fds_evt_t const * const p_fds_evt )
             else
             {
                 // Initialization failed.
-                NRF_LOG_ERROR("FDS write failed!\r\n");
+                printf("FDS write failed!\r\n");
                 APP_ERROR_CHECK_BOOL(false);
             }
             break;
         default:
-            NRF_LOG_INFO("FDS handler - %d - %d\r\n", p_fds_evt->id, p_fds_evt->result);
+            printf("FDS handler - %d - %d\r\n", p_fds_evt->id, p_fds_evt->result);
             APP_ERROR_CHECK(p_fds_evt->result);
             break;
     }
@@ -153,7 +153,7 @@ uint32_t m_env_flash_config_store(const ble_tes_config_t * p_config)
     uint32_t            err_code;
     fds_record_t        record;
 
-    NRF_LOG_INFO("Storing configuration\r\n");
+    printf("Storing configuration\r\n");
 
     NULL_PARAM_CHECK(p_config);
 
@@ -181,7 +181,7 @@ uint32_t m_env_flash_config_load(ble_tes_config_t ** p_config)
 
     memset(&ftok, 0x00, sizeof(fds_find_token_t));
 
-    NRF_LOG_INFO("Loading configuration\r\n");
+    printf("Loading configuration\r\n");
 
     err_code = fds_record_find(ENV_FILE_ID, ENV_REC_KEY, &m_record_config_desc, &ftok);
     RETURN_IF_ERROR(err_code);
@@ -259,7 +259,7 @@ uint32_t m_env_flash_init(const ble_tes_config_t * p_default_config,
 {
     uint32_t err_code;
 
-    NRF_LOG_INFO("Initialization\r\n");
+    printf("Initialization\r\n");
     
     NULL_PARAM_CHECK(p_default_config);
     NULL_PARAM_CHECK(p_default_baseline);
@@ -279,7 +279,7 @@ uint32_t m_env_flash_init(const ble_tes_config_t * p_default_config,
     
     if (err_code == FDS_ERR_NOT_FOUND)
     {
-        NRF_LOG_INFO("Writing default config\r\n");
+        printf("Writing default config\r\n");
 
         fds_record_t        record;
 
@@ -313,7 +313,7 @@ uint32_t m_env_flash_init(const ble_tes_config_t * p_default_config,
     {
         fds_record_t        record;
 
-        NRF_LOG_INFO("Writing default baseline to flash 0x%04x 0x%04x 0x%04x 0x%04x \r\n",
+        printf("Writing default baseline to flash 0x%04x 0x%04x 0x%04x 0x%04x \r\n",
         p_default_baseline->mode_250ms, p_default_baseline->mode_1s, p_default_baseline->mode_10s, p_default_baseline->mode_60s);
 
         memcpy(&m_gas_baseline.data.baseline, p_default_baseline, sizeof(m_gas_baseline_t));

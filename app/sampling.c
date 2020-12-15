@@ -7,6 +7,7 @@
 
 #include <ubinos.h>
 
+#include <assert.h>
 #include <stdint.h>
 #include <float.h>
 #include <string.h>
@@ -65,26 +66,23 @@ static void thingy_init(void)
     APP_ERROR_CHECK(err_code);
 
     /**@brief Initialize LED and button UI module. */
-    ui_params.p_twi_instance = &m_twi_sensors;
-    err_code = m_ui_init(&m_ble_service_handles[THINGY_SERVICE_UI], &ui_params);
-    APP_ERROR_CHECK(err_code);
-
+//    ui_params.p_twi_instance = &m_twi_sensors;
+//    err_code = m_ui_init(&m_ble_service_handles[THINGY_SERVICE_UI], &ui_params);
+//    APP_ERROR_CHECK(err_code);
     /**@brief Initialize environment module. */
     env_params.p_twi_instance = &m_twi_sensors;
-    err_code = m_environment_init(&m_ble_service_handles[THINGY_SERVICE_ENVIRONMENT], &env_params);
+    err_code = m_environment_init(&env_params);
     APP_ERROR_CHECK(err_code);
 
     /**@brief Initialize motion module. */
-    motion_params.p_twi_instance = &m_twi_sensors;
-
-    err_code = m_motion_init(&m_ble_service_handles[THINGY_SERVICE_MOTION], &motion_params);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = m_sound_init(&m_ble_service_handles[THINGY_SERVICE_SOUND]);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = m_ui_led_set_event(M_UI_BLE_DISCONNECTED);
-    APP_ERROR_CHECK(err_code);
+//    motion_params.p_twi_instance = &m_twi_sensors;
+//    err_code = m_motion_init(&m_ble_service_handles[THINGY_SERVICE_MOTION], &motion_params);
+//    APP_ERROR_CHECK(err_code);
+//    err_code = m_sound_init(&m_ble_service_handles[THINGY_SERVICE_SOUND]);
+//    APP_ERROR_CHECK(err_code);
+//
+//    err_code = m_ui_led_set_event(M_UI_BLE_DISCONNECTED);
+//    APP_ERROR_CHECK(err_code);
 }
 
 static void board_init(void)
@@ -122,6 +120,19 @@ static void board_init(void)
 }
 
 /***************************************************************************************************************/
+int idletaskhookfunc(void *arg)
+{
+    for (;;)
+    {
+        app_sched_execute();
+        if (NRF_LOG_PROCESS() == false)
+        {
+            break;
+        }
+    }
+
+    return 0;
+}
 void sampling_event_send(uint8_t evt, uint8_t state, uint8_t *msg)
 {
     smpEvt_msgt sampling_msg;
@@ -162,8 +173,7 @@ static void sampling_task(void *arg)
 
     for (;;)
     {
-        app_sched_execute();
-        task_sleepms(10);
+        task_sleepms(100);
     }
 }
 
@@ -186,5 +196,8 @@ void sampling_task_init(void)
     {
         printf("== sampling_task created\n\r");
     }
+
+    r = ubik_setidletaskhookfunc(&idletaskhookfunc, 0, "idle_state_handle", IDLEHOOKFUNC_OPT__REPEAT);
+    assert(r == 0);
 }
 /***************************************************************************************************************/

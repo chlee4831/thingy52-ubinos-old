@@ -50,7 +50,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "m_ble.h"
+//#include "m_ble.h"
 #include "ble_tes.h"
 #include "nrf_drv_twi.h"
 
@@ -105,7 +105,7 @@ uint32_t m_environment_stop(void);
  *
  * @retval NRF_SUCCESS  If initialization was successful.
  */
-uint32_t m_environment_init(m_ble_service_handle_t * p_handle, m_environment_init_t * p_params);
+uint32_t m_environment_init(m_environment_init_t * p_params);
 #endif
 
 /** @} */

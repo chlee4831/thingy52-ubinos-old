@@ -1,31 +1,27 @@
-set_cache(UBINOS__UBIK__TICK_TYPE "RTC" STRING)
-set_cache(UBINOS__UBIK__TICK_PER_SEC 1024 STRING)
+set_cache(NRF5SDK__BOARD_NAME          			"PCA10040"		STRING)
 
-set_cache(NRF5SDK__BOARD_NAME                                                   "PCA10040"  STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN  	0x20004400     	STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH  	0x0000BC00     	STRING)
 
-set_cache(NRF5SDK__SWI_DISABLE0                                                 TRUE    BOOL)
+set_cache(NRF5SDK__SWI_DISABLE0					TRUE 			BOOL)
+wd
+set_cache(UBINOS__UBIK__MSGQ_MSGSIZE_MAX 		32 				STRING)
 
-set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN                                   0x20004400     STRING)
-set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH                                   0x0000BC00     STRING)
-
-set_cache(UBINOS__UBIK__MSGQ_MSGSIZE_MAX   32 STRING)
-
-set_cache(UBINOS__BSP__USE_DTTY	TRUE   BOOL)
-set_cache(NRF5SDK__UART_ENABLED	FALSE   BOOL)
-set_cache(NRF5SDK__ENABLE_APP_UART_FIFO	FALSE   BOOL)
-set_cache(UBINOS__BSP__DTTY_TYPE EXTERNAL STRING)
-set_cache(SEGGERRTT__DTTY_ENABLE TRUE BOOL)
+#segger_rtt xconfig
+set_cache(UBINOS__BSP__USE_DTTY					TRUE   			BOOL)
+set_cache(NRF5SDK__UART_ENABLED					FALSE   		BOOL)
+set_cache(NRF5SDK__ENABLE_APP_UART_FIFO			FALSE   		BOOL)
+set_cache(UBINOS__BSP__DTTY_TYPE 				EXTERNAL 		STRING)
+set_cache(SEGGERRTT__DTTY_ENABLE 				TRUE 			BOOL)
 
 include(${PROJECT_UBINOS_DIR}/config/ubinos_nrf52dk_softdevice.cmake)
 include(${PROJECT_LIBRARY_DIR}/seggerrtt_wrapper/config/seggerrtt.cmake)
 include(${PROJECT_LIBRARY_DIR}/nrf5sdk_wrapper/config/nrf5sdk.cmake)
 
-####
 add_compile_definitions(BLE_STACK_SUPPORT_REQD NRF52_PAN_12 NRF52_PAN_15 NRF52_PAN_20 NRF52_PAN_30 NRF52_PAN_31 NRF52_PAN_36 NRF52_PAN_51 NRF52_PAN_53 NRF52_PAN_54 NRF52_PAN_55 NRF52_PAN_58 NRF52_PAN_62 NRF52_PAN_63 NRF52_PAN_64 S132 NRF52 SOFTDEVICE_PRESENT SWI_DISABLE0 DEBUG ARM_MATH_CM4 MPU9250 EMPL USE_DMP EMPL_TARGET_NRF52 NO_VTOR_CONFIG)
 
 set(INCLUDE__APP TRUE)
 set(APP__NAME "appmain")
-
 
 #NRF SDK libraries
 get_filename_component(_tmp_source_dir "${NRF5SDK__BASE_DIR}" ABSOLUTE)
@@ -44,17 +40,8 @@ set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/d
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_pdm.c)
 set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmp_source_dir}/modules/nrfx/drivers/src/nrfx_pwm.c)
 
-
 #APP
 get_filename_component(_tmpdir "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
-
-file(GLOB_RECURSE _tmpsrc
-    "${_tmpdir}/*.c"
-    "${_tmpdir}/*.cpp"
-    "${_tmpdir}/*.S"
-    "${_tmpdir}/*.s")
-
-set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmpsrc})
 
 include_directories(${_tmpdir})
 
@@ -79,6 +66,13 @@ include_directories(${_tmpdir}/lib_thingy/include/drivers)
 include_directories(${_tmpdir}/lib_thingy/include/modules)
 include_directories(${_tmpdir}/lib_thingy/include/ble_services)
 
+file(GLOB_RECURSE _tmpsrc
+    "${_tmpdir}/*.c"
+    "${_tmpdir}/*.cpp"
+    "${_tmpdir}/*.S"
+    "${_tmpdir}/*.s")
+
+set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} ${_tmpsrc})
 
 #MPL library
 find_library(LIBMPLLIB mpllib ${_tmpdir}/lib_thingy/libs/eMD6/core/mpl)
